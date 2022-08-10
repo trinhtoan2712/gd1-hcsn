@@ -1,0 +1,33 @@
+.btn-add {
+    background: no-repeat -467px -421px;
+    font-size: 13px;
+    color: #ffffff;
+    padding-left:13px;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1aa4c8;
+    border-radius: 3px;
+    width: 110px;
+    height: 36px;
+    overflow: hidden;
+    border: none;
+}
+
+.button__icon {
+    background-image: url(../../assets/icon/qlts-icon.svg) !important;
+    display: inline;
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: #58bdd6;
+    cursor: pointer;
+}
+
+.btn-dialog {
+    margin-left:16px;
+}

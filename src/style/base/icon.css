@@ -1,0 +1,27 @@
+.icon-nav {
+    background-image: url(../../assets/icon/qlts-icon.svg) !important;
+    width: 24px !important;
+    height: 24px !important;
+    padding: 8px 10px;
+    position: fixed;
+}
+
+.icon-content {
+    background-image: url(../../assets/icon/qlts-icon.svg) !important;
+}
+
+.icon-dropdown {
+    background: no-repeat -72px -338px;
+	width: 8px;
+	height: 5px;
+    position: absolute;
+    padding-right: 10px;
+}
+
+.icon-updown {
+    background: no-repeat -204px -332px;
+	width: 8px;
+	height: 16px;
+    position: absolute;
+    padding-right: 10px;
+}

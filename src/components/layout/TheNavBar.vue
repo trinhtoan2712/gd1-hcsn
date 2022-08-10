@@ -1,0 +1,66 @@
+<template>
+    <div class="side-bar">
+        <div class="logo-details bx bx-menu" id="btn-open">
+            <div class="logo_name">MISA QLTS</div>
+            <span class="tooltip">Mở danh mục</span>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <router-link to="/">
+                    <div class="icon-dashboard icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Tổng quan</span>
+                </router-link>
+                <span class="tooltip">Tổng quan</span>
+            </li>
+            <li>
+                <router-link to="/assets">
+                    <div class="icon-assets icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Tài sản</span>
+                </router-link>
+                <span class="tooltip">Tài sản</span>
+            </li>
+            <li>
+                <router-link to="/customer">
+                    <div class="icon-assets-htdb icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Tài sản HT-ĐB</span>
+                </router-link>
+                <span class="tooltip">Tài sản HT-ĐB</span>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="icon-tool icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Công cụ dụng cụ</span>
+                </a>
+                <span class="tooltip">Công cụ dụng cụ</span>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="icon-category icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Danh mục</span>
+                </a>
+                <span class="tooltip">Danh mục</span>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="icon-search-nav icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Tra cứu</span>
+                </a>
+                <span class="tooltip">Tra cứu</span>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="icon-report icon-nav icon-navbar-active"></div>
+                    <span class="links_name">Báo cáo</span>
+                </a>
+                <span class="tooltip">Báo cáo</span>
+            </li>
+        </ul>
+        <div class="bottom-nav" id="">
+            <button class="btn-close-nav icon-nav icon-navbar-active" id="btn-close"></button>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+@import url(../../style/layout/navbar.css);
+</style>

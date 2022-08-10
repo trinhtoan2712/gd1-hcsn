@@ -1,0 +1,15 @@
+.content {
+    background-color: #f4f7ff;
+    position: relative;
+    min-height: 100vh;
+    top: 0;
+    left: 66px;
+    width: calc(100% - 66px);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.side-bar.open~.content {
+    left: 226px;
+    width: calc(100% - 226px);
+}

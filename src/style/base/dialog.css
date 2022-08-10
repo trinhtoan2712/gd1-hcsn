@@ -1,0 +1,158 @@
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(183, 181, 181, 0.24);
+    z-index: 100;
+}
+
+.frame_dialog {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 300px;
+}
+
+.dialog_header {
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding:16px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.btn-close-dialog {
+    background: no-repeat -365px -275px;
+	width: 40px;
+	height: 40px;
+}
+
+.dialog_content {
+    background-color: #fff;
+    padding: 0px 16px 0px 4px;
+
+}
+
+.row {
+    display: grid;
+    padding-bottom: 16px;
+    grid-template-columns: auto auto auto;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    padding-left: 16px;
+    padding-bottom: 16px;
+}
+
+.col label {
+    padding-bottom: 8px;
+    font-size: 13px;
+}
+
+.dialog_footer {
+    height: 52px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: rgb(244, 242, 242);
+    border-radius: 0px 0px 6px 6px;
+    padding-right: 16px;
+}
+
+/* ---------------- DIALOG WARNING --------------- */
+.dialog__content {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    min-width: 450px;
+}
+
+.dialog__container {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.icon-warning-dialog {
+    background: no-repeat -410px -58px;
+	width: 50px;
+	height: 50px;
+    margin-left: 20px;
+}
+
+.dialog__body {
+    padding:12px 24px 12px 12px;
+    font-size: 13px;
+}
+
+.dialog__msg-item {
+    display: flex;
+    align-items: center;
+    background-size: 16px;
+    background-position: 0 center;
+    background-repeat: no-repeat;
+    padding-left: 24px;
+}
+
+.dialog__msg-item~.dialog__msg-item {
+    margin-top: 8px;
+}
+
+.dialog__footer {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 24px 24px;
+    border-radius: 0 0 4px 4px;
+    flex-direction: row-reverse;
+}
+
+.dialog__footer .button--cancel {
+    background-color: unset;
+    color: #000;
+}
+
+.dialog__footer .button--cancel:hover,
+.button--cancel:focus {
+    background-color: #ccc;
+}
+
+.dialog__button--close {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 4px 0 4px;
+    width: 40px;
+    height: 40px;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: invert(20%) sepia(100%) saturate(3000%)
+}
+
+.dialog__button--close:hover {
+    background-color: #dedede;
+    filter: unset
+    /* filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%); */
+}

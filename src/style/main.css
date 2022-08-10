@@ -1,0 +1,46 @@
+@import url('../style/base/icon.css');
+@import url('../style/base/tool-tip.css');
+@import url('../style/base/button.css');
+@import url('../style/base/dialog.css');
+@import url('../style/base/input.css');
+@import url('../style/base/drop-down.css');
+@import url('../style/base//table.css');
+@import url('../style/layout/header.css');
+@import url('../style/layout/navbar.css');
+@import url('../style/layout/content.css');
+@import url('../style/base/combobox.css');
+
+
+@font-face {
+    font-family: MISA Fonts;
+    src: url(../assets/font/GoogleSans-Regular.otf);
+}
+
+@font-face {
+    font-family: MISA Font Bold;
+    src: url(../assets/font/GoogleSans-Bold.otf);
+}
+
+@font-face {
+    font-family: MISA Font Italic;
+    src: url(../assets/font/GoogleSans-Italic.otf);
+}
+
+body {
+    box-sizing: border-box;
+    margin: 0 auto;
+    font-family: MISA Fonts;
+}
+
+/* --------------- NUMBER --------------- */
+.number-right {
+    text-align: right !important;
+}
+
+/* -------------- REPONSIVE -------------- */
+@media (max-width: 420px) {
+    .side-bar li .tooltip {
+        display: none;
+    }
+
+}

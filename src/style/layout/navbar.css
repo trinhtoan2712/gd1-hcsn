@@ -1,0 +1,183 @@
+.side-bar {
+  position: fixed;
+  width: 66px;
+  height: 100vh;
+  background-color: #1c3048;
+  z-index: 99;
+  transition: all 0.1s ease;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, .16);
+}
+
+.side-bar.open {
+  width: 226px;
+}
+
+.nav-list span {
+  padding-left: 50px;
+}
+
+.side-bar .logo-details {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: no-repeat -6px -670px;
+  background-image: url(../../assets/icon/qlts-icon.svg);
+  cursor: pointer;
+}
+
+.icon-dashboard {
+  background: no-repeat -9px -144px;
+  /* -21px -153px */
+}
+
+.icon-assets {
+  background: no-repeat -53px -188px;
+}
+
+.icon-assets-htdb {
+  background: no-repeat -98px -144px;
+}
+
+.icon-tool {
+  background: no-repeat -141px -144px;
+}
+
+.icon-category {
+  background: no-repeat -185px -144px;
+}
+
+.icon-search-nav {
+  background: no-repeat -229px -144px;
+}
+
+.icon-report {
+  background: no-repeat -317px -144px;
+}
+
+.logo_name {
+  display: flex;
+  align-items: center;
+}
+
+.side-bar .logo-details .logo_name {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0;
+  transition: 0.1s;
+  height: 50px;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.side-bar.open .logo_name {
+  opacity: 1;
+  transition: all 3s ease;
+}
+
+.side-bar .logo-details #btn-open {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-size: 23px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.side-bar .open .logo-details #btn {
+  text-align: right;
+}
+
+.side-bar i {
+  color: #fff;
+  height: 60px;
+  min-width: 66px;
+  font-size: 28px;
+  text-align: center;
+  line-height: 60px;
+}
+
+.side-bar .nav-list {
+  padding-inline-start: 10px;
+  padding-inline-end: 10px;
+}
+
+.side-bar li {
+  position: relative;
+  list-style: none;
+  margin-bottom: 2px;
+}
+
+.side-bar .logo-details {
+  position: relative;
+}
+
+.side-bar li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  height: 44px;
+  border-radius: 6px;
+}
+
+.router-link-active {
+  background: #1aa4c8;
+}
+
+.side-bar li a:hover {
+  background: #1aa4c8;
+}
+
+.side-bar li a .links_name {
+  color: rgb(209, 203, 203);
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+.side-bar.open li a .links_name {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-bar li a:hover .links_name,
+.side-bar li a:hover i {
+  transition: all 0.1s ease;
+  color: #fff;
+}
+
+.side-bar li i {
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  border-radius: 12px;
+}
+
+.bottom-nav {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  justify-content: right;
+  border-top: 1px solid #fff;
+  transition: all 0.3s ease;
+}
+
+.btn-close-nav {
+  cursor: pointer;
+  padding: 10px 10px;
+  margin: 10px;
+  background: no-repeat -22px -284px;
+  width: 7px;
+  height: 12px;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  transition: all 1s ease;
+}
