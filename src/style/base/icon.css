@@ -18,10 +18,28 @@
     padding-right: 10px;
 }
 
-.icon-updown {
-    background: no-repeat -204px -332px;
-	width: 8px;
-	height: 16px;
+.btn-updown-number {
     position: absolute;
-    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+}
+
+.icon-up-number {
+	background: no-repeat -28px -338px;
+	width: 8px;
+	height: 5px;
+    cursor: pointer;
+    margin-bottom: 6px;
+}
+
+.icon-down-number {
+    background: no-repeat -72px -338px;
+    width: 8px;
+    height: 5px;
+    cursor: pointer;
+
 }

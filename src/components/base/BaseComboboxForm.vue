@@ -1,48 +1,18 @@
 <template>
-  <!-- <select>
-        <option v-for="item in data" :key="item[this.propValue]" value="{{item[this.propValue]}}">
-            {{ item[this.propText] }}
-        </option>
-    </select> -->
-  <div class="combobox">
-    <input
-      type="text"
-      class="input combobox__input"
-      v-model="text"
-      @input="inputOnChange"
-      @keydown="selecItemUpDown"
-    />
-    <button
-      class="button combobox__button"
-      @click="btnSelectDataOnClick"
-      @keydown="selecItemUpDown"
-      tabindex="-1"
-    >
+  <div class="comboboxform">
+    <input type="text" class="input comboboxform__input" v-model="text" @input="inputOnChange"
+      @keydown="selecItemUpDown" :placeholder="placText" :tabindex="tabIndex" />
+    <button class="button comboboxform__button" @click="btnSelectDataOnClick" @keydown="selecItemUpDown" tabindex="-1">
       <i class="fa-solid fa-chevron-down"></i>
     </button>
-    <div
-      v-show="isShowListData"
-      class="combobox__data"
-      ref="combobox__data"
-      v-clickoutside="hideListData"
-    >
-      <a
-        class="combobox__item"
-        v-for="(item, index) in dataFilter"
-        :class="{
-          'combobox__item--focus': index == indexItemFocus,
-          'combobox__item--selected': index == indexItemSelected,
-        }"
-        :key="item[this.propValue]"
-        :ref="'toFocus_' + index"
-        :value="item[this.propValue]"
-        @click="itemOnSelect(item, index)"
-        @focus="saveItemFocus(index)"
-        @keydown="selecItemUpDown(index)"
-        @keyup="selecItemUpDown(index)"
-        tabindex="1"
-      >
-        <div class="combobox__item-icon">
+    <div v-show="isShowListData" class="comboboxform__data" ref="comboboxform__data" v-clickoutside="hideListData">
+      <a class="comboboxform__item" v-for="(item, index) in dataFilter" :class="{
+        'comboboxform__item--focus': index == indexItemFocus,
+        'comboboxform__item--selected': index == indexItemSelected,
+      }" :key="item[this.propValue]" :ref="'toFocus_' + index" :value="item[this.propValue]"
+        @click="itemOnSelect(item, index)" @focus="saveItemFocus(index)" @keydown="selecItemUpDown(index)"
+        @keyup="selecItemUpDown(index)" tabindex="1">
+        <div class="comboboxform__item-icon">
           <i v-show="index == indexItemSelected" class="fa-solid fa-check"></i>
         </div>
         {{ item[this.propText] }}
@@ -53,8 +23,8 @@
 </template>
 <script>
 /**
- * Gán sự kiện nhấn click chuột ra ngoài combobox data (ẩn data list đi)
- * NVMANH (31/07/2022)
+ * Gán sự kiện nhấn click chuột ra ngoài để ẩn combobox data 
+ * TVTOAN (31/07/2022)
  */
 const clickoutside = {
   mounted(el, binding) {
@@ -87,8 +57,10 @@ export default {
   },
   props: {
     placText: String,
-    value:null,
+    tabIndex:Number,
+    value: null,
     url: String,
+    propName: String,
     propValue: String,
     propText: String,
     isLoadData: {
@@ -109,16 +81,19 @@ export default {
 
     itemOnSelect(item, index) {
       this.text = item[this.propText];
+      this.valueInput = item[this.propName];
       this.indexItemSelected = index;
       this.isShowListData = false;
-      this.$emit("getValue","11111");
+      this.$emit('getNameDepartment', this.valueInput)
+      this.$emit('getNameCategory', this.valueInput)
     },
-
     inputOnChange() {
       var me = this;
       // Thực hiện lọc các phần tử phù hợp trong data:
       this.dataFilter = this.data.filter((e) => {
-        return e[me.propText].includes(me.text);
+        let valueCode = e[me.propText].includes(me.text);
+        let valueName = e[me.propName].includes(me.valueInput);
+        return valueCode, valueName;
       });
       this.isShowListData = true;
     },
@@ -186,8 +161,9 @@ export default {
     return {
       data: [],
       dataFilter: [],
+      valueInput: '',
       text: null,
-    //   value: null,
+      //   value: null,
       isShowListData: false,
       focus: false,
       indexItemFocus: null,

@@ -17,15 +17,22 @@
     border: none;
 }
 
+.btn:focus {
+    outline: none;
+    border: 1px solid #1aa4c8 !important;
+    color: #1aa4c8 !important;
+    background-color: #ffffff;
+}
+
 .button__icon {
     background-image: url(../../assets/icon/qlts-icon.svg) !important;
     display: inline;
 }
 
-.btn:hover,
-.btn:focus {
+.btn:hover {
     background-color: #58bdd6;
     cursor: pointer;
+    color: #fff;
 }
 
 .btn-dialog {

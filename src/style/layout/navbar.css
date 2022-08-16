@@ -137,7 +137,7 @@
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 .side-bar.open li a .links_name {

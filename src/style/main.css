@@ -35,6 +35,7 @@ body {
 /* --------------- NUMBER --------------- */
 .number-right {
     text-align: right !important;
+    padding-right: 13px;
 }
 
 /* -------------- REPONSIVE -------------- */

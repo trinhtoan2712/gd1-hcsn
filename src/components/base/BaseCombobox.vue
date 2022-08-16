@@ -1,9 +1,4 @@
 <template>
-  <!-- <select>
-        <option v-for="item in data" :key="item[this.propValue]" value="{{item[this.propValue]}}">
-            {{ item[this.propText] }}
-        </option>
-    </select> -->
   <div class="combobox">
     <div class="icon-filter-combobox"></div>
     <input
@@ -55,8 +50,8 @@
 </template>
 <script>
 /**
- * Gán sự kiện nhấn click chuột ra ngoài combobox data (ẩn data list đi)
- * NVMANH (31/07/2022)
+ * Gán sự kiện nhấn click chuột ra ngoài để ẩn combobox data 
+ * TVTOAN (31/07/2022)
  */
 const clickoutside = {
   mounted(el, binding) {
@@ -113,7 +108,6 @@ export default {
       this.text = item[this.propText];
       this.indexItemSelected = index;
       this.isShowListData = false;
-      this.$emit("getValue","11111");
     },
 
     inputOnChange() {

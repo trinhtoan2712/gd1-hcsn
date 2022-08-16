@@ -6,13 +6,13 @@
     border: 1px solid #bbbbbb;
     padding-left: 16px;
     padding-right: 5px;
-    min-width: 100px;
+    min-width: 100%;
     font-family: MISA Fonts;
 }
 
 .input:focus,
 select:focus {
-    border-color: #019160;
+    border-color: #1aa4c8
 }
 
 .input--required {
@@ -31,7 +31,6 @@ select:focus {
 
 .input-updown {
     display: flex;
-    align-items: center;
     justify-content:right;
 }
 
@@ -40,5 +39,13 @@ select:focus {
 }
 
 .input-number {
-    padding-right: 25px;
+    padding-right: 35px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
 }

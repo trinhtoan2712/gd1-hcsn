@@ -1,6 +1,6 @@
 <template>
-    <div class="side-bar">
-        <div class="logo-details bx bx-menu" id="btn-open">
+    <div class="side-bar" v-bind:class="{open: isShowNavBar}">
+        <div class="logo-details bx bx-menu" id="btn-open" @click="btnShowNavBarOnClick">
             <div class="logo_name">MISA QLTS</div>
             <span class="tooltip">Mở danh mục</span>
         </div>
@@ -56,10 +56,38 @@
             </li>
         </ul>
         <div class="bottom-nav" id="">
-            <button class="btn-close-nav icon-nav icon-navbar-active" id="btn-close"></button>
+            <button class="btn-close-nav icon-nav icon-navbar-active" id="btn-close"
+                @click="btnHideNavBarOnClick"></button>
         </div>
     </div>
 </template>
+
+<script>
+export default ({
+    data() {
+        return {
+            isShowNavBar: false,
+        }
+    },
+    methods: {
+        //hàm ẩn hiện navbar
+        btnShowNavBarOnClick() {
+            try {
+                this.isShowNavBar = true;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        btnHideNavBarOnClick() {
+            try {
+                this.isShowNavBar = false;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+})
+</script>
 
 <style scoped>
 @import url(../../style/layout/navbar.css);

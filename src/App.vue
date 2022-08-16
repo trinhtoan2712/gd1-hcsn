@@ -15,6 +15,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import url(../src/style/main.css);
 </style>

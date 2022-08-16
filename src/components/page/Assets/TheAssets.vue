@@ -19,11 +19,11 @@
             <div></div>
         </div>
         <div class="content-option-right">
-            <button class="btn" id="btnAdd">
-                <div class="btn-add button__icon" @click="showDetail(true)">Thêm tài sản</div>
+            <button class="btn" id="btnAdd" @click="showDetail(true)">
+                <div class="btn-add button__icon">Thêm tài sản</div>
             </button>
-            <div class="btn-export-excel icon-content"></div>
-            <div class="btn-delete icon-content"></div>
+            <div class="btn-export-excel icon-content"><span class="tooltip">Xuất file excel</span> </div>
+            <div class="btn-delete icon-content"><span class="tooltip">Xóa</span> </div>
         </div>
     </div>
     <div class="content-table">
@@ -31,39 +31,58 @@
             <thead class="table-header">
                 <tr>
                     <th>
-                        <input type="checkbox" name="" id="" disabled>
+                        <input type="checkbox" name="" id="" v-model="isSelect" @click="selectAllRows">
                     </th>
-                    <th>STT</th>
+                    <th>STT<span class="tooltip">Số thứ tự</span> </th>
                     <th style="width:150px">Mã tài sản</th>
                     <th>Tên tài sản</th>
                     <th>Loại tài sản</th>
                     <th>Bộ phận sử dụng</th>
+                    <th>Ngày mua</th>
                     <th class="number-right">Số lượng</th>
                     <th class="number-right">Nguyên giá</th>
-                    <th class="number-right">HM/KH lũy kế</th>
+                    <th class="number-right">HM/KH lũy kế <span class="tooltip">Hao mòn/ Khấu hao</span></th>
                     <th class="number-right">Giá trị còn lại</th>
                     <th style="padding-left:20px">Chức năng</th>
                 </tr>
             </thead>
-            <tbody class="table-body" style="  overflow-y: auto;">
-                <tr class="tbody-tr" v-for="(cus, index ) in assets" :key="cus.CustomerId">
-                    <td><input type="checkbox" name="" id="" class="input-tbody"></td>
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ cus.CustomerCode }}</td>
-                    <td>{{ cus.FullName }}</td>
-                    <td>{{ cus.Gender }}</td>
-                    <td>{{ cus.Address }}</td>
-                    <td class="number-right">12</td>
+            <tbody class="table-body">
+                <tr class="tbody-tr" v-for="(asset, index ) in assets" :key="asset.CustomerId"
+                    :class="{ 'bgblue': checkActive(asset.CustomerId) }" @click="btnRowActiveOnClick(asset, $event)"
+                    @dblclick="rowOnDblClick(asset)">
+                    <td>
+                        <input type="checkbox" name="" id="" class="input-tbody" :value="asset.CustomerId"
+                            v-model="selected">
+                    </td>
+                    <td style="text-align:center">{{ index + 1 }}</td>
+                    <td>{{ asset.CustomerCode }}</td>
+                    <td>{{ asset.FullName }}</td>
+                    <td>{{ asset.FullName }}</td>
+                    <td class="number-right">{{asset.FullName}}</td>
+                    <td>{{ formatDate(asset.DateOfBirth) }}</td>
                     <td class="number-right">20.000.000</td>
                     <td class="number-right">1.432.000</td>
+                    <td class="number-right">1.000.000</td>
                     <td class="number-right">18.123.000</td>
+
                     <td class="table-option">
-                        <div class="table-eidt icon-content"></div>
-                        <div class="table-replication icon-content"></div>
+                        <div @click="rowOnDblClick(asset)" class="table-eidt icon-content"> </div>
+                        <div @click="duplicateAssets()" class="table-replication icon-content"> </div>
+                    </td>
+                </tr>
+                <tr class="table-summary">
+                    <td colspan="7">
+                    </td>
+                    <td class="number-right font-bold">20.000.000</td>
+                    <td class="number-right font-bold">1.432.000</td>
+                    <td class="number-right font-bold">18.123.000</td>
+                    <td class="number-right font-bold">18.123.000</td>
+                    <td>
+                        <div></div>
                     </td>
                 </tr>
                 <tr class="table-footer">
-                    <td colspan="6">
+                    <td colspan="12" class="td-footer">
                         <div class="paging">
                             <div class="total-record">Tổng số: <strong>200</strong> bản ghi</div>
                             <div class="page-record">
@@ -85,19 +104,10 @@
                             </div>
                         </div>
                     </td>
-                    <td class="number-right font-bold">12</td>
-                    <td class="number-right font-bold">20.000.000</td>
-                    <td class="number-right font-bold">1.432.000</td>
-                    <td class="number-right font-bold">18.123.000</td>
-                    <td>
-                        <div></div>
-                    </td>
                 </tr>
             </tbody>
-            <TheAssetDetail v-if="showDetailParent" 
-            :showDetailChil="showDetailParent" 
-            :showDetailFunction="showDetail"
-            :assetSelected="assetSelected"/>
+            <TheAssetDetail v-if="showDetailParent" :showDetailChil="showDetailParent" :showDetailFunction="showDetail"
+                :assetSelected="assetSelected" />
             <BaseLoading v-if="isShowLoading"></BaseLoading>
         </table>
     </div>
@@ -105,11 +115,10 @@
 <script>
 import TheAssetDetail from "./TheAssetsDetail.vue"
 import BaseLoading from '../../base/BaseLoading.vue'
-import BaseCombobox from '../../base/BaseCombobox.vue'
 
 export default ({
     name: "AssetList",
-    component: { TheAssetDetail, BaseLoading, BaseCombobox },
+    components: { TheAssetDetail, BaseLoading },
     props: [],
     created() {
         //gọi api lấy dữ liệu
@@ -125,18 +134,115 @@ export default ({
         return {
             isShowLoading: false,
             showDetailParent: false,
+            assets: [],
             assetSelected: {},
-            assets: []
+            isSelect: false,
+            selected: [],
+            totalQuantity: Number,
+            totalCost: Number,
+            totalAtrophy: Number,
+            totalResidualValue: Number,
         }
     },
-    method: {
+    methods: {
+        //chức năng mở dialog thêm mới
         showDetail(isShow) {
-            this.showDetailParent = isShow;
+            try {
+                this.showDetailParent = isShow;
+                this.assetSelected = {};
+            } catch (error) {
+                console.log(error);
+            }
         },
-        rowOnDblClick(ass) {
-            this.assetSelected = ass;
-            this.showDetailParent = true;
+
+        //chức năng db click 1 bản ghi
+        rowOnDblClick(asset) {
+            try {
+                this.assetSelected = asset;
+                this.showDetailParent = true;
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        // xóa 1 hoặc nhiều bản ghi
+        deleteAssets(listId) {
+            try {
+                console.log(listId);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        // chọn tất cả bản ghi
+        selectAllRows() {
+            try {
+                this.selected = [];
+                if (!this.isSelect) {
+                    for (let i in this.assets) {
+                        this.selected.push(this.assets[i].CustomerId);
+                    }
+                }
+            } catch (error) {
+                console.log();
+            }
+        },
+
+        //chức năng active 1 bản ghi
+        btnRowActiveOnClick(asset, e) {
+            try {
+                if (e.ctrlKey) {
+                    this.selected.push(asset.CustomerId);
+                    if (this.selected.length == this.assets.length) {
+                        this.isSelect = true;
+                    }
+                } else {
+                    this.selected = [];
+                    this.selected.push(asset.CustomerId);
+                    this.isSelect = false;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        // active những row có id trong mảng
+        checkActive(rowActive) {
+            try {
+                for (let asset of this.selected) {
+                    if (rowActive == asset) {
+                        return rowActive;
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        //chức năng fomart date
+        formatDate(date) {
+            try {
+                let characters = '/'
+                if (date) {
+                    date = new Date(date);
+                    return `${((date.getDate() < 10) ? '0' : '')}${date.getDate()}${characters}${((date.getMonth() < 10) ? '0' : '')}${date.getMonth() + 1}${characters}${date.getFullYear()}`
+                }
+            } catch (error) {
+                console.log(error);
+                return "";
+            }
+        },
+
+        // chức năng format tiền
+        formatMoney(money) {
+            try {
+                console.log(money);
+            } catch (error) {
+                console.log(error);
+                return "";
+            }
+        },
+
     }
 })
 </script>
@@ -144,4 +250,5 @@ export default ({
 @import url(../../../style/page/asstes.css);
 @import url(../../../style/layout/header.css);
 @import url(../../../style/base/combobox.css);
+@import url(../../../style/base/tool-tip.css);
 </style>

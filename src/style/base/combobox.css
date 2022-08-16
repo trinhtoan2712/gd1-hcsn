@@ -12,9 +12,8 @@
 	height: 35px;
     position: absolute;
 }
-.combobox__input,
-select {
-    width: 219px;
+.combobox__input {
+    width: 199px;
     height: 35px;
     flex: 1;
     padding-right: 56px !important;
@@ -57,7 +56,7 @@ select {
 
 .combobox__button:hover,
 .combobox__button:focus {
-    background-color: #1aa4c8;
+    background-color: #6bc1d6;
     color: #000;
 }
 
@@ -66,7 +65,7 @@ select {
     flex-direction: column;
     padding: 4px 0px;
     position: absolute;
-    width: 219px;
+    width: 199px;
     top: 100%;
     left: 0;
     z-index: 9;
@@ -94,12 +93,12 @@ select {
 .combobox__item:focus,
 .combobox__item--focus,
 .combobox__item--hover {
-    background-color: #e9ebee;
+    background-color: rgba(75, 173, 198, 0.2);
     color: #000;
 }
 
 .combobox__item--selected {
     pointer-events: none;
-    background-color: #1aa4c8;
+    background-color: #6bc1d6;
     color: #fff;
 }

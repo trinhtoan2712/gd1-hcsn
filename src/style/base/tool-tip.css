@@ -29,13 +29,104 @@
     transform: translateY(-50%);
   }
 
-  .side-bar.open li .tooltip,
-  .side-bar.open .logo-details .tooltip{
-    display: none;
+  .table-header tr th .tooltip {
+    position: absolute;
+    top: -20px;
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 400;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0s;
   }
 
-  @media (max-width: 420px) {
-    .side-bar li .tooltip{
-      display: none;
-    }
+  .table-header tr th:hover .tooltip {
+    opacity: 1;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    top: 50%;
+    transform: translateY(-50%);
   }
+
+
+  .content-header-right .padding .tooltip{
+    position: absolute;
+    top: -20px;
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 400;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0s;
+  }
+
+.content-header-right .padding:hover .tooltip{
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  top: 6%;
+  transform: translateX(-80%);
+}
+
+.content-option-right .btn-export-excel .tooltip,
+.content-option-right .btn-delete .tooltip {
+  position: absolute;
+  top: 60px;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
+}
+
+.content-option-right .btn-export-excel:hover .tooltip,
+.content-option-right .btn-delete:hover .tooltip{
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  top: 15%;
+  transform: translateX(-70%);
+}
+
+
+/* .table-option .table-eidt .tooltip,
+.table-option .table-replication .tooltip {
+  position: absolute;
+  top: -20px;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
+}
+
+.table-option .table-eidt:hover .tooltip,
+.table-option .table-replication:hover .tooltip{
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+  top: 50%;
+  transform: translateY(-50%);
+} */

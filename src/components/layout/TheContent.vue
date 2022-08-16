@@ -16,11 +16,11 @@
                         <div class="btn-down icon-content"></div>
                     </div>
                 </div>
-                <div class="header-notify icon-content padding"></div>
-                <div class="header-system icon-content padding"></div>
-                <div class="header-support icon-content padding"></div>
-                <div class="header-user icon-content padding"></div>
-                <div class="header-arrow icon-content padding"></div>
+                <div class="header-notify icon-content padding"> <span class="tooltip">Thông báo</span> </div>
+                <div class="header-system icon-content padding"><span class="tooltip">Hệ thống</span></div>
+                <div class="header-support icon-content padding"><span class="tooltip">Hỗ trợ</span></div>
+                <div class="header-user icon-content padding"><span class="tooltip">Thông tin</span></div>
+                <div class="header-arrow icon-content padding"><span class="tooltip">Cài đặt</span></div>
             </div>
         </div>
         <router-view></router-view>
