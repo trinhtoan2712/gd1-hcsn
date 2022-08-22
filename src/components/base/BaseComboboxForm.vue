@@ -2,7 +2,8 @@
   <div class="comboboxform">
     <input type="text" class="input comboboxform__input" v-model="text" @input="inputOnChange"
       @keydown="selecItemUpDown" :placeholder="placText" :tabindex="tabIndex" />
-    <button class="button comboboxform__button" @click="btnSelectDataOnClick" @keydown="selecItemUpDown" tabindex="-1">
+    <button class="button comboboxform__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
+      tabindex="-1">
       <i class="fa-solid fa-chevron-down"></i>
     </button>
     <div v-show="isShowListData" class="comboboxform__data" ref="comboboxform__data" v-clickoutside="hideListData">
@@ -13,9 +14,9 @@
         @click="itemOnSelect(item, index)" @focus="saveItemFocus(index)" @keydown="selecItemUpDown(index)"
         @keyup="selecItemUpDown(index)" tabindex="1">
         <div class="comboboxform__item-icon">
-          <i v-show="index == indexItemSelected" class="fa-solid fa-check"></i>
         </div>
         {{ item[this.propText] }}
+
       </a>
       <slot></slot>
     </div>
@@ -23,13 +24,13 @@
 </template>
 <script>
 /**
- * Gán sự kiện nhấn click chuột ra ngoài để ẩn combobox data 
+ * Click bên ngoài combobox để ẩn.
  * TVTOAN (31/07/2022)
  */
 const clickoutside = {
   mounted(el, binding) {
-    el.clickOutsideEvent = (event) => {
-      // Nếu element hiện tại không phải là element đang click vào
+    el.outsideOnClick = (event) => {
+      // Nếu click ko đúng element hiện tại
       // Hoặc element đang click vào không phải là button trong combobox hiện tại thì ẩn đi.
       if (
         !(
@@ -45,10 +46,10 @@ const clickoutside = {
         // vnode.context[binding.expression](event); // vue 2
       }
     };
-    document.body.addEventListener("click", el.clickOutsideEvent);
+    document.body.addEventListener("click", el.outsideOnClick);
   },
   beforeUnmount: (el) => {
-    document.body.removeEventListener("click", el.clickOutsideEvent);
+    document.body.removeEventListener("click", el.outsideOnClick);
   },
 };
 export default {
@@ -57,7 +58,7 @@ export default {
   },
   props: {
     placText: String,
-    tabIndex:Number,
+    tabIndex: Number,
     value: null,
     url: String,
     propName: String,
@@ -75,7 +76,10 @@ export default {
     hideListData() {
       this.isShowListData = false;
     },
-    btnSelectDataOnClick() {
+    btnSelectDataOnClick(e) {
+      if (e.keyCode === 13) {
+        this.isShowListData = !this.showListData;
+      }
       this.isShowListData = !this.showListData;
     },
 

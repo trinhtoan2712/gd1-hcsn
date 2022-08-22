@@ -43,3 +43,13 @@
     cursor: pointer;
 
 }
+
+.icon-pading {
+    padding: 4px;
+    margin: 1px;
+}
+.icon-pading:hover {
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background-color: rgb(233, 233, 244);
+}

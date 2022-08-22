@@ -55,7 +55,7 @@
                 <span class="tooltip">Báo cáo</span>
             </li>
         </ul>
-        <div class="bottom-nav" id="">
+        <div v-if="isShowNavBar" class="bottom-nav" id="">
             <button class="btn-close-nav icon-nav icon-navbar-active" id="btn-close"
                 @click="btnHideNavBarOnClick"></button>
         </div>

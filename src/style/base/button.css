@@ -24,6 +24,10 @@
     background-color: #ffffff;
 }
 
+.btn-header-right:focus {
+    color: #1aa4c8 !important;
+}
+
 .button__icon {
     background-image: url(../../assets/icon/qlts-icon.svg) !important;
     display: inline;
@@ -38,3 +42,9 @@
 .btn-dialog {
     margin-left:16px;
 }
+
+.btn-cancel-dialog-asset:hover {
+    color: #000;
+    background-color: rgb(206, 195, 195) !important;
+}
+

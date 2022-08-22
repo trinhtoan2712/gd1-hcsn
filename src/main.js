@@ -7,7 +7,9 @@ import CustomerList from './components/page/Customer/TheCustomer.vue'
 import BaseLoading from './components/base/BaseLoading.vue'
 import BaseCombobox from './components/base/BaseCombobox.vue'
 import BaseComboboxForm from './components/base/BaseComboboxForm.vue'
-import VueSimpleContextMenu from 'vue-simple-context-menu'
+import BaseWarningCancel from './components/base/BaseWarningCancel.vue'
+import BaseWarningDelete from './components/base/BaseWarningDelete.vue'
+
 
 
 const routers = [
@@ -26,5 +28,5 @@ app.use(router).mount('#app');
 app.component("BaseLoading", BaseLoading);
 app.component("BaseCombobox", BaseCombobox);
 app.component("BaseComboboxForm", BaseComboboxForm);
-app.component('vue-simple-context-menu', VueSimpleContextMenu)
-
+app.component("BaseWarningCancel", BaseWarningCancel);
+app.component("BaseWarningDelete", BaseWarningDelete);

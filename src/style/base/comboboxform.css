@@ -42,7 +42,6 @@
     cursor: pointer;
     min-width: unset !important;
     outline: none;
-    background: url('../../assets//icon/qlts-icon.svg') no-repeat -56px -323px;
 }
 
 .comboboxform__button:hover,

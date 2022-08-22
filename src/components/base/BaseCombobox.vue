@@ -1,48 +1,23 @@
 <template>
   <div class="combobox">
     <div class="icon-filter-combobox"></div>
-    <input
-      :placeholder="placText"
-      type="text"
-      class="input combobox__input"
-      v-model="text"
-      @input="inputOnChange"
-      @keydown="selecItemUpDown"
-    />
-    <button
-      class="button combobox__button"
-      @click="btnSelectDataOnClick"
-      @keydown="selecItemUpDown"
-      tabindex="-1"
-    >
+    <input :placeholder="placText" type="text" class="input combobox__input" v-model="text" @input="inputOnChange"
+      @keydown="selecItemUpDown" />
+    <button class="button combobox__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
+      tabindex="-1">
       <i class="fa-solid fa-chevron-down"></i>
     </button>
-    <div
-      v-show="isShowListData"
-      class="combobox__data"
-      ref="combobox__data"
-      v-clickoutside="hideListData"
-    >
-      <a
-        class="combobox__item"
-        v-for="(item, index) in dataFilter"
-        :class="{
-          'combobox__item--focus': index == indexItemFocus,
-          'combobox__item--selected': index == indexItemSelected,
-        }"
-        :key="item[this.propValue]"
-        :ref="'toFocus_' + index"
-        :value="item[this.propValue]"
-        @click="itemOnSelect(item, index)"
-        @focus="saveItemFocus(index)"
-        @keydown="selecItemUpDown(index)"
-        @keyup="selecItemUpDown(index)"
-        tabindex="1"
-      >
+    <div v-show="isShowListData" class="combobox__data" ref="combobox__data" v-clickoutside="hideListData">
+      <a class="combobox__item" v-for="(item, index) in dataFilter" :class="{
+        'combobox__item--focus': index == indexItemFocus,
+        'combobox__item--selected': index == indexItemSelected,
+      }" :key="item[this.propValue]" :ref="'toFocus_' + index" :value="item[this.propValue]"
+        @click="itemOnSelect(item, index)" @focus="saveItemFocus(index)" @keydown="selecItemUpDown(index)"
+        @keyup="selecItemUpDown(index)" tabindex="1">
         <div class="combobox__item-icon">
           <i v-show="index == indexItemSelected" class="fa-solid fa-check"></i>
         </div>
-        {{ item[this.propText] }}
+        <div class="comboxbox__text">{{ item[this.propText] }}</div>
       </a>
       <slot></slot>
     </div>
@@ -50,12 +25,12 @@
 </template>
 <script>
 /**
- * Gán sự kiện nhấn click chuột ra ngoài để ẩn combobox data 
+ * Click bên ngoài combobox để ẩn.
  * TVTOAN (31/07/2022)
  */
 const clickoutside = {
   mounted(el, binding) {
-    el.clickOutsideEvent = (event) => {
+    el.outsideOnClick = (event) => {
       // Nếu element hiện tại không phải là element đang click vào
       // Hoặc element đang click vào không phải là button trong combobox hiện tại thì ẩn đi.
       if (
@@ -72,10 +47,10 @@ const clickoutside = {
         // vnode.context[binding.expression](event); // vue 2
       }
     };
-    document.body.addEventListener("click", el.clickOutsideEvent);
+    document.body.addEventListener("click", el.outsideOnClick);
   },
   beforeUnmount: (el) => {
-    document.body.removeEventListener("click", el.clickOutsideEvent);
+    document.body.removeEventListener("click", el.outsideOnClick);
   },
 };
 export default {
@@ -84,7 +59,7 @@ export default {
   },
   props: {
     placText: String,
-    value:null,
+    value: null,
     url: String,
     propValue: String,
     propText: String,
@@ -100,7 +75,10 @@ export default {
     hideListData() {
       this.isShowListData = false;
     },
-    btnSelectDataOnClick() {
+    btnSelectDataOnClick(e) {
+      if (e.keyCode === 13) {
+        this.isShowListData = !this.showListData;
+      }
       this.isShowListData = !this.showListData;
     },
 
@@ -184,7 +162,7 @@ export default {
       data: [],
       dataFilter: [],
       text: null,
-    //   value: null,
+      //   value: null,
       isShowListData: false,
       focus: false,
       indexItemFocus: null,

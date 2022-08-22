@@ -6,7 +6,7 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 6px 12px;
+    padding: 4px 4px;
     border-radius: 4px;
     font-size: 15px;
     font-weight: 400;
@@ -35,7 +35,7 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 6px 12px;
+    padding: 4px 4px;
     border-radius: 4px;
     font-size: 15px;
     font-weight: 400;
@@ -60,7 +60,7 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 6px 12px;
+    padding: 4px 4px;
     border-radius: 4px;
     font-size: 15px;
     font-weight: 400;
@@ -81,11 +81,11 @@
 .content-option-right .btn-export-excel .tooltip,
 .content-option-right .btn-delete .tooltip {
   position: absolute;
-  top: 60px;
+  top: 50px;
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 6px 12px;
+  padding: 4px 4px;
   border-radius: 4px;
   font-size: 15px;
   font-weight: 400;
@@ -101,18 +101,70 @@
   cursor: pointer;
   transition: all 0.4s ease;
   top: 15%;
-  transform: translateX(-70%);
+  transform: translateX(-20%);
+}
+
+.table-eidt .tooltip,
+.table-delete .tooltip,
+.table-replication .tooltip {
+  position: relative;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 4px 4px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  top: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
 }
 
 
-/* .table-option .table-eidt .tooltip,
-.table-option .table-replication .tooltip {
+
+.table-option .table-eidt:hover .tooltip,
+.table-option .table-delete:hover .tooltip,
+.table-option .table-replication:hover .tooltip{
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  right: 200%;
+  color: #000;
+}
+
+.btn-header-right .btn-close-dialog .tooltip {
+  position: relative;
+  top: 20px;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 4px 4px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
+}
+.btn-header-right .btn-close-dialog:hover .tooltip{
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  right: 200%;
+  top: 180%;
+  transform: translateX(-30%);
+}
+
+.paging__button .tooltip {
   position: absolute;
   top: -20px;
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 6px 12px;
+  padding: 4px 4px;
   border-radius: 4px;
   font-size: 15px;
   font-weight: 400;
@@ -122,11 +174,10 @@
   transition: 0s;
 }
 
-.table-option .table-eidt:hover .tooltip,
-.table-option .table-replication:hover .tooltip{
+.table__paging--center .paging__button .tooltip{
   opacity: 1;
-  pointer-events: auto;
+  cursor: pointer;
   transition: all 0.4s ease;
   top: 50%;
   transform: translateY(-50%);
-} */
+}
