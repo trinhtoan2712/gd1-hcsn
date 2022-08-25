@@ -158,9 +158,9 @@
   transform: translateX(-30%);
 }
 
-.paging__button .tooltip {
+.table__paging--center .paging__button .tooltip {
   position: absolute;
-  top: -20px;
+  bottom: -10px;
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
@@ -174,10 +174,10 @@
   transition: 0s;
 }
 
-.table__paging--center .paging__button .tooltip{
+.table__paging--center .paging__button:hover .tooltip{
   opacity: 1;
-  cursor: pointer;
+  pointer-events: auto;
   transition: all 0.4s ease;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-150%);
 }

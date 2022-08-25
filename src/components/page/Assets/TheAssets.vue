@@ -39,7 +39,7 @@
                     <th>Ngày mua</th>
                     <th class="number-right">Số lượng</th>
                     <th class="number-right">Nguyên giá</th>
-                    <th class="number-right">HM/KH lũy kế <span class="tooltip">Hao mòn/ Khấu hao</span></th>
+                    <th class="number-right">HM/KH lũy kế <span class="tooltip">Hao mòn/Khấu hao lũy kế</span></th>
                     <th class="number-right">Giá trị còn lại</th>
                     <th style="padding-left:20px">Chức năng</th>
                 </tr>
@@ -95,16 +95,16 @@
                                 </select>
                             </div>
                             <div class="table__paging--center">
-                                <div class="paging__button"><i class="fa-solid fa-angles-left"></i></div>
-                                <div class="paging__button paging__button--prev icon-content"></div>
+                                <div class="paging__button"><i class="fa-solid fa-angles-left"></i><span class="tooltip">Về trang đầu</span></div>
+                                <div class="paging__button paging__button--prev icon-content"><span class="tooltip">Trang trước</span></div>
                                 <div class="paging__button--group">
                                     <div class="paging__number paging__number--selected">1</div>
                                     <div class="paging__number">2</div>
                                     <div class="paging__number">...</div>
                                     <div class="paging__number">10</div>
                                 </div>
-                                <div class="paging__button paging__button--next icon-content"></div>
-                                <div class="paging__button"><i class="fa-solid fa-angles-right"></i></div>
+                                <div class="paging__button paging__button--next icon-content"><span class="tooltip">Trang sau</span></div>
+                                <div class="paging__button"><i class="fa-solid fa-angles-right"></i><span class="tooltip">Đến trang cuối</span></div>
                             </div>
                         </div>
                     </td>
