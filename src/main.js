@@ -7,10 +7,6 @@ import CustomerList from './components/page/Customer/TheCustomer.vue'
 import BaseLoading from './components/base/BaseLoading.vue'
 import BaseCombobox from './components/base/BaseCombobox.vue'
 import BaseComboboxForm from './components/base/BaseComboboxForm.vue'
-import BaseWarningCancel from './components/base/BaseWarningCancel.vue'
-import BaseWarningDelete from './components/base/BaseWarningDelete.vue'
-
-
 
 const routers = [
     { path: "/assets", component: AssetList},
@@ -28,5 +24,3 @@ app.use(router).mount('#app');
 app.component("BaseLoading", BaseLoading);
 app.component("BaseCombobox", BaseCombobox);
 app.component("BaseComboboxForm", BaseComboboxForm);
-app.component("BaseWarningCancel", BaseWarningCancel);
-app.component("BaseWarningDelete", BaseWarningDelete);

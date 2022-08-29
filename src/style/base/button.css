@@ -1,8 +1,12 @@
 .btn-add {
     background: no-repeat -467px -421px;
     font-size: 13px;
-    color: #ffffff;
+    color: #fff;
     padding-left:13px;
+}
+
+.btn-add:focus {
+    color: #1aa4c8;
 }
 
 .btn {
@@ -43,8 +47,7 @@
     margin-left:16px;
 }
 
-.btn-cancel-dialog-asset:hover {
-    color: #000;
-    background-color: rgb(206, 195, 195) !important;
+.btn-cancel-dialog:hover {
+    cursor: pointer;
 }
 

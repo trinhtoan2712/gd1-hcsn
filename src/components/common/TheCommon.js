@@ -6,6 +6,16 @@
             console.log(error);
         }
     }
+
+    export function formatNumber(value) {
+        try {
+            return value.split('.').join('');
+        } catch (error) {
+            console.log(error);
+            return "";
+        }
+    }
+
     export function formatDate(date) {
         try {
             let characters = '/'

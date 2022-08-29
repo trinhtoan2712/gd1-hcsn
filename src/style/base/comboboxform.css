@@ -62,6 +62,8 @@
     border-radius: 4px;
     background-color: #fff;
     box-shadow: 0px 3px 6px #00000016;
+    max-height: 200px;
+    overflow-y:auto;
 }
 
 .comboboxform__item {

@@ -13,23 +13,33 @@
     min-width: 450px;
 }
 
+.btn-cancel-dialog-asset {
+    border: 1px solid rgb(179, 173, 173);
+    color: #000;
+    background-color: #fff;
+}
+
+.btn-cancel-dialog-asset:hover {
+    background-color: rgb(216, 211, 211);
+    color: #000;
+}
+
+
+
 .dialog__container {
     padding-top: 40px;
     display: flex;
+    padding-left: 40px;
+    padding-right: 40px;
     flex-direction: row;
     align-items: center;
-}
-
-.icon-warning-dialog {
-    background: no-repeat -410px -58px;
-	width: 50px;
-	height: 50px;
-    margin-left: 20px;
 }
 
 .dialog__body {
     padding:12px 24px 12px 12px;
     font-size: 13px;
+    display: flex;
+    align-items: center;
 }
 
 .dialog__msg-item {

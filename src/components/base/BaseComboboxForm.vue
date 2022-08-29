@@ -64,6 +64,7 @@ export default {
     propName: String,
     propValue: String,
     propText: String,
+    valDefault: String,
     isLoadData: {
       type: Boolean,
       default: true,
@@ -88,8 +89,8 @@ export default {
       this.valueInput = item[this.propName];
       this.indexItemSelected = index;
       this.isShowListData = false;
-      this.$emit('getNameDepartment', this.valueInput)
-      this.$emit('getNameCategory', this.valueInput)
+      this.$emit('getNameDepartment', this.valueInput, item[this.propValue])
+      this.$emit('getNameCategory', this.valueInput, item[this.propValue])
     },
     inputOnChange() {
       var me = this;
@@ -155,6 +156,7 @@ export default {
         .then((res) => {
           this.data = res;
           this.dataFilter = res;
+          this.text = this.valDefault;
         })
         .catch((res) => {
           console.log(res);
