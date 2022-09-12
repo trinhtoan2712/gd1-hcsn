@@ -54,7 +54,6 @@
 
 .combobox__button:hover,
 .combobox__button:focus {
-    background-color: #6bc1d6;
     color: #000;
 }
 
@@ -81,6 +80,17 @@
     padding-left:35px;
 }
 
+.text-ellipsis{
+    margin: 0px;
+    width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.combobox__input::placeholder{
+    color: #000;
+}
+
 .combobox__item {
     display: flex;
     align-items: center;
@@ -105,7 +115,6 @@
 }
 
 .combobox__item--selected {
-    pointer-events: none;
     background-color: #6bc1d6;
     color: #fff;
 }

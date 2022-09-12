@@ -17,13 +17,20 @@
         <div class="combobox__item-icon">
           <i v-show="index == indexItemSelected" class="fa-solid fa-check"></i>
         </div>
-        <div class="comboxbox__text">{{ item[this.propText] }}</div>
+        <div class="comboxbox__text">
+          <p class="text-ellipsis">{{ item[this.propText] }}
+            <!-- <span class="text-ellipsis align-middle" v-tooltip :style="{ 'width': 150 + 'px' }">{{ item[this.propText] }}</span> -->
+          </p>
+        </div>
       </a>
       <slot></slot>
     </div>
   </div>
 </template>
 <script>
+
+import tooltipMixin from "../common/tooltipMixin";
+
 /**
  * Click bên ngoài combobox để ẩn.
  * TVTOAN (31/07/2022)
@@ -57,11 +64,13 @@ export default {
   directives: {
     clickoutside,
   },
+  mixins: [tooltipMixin],
   props: {
     placText: String,
     value: null,
     url: String,
     propValue: String,
+    propID:String,
     propText: String,
     isLoadData: {
       type: Boolean,
@@ -70,7 +79,11 @@ export default {
   },
   methods: {
     saveItemFocus(index) {
-      this.indexItemFocus = index;
+          if(this.indexItemFocus == index) {
+            this.indexItemFocus = index
+          }else {
+            this.indexItemFocus = null;
+          }
     },
     hideListData() {
       this.isShowListData = false;
@@ -83,9 +96,19 @@ export default {
     },
 
     itemOnSelect(item, index) {
-      this.text = item[this.propText];
-      this.indexItemSelected = index;
-      this.isShowListData = false;
+      if(this.indexItemSelected == index) {
+        this.text = '';
+        this.indexItemSelected = null;
+        this.isShowListData = false;
+        this.$emit('filterByDepartmentID', '')
+        this.$emit('filterByCategoryID', '')
+      }else {
+        this.text = item[this.propText];
+        this.indexItemSelected = index;
+        this.isShowListData = false;
+        this.$emit('filterByDepartmentID', item[this.propID])
+        this.$emit('filterByCategoryID', item[this.propID])
+      }
     },
 
     inputOnChange() {

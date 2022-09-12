@@ -56,8 +56,11 @@
             </li>
         </ul>
         <div v-if="isShowNavBar" class="bottom-nav" id="">
+
             <button class="btn-close-nav icon-nav icon-navbar-active" id="btn-close"
-                @click="btnHideNavBarOnClick"></button>
+                @click="btnHideNavBarOnClick">
+                <span class="tooltip">Đóng danh mục</span>
+</button>
         </div>
     </div>
 </template>

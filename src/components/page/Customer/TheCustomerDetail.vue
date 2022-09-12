@@ -6,7 +6,7 @@
                     <h4 style="margin: unset">Thêm tài sản</h4>
                 </div>
                 <div class="btn-header-right" @click="showDetailFunction(false)">
-                    <div class="btn-close-dialog icon-content btn-cancel-dialog-asset"></div>
+                    <div class="btn-close-dialog icon-content btn-cancel-dialog-asset"><i class="fa-solid fa-xmark"></i></div>
                 </div>
             </div>
             <div class="dialog_content">
@@ -81,8 +81,8 @@
                 </div>
             </div>
             <div class="dialog_footer">
-                <button tabindex="13" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset" style="background-color:#fff">Hủy</button>
-                <button tabindex="12" id="btnSave" class="btn-dialog btn btn-save-dialog-asset" style="color: #fff" @click="btnSaveOnClick">Lưu</button>
+                <button tabindex="13" id="btnClose" class="btn-dialog btn-cancel-dialog-asset" style="background-color:#fff">Hủy</button>
+                <button tabindex="12" id="btnSave" class="btn-dialog btn-save-dialog-asset" style="color: #fff" @click="btnSaveOnClick">Lưu</button>
             </div>
         </div>
     </div>
@@ -99,9 +99,7 @@ export default {
     customerSelected: Object,
   },
   methods: {
-    btnSaveOnClick() {
-      console.log(this.customer.CustomerId);
-    },
+
   },
   watch: {
 

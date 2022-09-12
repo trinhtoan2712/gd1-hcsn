@@ -17,6 +17,14 @@
     box-sizing: border-box;
 }
 
+.comboboxform__input::placeholder{
+    font-style: italic;
+}
+
+.border-red {
+    border: 1px solid rgb(244, 12, 12) !important;
+  }
+
 .comboboxform__input:focus~.comboboxform__button {
     border-color: #1aa4c8;
 }
@@ -31,10 +39,12 @@
     border-radius: 0 4px 4px 0;
     right: 0px;
     top: 0px;
-    border: 1px solid #bbbbbb;
-    border-left: unset;
-    height: 36px;
+    border: unset;
+    height: 34px;
     width: 40px;
+    margin-top: 1px;
+    margin-right: 1px;
+
     border-radius: 0 4px 4px 0px;
     background-repeat: no-repeat;
     background-position: center;
@@ -46,9 +56,21 @@
 
 .comboboxform__button:hover,
 .comboboxform__button:focus {
-    background-color: #56bcd5 !important;
     color: #000;
 }
+
+.text-ellipsis{
+    margin: 0px;
+    width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.comboxbox__text{
+    position: absolute;
+    padding-left:35px;
+}
+
 
 .comboboxform__data {
     display: flex;

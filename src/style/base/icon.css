@@ -4,10 +4,15 @@
     height: 24px !important;
     padding: 8px 10px;
     position: fixed;
+    opacity: 0.5
 }
 
 .icon-content {
     background-image: url(../../assets/icon/qlts-icon.svg) !important;
+}
+
+.icon-small {
+    background-image: url(../../assets/icon/qlts-icon-small.svg) !important;
 }
 
 .icon-dropdown {

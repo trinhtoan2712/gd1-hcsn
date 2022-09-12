@@ -8,6 +8,20 @@
     z-index: 9999;
 }
 
+.title-valid {
+    color: rgb(244, 10, 10);
+    font-size: 11px;
+    position: absolute;
+    visibility: hidden;
+    transform: translateY(450%);
+
+  }
+  
+  .title-invalid {
+    visibility: visible !important;
+  }
+  
+
 .frame_dialog {
     display: flex;
     position: absolute;
@@ -24,11 +38,12 @@
     justify-content: space-between;
     align-items: center;
     background-color: #fff;
-    padding:16px;
+    padding:15px;
     border-radius: 4px 4px 0px 0px;
 }
 
 .btn-close-dialog {
+    position: absolute;
     background: no-repeat -374px -285px;
 	width: 20px;
 	height: 20px;
@@ -36,21 +51,20 @@
 
 .dialog_content {
     background-color: #fff;
-    padding: 0px 16px 0px 4px;
+    padding: 0px 16px 0px 0px;
 
 }
 
 .row {
     display: grid;
-    padding-bottom: 16px;
     grid-template-columns: auto auto auto;
 }
 
 .col {
     display: flex;
     flex-direction: column;
-    padding-left: 16px;
-    padding-bottom: 16px;
+    padding-left: 17px;
+    padding-bottom: 17px;
 }
 
 .col label {
@@ -59,7 +73,7 @@
 }
 
 .dialog_footer {
-    height: 52px;
+    height: 60px;
     display: flex;
     justify-content: flex-end;
     align-items: center;

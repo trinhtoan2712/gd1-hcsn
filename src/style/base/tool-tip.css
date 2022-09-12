@@ -1,4 +1,5 @@
 .side-bar li .tooltip,
+.side-bar .bottom-nav .btn-close-nav .tooltip,
 .side-bar .logo-details .tooltip{
     position: absolute;
     top: -20px;
@@ -15,12 +16,13 @@
     pointer-events: none;
     transition: 0s;
   }
-
+  .side-bar .bottom-nav .btn-close-nav .tooltip,
   .side-bar .logo-details .tooltip{
     left: calc(100%) !important;
   }
 
   .side-bar li:hover .tooltip,
+  .side-bar .bottom-nav .btn-close-nav:hover .tooltip,
   .side-bar .logo-details:hover .tooltip{
     opacity: 1;
     pointer-events: auto;
@@ -116,13 +118,23 @@
   font-size: 15px;
   font-weight: 400;
   top: 20px;
-  opacity: 0;
   white-space: nowrap;
   pointer-events: none;
   transition: 0s;
+  display: none;
 }
 
+.table-option .table-eidt span {
+  width: 75px;
+}
 
+.table-option .table-delete span {
+  width: 25px;
+}
+
+.table-option .table-replication span {
+  width: 65px;
+}
 
 .table-option .table-eidt:hover .tooltip,
 .table-option .table-delete:hover .tooltip,
@@ -130,8 +142,9 @@
   opacity: 1;
   cursor: pointer;
   transition: all 0.4s ease;
-  right: 200%;
   color: #000;
+  display:block;
+  right: 200%;
 }
 
 .btn-header-right .btn-close-dialog .tooltip {

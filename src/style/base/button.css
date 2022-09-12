@@ -6,7 +6,10 @@
 }
 
 .btn-add:focus {
-    color: #1aa4c8;
+    outline: none;
+    border: 1px solid #1aa4c8 !important;
+    color: #1aa4c8 !important;
+    background-color: #ffffff;
 }
 
 .btn {
@@ -32,6 +35,17 @@
     color: #1aa4c8 !important;
 }
 
+.btn-header-right {
+    align-items: center;
+    display: flex;
+    justify-content: right;
+}
+
+.btn-header-right i{
+    position: absolute;
+    -webkit-text-stroke: 2px white;
+}
+
 .button__icon {
     background-image: url(../../assets/icon/qlts-icon.svg) !important;
     display: inline;
@@ -44,7 +58,16 @@
 }
 
 .btn-dialog {
-    margin-left:16px;
+    margin-left:16px;        
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1aa4c8;
+    border-radius: 3px;
+    width: 90px;
+    height: 32px;
+    overflow: hidden;
+    border: none;
 }
 
 .btn-cancel-dialog:hover {

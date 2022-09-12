@@ -122,8 +122,12 @@
   border-radius: 6px;
 }
 
-.router-link-active {
+.router-link-active{
   background: #1aa4c8;
+}
+
+.router-link-active .icon-nav{
+  opacity: 1;
 }
 
 .side-bar li a:hover {

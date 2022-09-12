@@ -1,6 +1,7 @@
 <template>
   <div class="comboboxform">
-    <input type="text" class="input comboboxform__input" v-model="text" @input="inputOnChange"
+    <input type="text" class="input comboboxform__input" v-model="text" @input="inputOnChange()"
+    @blur="checkValidate(this.$refs['txtDepartmentCode'])"  ref="txtDepartmentCode"
       @keydown="selecItemUpDown" :placeholder="placText" :tabindex="tabIndex" />
     <button class="button comboboxform__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
       tabindex="-1">
@@ -15,8 +16,9 @@
         @keyup="selecItemUpDown(index)" tabindex="1">
         <div class="comboboxform__item-icon">
         </div>
-        {{ item[this.propText] }}
-
+        <p class="text-ellipsis">{{ item[this.propText] }}
+            <!-- <span class="text-ellipsis align-middle" v-tooltip :style="{ 'width': 150 + 'px' }">{{ item[this.propText] }}</span> -->
+          </p>
       </a>
       <slot></slot>
     </div>
@@ -71,6 +73,14 @@ export default {
     },
   },
   methods: {
+    checkValidate(valInput) {
+            if (!valInput.value) {
+                valInput.classList.add("border-red");
+            }
+            else {
+                valInput.classList.remove("border-red");
+            }
+        },
     saveItemFocus(index) {
       this.indexItemFocus = index;
     },
@@ -89,16 +99,30 @@ export default {
       this.valueInput = item[this.propName];
       this.indexItemSelected = index;
       this.isShowListData = false;
+      this.$emit('validCombobox', true);
       this.$emit('getNameDepartment', this.valueInput, item[this.propValue])
       this.$emit('getNameCategory', this.valueInput, item[this.propValue])
     },
     inputOnChange() {
       var me = this;
-      // Thực hiện lọc các phần tử phù hợp trong data:
+      var validBy = '';
+      let arrBool = [];
       this.dataFilter = this.data.filter((e) => {
         let valueCode = e[me.propText].includes(me.text);
-        let valueName = e[me.propName].includes(me.valueInput);
-        return valueCode, valueName;
+        validBy = e.DepartmentCode || e.FixedAssetCategoryCode;
+        if(validBy == this.text) {
+          arrBool.push(true);
+          this.$emit('getNameDepartment', e[me.propName], e[me.propValue]);
+          this.$emit('getNameCategory', e[me.propName], e[me.propValue]);
+          this.$emit('validCombobox', true);
+        }else {
+          arrBool.push(false);
+          let isValid = arrBool.includes(true);
+          if(isValid == false) {
+            this.$emit('validCombobox', false);
+          }
+        }
+        return valueCode;
       });
       this.isShowListData = true;
     },
@@ -148,6 +172,7 @@ export default {
       }
     },
   },
+  
   created() {
     // Thực hiện lấy dữ liệu từ api:
     if (this.url) {

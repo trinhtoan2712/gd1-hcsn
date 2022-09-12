@@ -4,7 +4,6 @@
     position: relative !important;
     padding: 0 0 0 0  !important;
     min-width: auto !important;
-
 }
 .vuejs3-datepicker__value:focus-visible{
     outline: none !important;
@@ -13,7 +12,9 @@
     display: none !important;
 }
 .vuejs3-datepicker__typeablecalendar{
-    margin-left:220px !important;
+    right:12px !important;
+    position: absolute;
+    left: unset !important;
 }
 
 .vuejs3-datepicker__content {
@@ -37,9 +38,8 @@
 }
 .vuejs3-datepicker__calendar {
     z-index: 1000000 !important;
-    top: -435px !important;
-    width: 265px !important;
-
+    top: -450px !important;
+    width: 100% !important;
 }
 
 .vuejs3-datepicker__calendar-topbar{
@@ -57,17 +57,19 @@
 .vuejs3-datepicker input:focus-visible{
     outline: none !important;
 }
+
 .vuejs3-datepicker input{
-    width: 100% !important;
-    height: 35px !important;
+    height: 36px !important; 
     border-radius: 4px !important;
-    /* border: 1px solid #000; */
-    min-width: unset !important;
-    font-size: 14px !important;
-    border: 1px solid #fff !important;
     outline: none !important;
-    padding: 0px 16px !important;
     box-sizing: border-box !important;
-    width: 100% !important;
-    font-family: 'Roboto' !important;
+    border: 1px solid #bbbbbb !important;
+    padding-left: 16px !important;
+    padding-right: 5px !important;
+    min-width: 100% !important;
+    font-family: MISA Fonts !important;
 }
+
+.border-red {
+    border: 1px solid rgb(244, 12, 12) !important;
+  }
