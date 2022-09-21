@@ -65,7 +65,7 @@
   font-weight: 600;
   opacity: 0;
   transition: 0.1s;
-  height: 50px;
+  height: 56px;
   white-space: nowrap;
   opacity: 0;
 }
@@ -184,4 +184,5 @@
   border: 1px solid #fff;
   border-radius: 5px;
   transition: all 1s ease;
+  opacity: unset !important;
 }

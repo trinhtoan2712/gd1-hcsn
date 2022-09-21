@@ -8,20 +8,6 @@
     z-index: 9999;
 }
 
-.title-valid {
-    color: rgb(244, 10, 10);
-    font-size: 11px;
-    position: absolute;
-    visibility: hidden;
-    transform: translateY(450%);
-
-  }
-  
-  .title-invalid {
-    visibility: visible !important;
-  }
-  
-
 .frame_dialog {
     display: flex;
     position: absolute;
@@ -29,7 +15,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    min-width: 300px;
+    min-width: 250px;
 }
 
 .dialog_header {
@@ -81,3 +67,16 @@
     border-radius: 0px 0px 6px 6px;
     padding-right: 16px;
 }
+
+@media only screen and (width: 1366px) {
+    .dialog_header {
+      height: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      padding:12px;
+      border-radius: 4px 4px 0px 0px;
+    
+    }
+  }

@@ -11,7 +11,7 @@
 }
 
 .bgblue {
-  background-color: #a0dceb !important;
+  background-color: rgba(75, 173, 198, 0.2) !important;
   color: #000;
 }
 
@@ -123,8 +123,8 @@ input[type="date"] {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 
 /* Track */
@@ -152,6 +152,7 @@ input[type="date"] {
 
 .table-header {
   position: sticky;
+  cursor: context-menu;
   top: 0;
   background-color: rgb(240, 239, 239);
   color: #000;
@@ -414,3 +415,6 @@ input[type="date"] {
     height: 79vh;
   }
 }
+
+
+

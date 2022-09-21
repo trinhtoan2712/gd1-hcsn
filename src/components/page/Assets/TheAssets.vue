@@ -22,14 +22,14 @@
         </div>
         <div class="content-option-right">
             <button class="btn" id="btnAdd" @click="showDetail(true)">
-                <div class="btn-add button__icon">Thêm tài sản</div>
+                <div class="btn-add button__icon">Thêm tài sản <span class="tooltip">Ctrl + I</span></div>
             </button>
             <div class="btn-export-excel icon-content"><span class="tooltip">Xuất file excel</span> </div>
             <div class="btn-delete icon-content" @click="showDialogDeleteList"><span class="tooltip">Xóa</span> </div>
         </div>
     </div>
     <div class="content-table" :class="{tablenodatasize: assets.length < 1}">
-        <table class="table-data">
+        <table  class="table-data">
             <thead class="table-header" v-if="assets.length > 0">
                 <tr>
                     <th>
@@ -49,7 +49,7 @@
                     <th style="padding: 0px 10px">Chức năng</th>
                 </tr>
             </thead>
-            <tbody class="table-body">
+            <tbody  class="table-body">
                 <v-contextmenu ref="contextmenu">
                     <v-contextmenu-item>
                         <div class="menu__context">
@@ -72,7 +72,8 @@
                     v-contextmenu:contextmenu :class="{'bgblue': checkActive(asset.fixedAssetId) }"
                     @click="btnRowActiveOnClick(asset, $event, index)" @dblclick="rowOnDblClick(asset)">
                     <td>
-                        <input type="checkbox" name="" id="" class="ckb ckb-primary" :value="asset.fixedAssetId" v-model="selected">
+                        <input type="checkbox" name="" id="" class="ckb ckb-primary" :value="asset.fixedAssetId"
+                            v-model="selected">
                     </td>
                     <td style="text-align:center">{{ index + 1 }}</td>
                     <td>{{ asset.fixedAssetCode }}</td>
@@ -92,12 +93,17 @@
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
 
                     <td class="table-option">
-                        <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span class="tooltip">Sửa tài sản</span></div>
-                        <div @click="duplicateAssets(asset)" class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân bản</span></div>
-                        <div @click="showDialogDelete(asset)" class="table-delete icon-content icon-pading icon-small"><span class="tooltip">Xóa </span></div>
+                        <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
+                                class="tooltip">Sửa (Ctrl + C)</span></div>
+                        <div @click="duplicateAssets(asset)"
+                            class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
+                                bản </span></div>
+                        <div @click="showDialogDelete(asset)" class="table-delete icon-content icon-pading icon-small">
+                            <span class="tooltip">Xóa(Delete)</span>
+                        </div>
                     </td>
                 </tr>
-                <tr >
+                <tr>
                     <td colspan="12" class="table__nodata" v-if="assets.length < 1"> </td>
                 </tr>
                 <tr class="table-summary" v-if="assets.length > 0">
@@ -150,9 +156,9 @@
             <div class="dialog__container">
                 <div class="icon-warning-dialog icon-content"></div>
                 <div class="dialog__body">
-                    <i style="color: #C4D106" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
-                        {{ errMessWarning }}
+                        <span v-html = "errMessWarning"></span>
                     </div>
                 </div>
             </div>
@@ -170,9 +176,9 @@
             <div class="dialog__container">
                 <div class="icon-warning-dialog icon-content"></div>
                 <div class="dialog__body">
-                    <i style="color: #C4D106" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
-                        {{ errMessWarning }}
+                        <span v-html = "errMessWarning"></span>
                     </div>
                 </div>
             </div>
@@ -213,14 +219,22 @@ export default ({
          * Gọi hàm getData để lấy dữ liệu.
          * TVTOAN (31/07/2022)
          */
-        this.getData(this.paging);
+        try {
+            this.getData(this.paging);
+        } catch (error) {
+            console.log(error);
+        }
     },
     mounted: function () {
         /**
          * Vòng lặp focus trong dialog.
          * TVTOAN (31/07/2022)
          */
-        this.$refs.txtSearch.focus();
+        try {
+            this.$refs.txtSearch.focus();
+        } catch (error) {
+            console.log(error);
+        }
     },
 
     beforeMount() {
@@ -229,14 +243,23 @@ export default ({
          * TVTOAN (08/08/2022)
          */
         window.addEventListener('keydown', this.handleKeydown, null);
+        window.addEventListener('keydown', this.eventKeyPage);
     },
-
-    beforeUnmount() {
+    watch: {
+        showDetailParent: function(newValue){
+            if(newValue == true){
+                window.removeEventListener('keydown', this.handleKeydown);
+            }else{
+                window.addEventListener('keydown', this.handleKeydown);
+            }
+        }
+    },
+    unmounted() {
         /**
          * Hủy sự kiện handleKeydown cho window.
          * TVTOAN (08/08/2022)
          */
-        window.removeEventListener('keydown', this.handleKeydown);
+         window.removeEventListener('keydown', this.handleKeydown);
     },
 
     data() {
@@ -259,6 +282,7 @@ export default ({
             assets: [],
             assetSelected: {},
             selected: [],
+            assetCurrent: {},
 
             //Index
             indexRecord: {
@@ -326,10 +350,44 @@ export default ({
         * Tính ra đã sử dụng được bao nhiêu năm.
         * TVTOAN (11/09/2022)
         */
-        getAtrophy(curDate, productDate, ) {
+        getAtrophy(curDate, productDate,) {
             try {
                 let productYear = productDate.slice(0, 4);
                 return Number(curDate) - Number(productYear);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Mở dialog thêm mới.
+        * TVTOAN (08/08/2022)
+        */
+        eventKeyPage(e) {
+            try {
+                if(e.keyCode == 73 && e.ctrlKey){
+                    this.showDetail(true);
+                }
+                if(e.keyCode == 67 && e.ctrlKey){
+                    if(this.selected.length == 1){
+                        this.rowOnDblClick(this.assetCurrent)
+                    }
+                }
+                if(e.keyCode == 68 && e.ctrlKey){
+                    if(this.selected.length == 1){
+                        this.duplicateAssets(this.assetCurrent)
+                    }
+                }
+                if(e.keyCode == 46){
+                    if(this.selected.length > 0){
+                        this.showDialogDeleteList();
+                    }
+                }
+                if(this.isDelete == true) {
+                    if(e.keyCode == 13){
+                        this.btnDeleteOnClick()
+                    }
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -340,37 +398,45 @@ export default ({
         * TVTOAN (08/08/2022)
         */
         handleKeydown(e) {
-            var startIndex = 0;
-            var endIndex = this.assets.length - 1;
-            switch (e.keyCode) {
-                case 38:
-                    if (this.selected.length == 0) {
-                        this.selected.push(this.assets[endIndex].fixedAssetId);
-                        this.checkActive(this.assets[endIndex].fixedAssetId);
-                    } else {
-                        this.curIndex--;
-                        if (this.curIndex < startIndex) {
-                            this.curIndex = endIndex;
+            try {
+                var startIndex = 0;
+                var endIndex = this.assets.length - 1;
+                switch (e.keyCode) {
+                    case 38:
+                        if (this.selected.length == 0) {
+                            this.assetCurrent = this.assets[endIndex]
+                            this.selected.push(this.assets[endIndex].fixedAssetId);
+                            this.checkActive(this.assets[endIndex].fixedAssetId);
+                        } else {
+                            this.curIndex--;
+                            if (this.curIndex < startIndex) {
+                                this.curIndex = endIndex;
+                            }
+                            this.selected = [];
+                            this.assetCurrent = this.assets[this.curIndex]
+                            this.selected.push(this.assets[this.curIndex].fixedAssetId);
+                            this.checkActive(this.assets[this.curIndex].fixedAssetId);
                         }
-                        this.selected = [];
-                        this.selected.push(this.assets[this.curIndex].fixedAssetId);
-                        this.checkActive(this.assets[this.curIndex].fixedAssetId);
-                    }
-                    break;
-                case 40:
-                    if (this.selected.length == 0) {
-                        this.selected.push(this.assets[startIndex].fixedAssetId);
-                        this.checkActive(this.assets[startIndex].fixedAssetId);
-                    } else {
-                        this.curIndex++;
-                        if (this.curIndex > endIndex) {
-                            this.curIndex = startIndex;
+                        break;
+                    case 40:
+                        if (this.selected.length == 0) {
+                            this.assetCurrent = this.assets[startIndex]
+                            this.selected.push(this.assets[startIndex].fixedAssetId);
+                            this.checkActive(this.assets[startIndex].fixedAssetId);
+                        } else {
+                            this.curIndex++;
+                            if (this.curIndex > endIndex) {
+                                this.curIndex = startIndex;
+                            }
+                            this.selected = [];
+                            this.assetCurrent = this.assets[this.curIndex]
+                            this.selected.push(this.assets[this.curIndex].fixedAssetId);
+                            this.checkActive(this.assets[this.curIndex].fixedAssetId);
                         }
-                        this.selected = [];
-                        this.selected.push(this.assets[this.curIndex].fixedAssetId);
-                        this.checkActive(this.assets[this.curIndex].fixedAssetId);
-                    }
-                    break;
+                        break;
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
 
@@ -379,8 +445,9 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickFirstPage() {
-            this.paging.pageNumber = 1;
-            this.getData(this.paging);
+                this.paging.pageNumber = 1;
+                this.getData(this.paging);
+
         },
 
         /**
@@ -388,10 +455,11 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickPreviousPage() {
-            if (this.paging.pageNumber > 1) {
-                this.paging.pageNumber -= 1;
-                this.getData(this.paging);
-            }
+                if (this.paging.pageNumber > 1) {
+                    this.paging.pageNumber -= 1;
+                    this.getData(this.paging);
+                }
+
         },
 
         /**
@@ -399,20 +467,22 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickPage(page) {
-            this.paging.pageNumber = page;
-            this.getData(this.paging);
+                this.paging.pageNumber = page;
+                this.getData(this.paging);
+
         },
 
-        
+
         /**
         * Tiến 1 trang.
         * TVTOAN (06/08/2022)
         */
         onClickNextPage() {
-            if (this.paging.pageNumber < this.paging.totalPage) {
-                this.paging.pageNumber += 1;
-                this.getData(this.paging);
-            }
+                if (this.paging.pageNumber < this.paging.totalPage) {
+                    this.paging.pageNumber += 1;
+                    this.getData(this.paging);
+                }
+
         },
 
         /**
@@ -420,8 +490,9 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickLastPage() {
-            this.paging.pageNumber = this.paging.totalPage;
-            this.getData(this.paging);
+                this.paging.pageNumber = this.paging.totalPage;
+                this.getData(this.paging);
+
         },
 
         /**
@@ -429,19 +500,27 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         btnSearch(key, e) {
-            if (e.keyCode === 13) {
-                this.paging.keyWord = key;
-                this.getData(this.paging);
+            try {
+                if (e.keyCode === 13) {
+                    this.paging.keyWord = key;
+                    this.getData(this.paging);
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
- 
+
         /**
         * Lọc theo id phòng ban.
         * TVTOAN (02/08/2022)
         */
         filterByDepartmentID(id) {
-            this.paging.departmentID = id;
-            this.getData(this.paging);
+            try {
+                this.paging.departmentID = id;
+                this.getData(this.paging);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -449,8 +528,12 @@ export default ({
         * TVTOAN (02/08/2022)
         */
         filterByCategoryID(id) {
-            this.paging.fixedAssetCategoryID = id;
-            this.getData(this.paging);
+            try {
+                this.paging.fixedAssetCategoryID = id;
+                this.getData(this.paging);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -458,8 +541,12 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         selectPageSize(e) {
-            this.paging.pageSize = e.target.value;
-            this.getData(this.paging);
+            try {
+                this.paging.pageSize = e.target.value;
+                this.getData(this.paging);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -467,9 +554,13 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         activeAssetNew(id) {
-            this.selected = [],
-                this.selected.push(id);
-            this.checkActive(id);
+            try {
+                this.selected = [],
+                    this.selected.push(id);
+                this.checkActive(id);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -477,30 +568,33 @@ export default ({
         * TVTOAN (25/07/2022)
         */
         getData(paging) {
-            this.isShowLoading = true;
-            //gọi api lấy dữ liệu
-            fetch(`http://localhost:14537/api/FixedAssets?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`, { method: "GET" })
-                .then(res => res.json())
-                .then(data => {
-                    this.isShowLoading = true;
-                    setTimeout(() => this.isShowLoading = false, 500);
-                    this.totalRecord = data.totalCount;
-                    this.total.totalCost = 0;
-                    this.total.totalQuantity = 0;
-                    this.total.totalAtrophy = 0;
-                    this.total.totalResidualValue = 0;
-                    this.assets = data.data;
-                    for (let asset of this.assets) {
-                        this.total.totalCost += Number(asset.cost);
-                        this.total.totalQuantity += Number(asset.quantity);
-                        asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
-                        asset.residualValue = asset.cost - asset.atrophy;
-                        this.total.totalAtrophy +=asset.atrophy;
-                        this.total.totalResidualValue +=asset.residualValue;
-                    }
-                    this.paging.totalPage = Math.ceil(data.totalCount / this.paging.pageSize);                
-                });
+            try {
+                this.isShowLoading = true;
+                //gọi api lấy dữ liệu
+                axios.get(`http://localhost:14537/api/FixedAssets?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                    .then(data => {
+                        this.isShowLoading = true;
+                        setTimeout(() => this.isShowLoading = false, 500);
+                        this.totalRecord = data.data.totalCount;
+                        this.total.totalCost = 0;
+                        this.total.totalQuantity = 0;
+                        this.total.totalAtrophy = 0;
+                        this.total.totalResidualValue = 0;
+                        this.assets = data.data.data;
+                        for (let asset of this.assets) {
+                            this.total.totalCost += Number(asset.cost);
+                            this.total.totalQuantity += Number(asset.quantity);
+                            asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
+                            asset.residualValue = asset.cost - asset.atrophy;
+                            this.total.totalAtrophy += asset.atrophy;
+                            this.total.totalResidualValue += asset.residualValue;
+                        }
+                        this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
+                    });
                 this.pages;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -566,8 +660,8 @@ export default ({
                         .then(res => {
                             if (res.status == 200) {
                                 this.isDelete = false;
+                                this.toastMess = `Xóa thành công`;
                                 this.getData(this.paging);
-                                this.toastMess = `Xóa ${this.selected.length} tài sản thành công`;
                                 this.selected = [];
                                 this.isShowToastSuccess = true
                                 setTimeout(() => this.isShowToastSuccess = false, 500);
@@ -589,22 +683,26 @@ export default ({
         showDialogDelete(asset) {
             try {
                 if (this.selected.length == 1) {
-                    this.errMessWarning = `Bạn có muốn xóa tài sản ${asset.fixedAssetCode} - ${asset.fixedAssetName} ?`;
+                    this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
                     this.isDelete = true;
                 }
             } catch (error) {
                 console.log(error);
             }
         },
-        
+
         /**
         * Cập nhật thông báo.
         * TVTOAN (02/08/2022)
         */
         updateMessage(mes) {
-            this.toastMess = mes;
-            this.isShowToastSuccess = true;
-            setTimeout(() => this.isShowToastSuccess = false, 3000);
+            try {
+                this.toastMess = mes;
+                this.isShowToastSuccess = true;
+                setTimeout(() => this.isShowToastSuccess = false, 3000);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -641,7 +739,7 @@ export default ({
                     productionDate: '',
                     trackedYear: '',
                     lifeTime: 1,
-                    depreciationValue: 0,
+                    depreciationValue: 1,
                     createdBy: "TVTOAN",
                     createdDate: new Date(),
                     modifiedBy: "TVTOAN",
@@ -660,7 +758,7 @@ export default ({
             try {
                 this.title = "Sửa tài sản";
                 this.assetSelected = asset;
-                this.showDetailParent = true;            
+                this.showDetailParent = true;
             } catch (error) {
                 console.log(error);
             }
@@ -675,8 +773,6 @@ export default ({
                 this.title = "Nhân bản tài sản";
                 this.assetSelected = asset;
                 this.isDuplicate = true;
-                axios.get("http://localhost:14537/api/FixedAssets/new-code")
-                    .then(res => { this.assetSelected.fixedAssetCode = res.data });
                 this.showDetailParent = true;
             } catch (error) {
                 console.log(error);
@@ -744,6 +840,7 @@ export default ({
                     }
                 } else {
                     //click để chọn bản ghi
+                    this.assetCurrent = asset;
                     this.selected = [];
                     this.firstIndex = index;
                     this.indexOld = this.firstIndex;
@@ -759,10 +856,10 @@ export default ({
         // Nếu đã active mà click thì sẽ bỏ active
         * TVTOAN (26/08/2022)
         */
-        btnRowUnActive (id) {
+        btnRowUnActive(id) {
             try {
                 let isInArray = this.selected.includes(id);
-                if(isInArray == true) {
+                if (isInArray == true) {
                     var value = this.selected.indexOf(id);
                     this.selected.splice(value, 1);
                 }

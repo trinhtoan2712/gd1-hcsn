@@ -7,9 +7,9 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 4px 4px;
+    padding: 6px 6px;
     border-radius: 4px;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 400;
     opacity: 0;
     white-space: nowrap;
@@ -37,9 +37,9 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 4px 4px;
+    padding: 6px 6px;
     border-radius: 4px;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 400;
     opacity: 0;
     white-space: nowrap;
@@ -62,9 +62,9 @@
     z-index: 3;
     background: #fff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    padding: 4px 4px;
+    padding: 6px 6px;
     border-radius: 4px;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 400;
     opacity: 0;
     white-space: nowrap;
@@ -79,7 +79,7 @@
   top: 6%;
   transform: translateX(-80%);
 }
-
+.content-option-right .btn-add .tooltip,
 .content-option-right .btn-export-excel .tooltip,
 .content-option-right .btn-delete .tooltip {
   position: absolute;
@@ -87,24 +87,44 @@
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 4px 4px;
+  padding: 6px 6px;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 400;
   opacity: 0;
   white-space: nowrap;
   pointer-events: none;
   transition: 0s;
+  color: #000;
 }
 
+.content-option-right .btn-add:hover .tooltip,
 .content-option-right .btn-export-excel:hover .tooltip,
 .content-option-right .btn-delete:hover .tooltip{
   opacity: 1;
   cursor: pointer;
   transition: all 0.4s ease;
   top: 15%;
-  transform: translateX(-20%);
+  transform: translateX(-75%);
 }
+
+.col__tooltip .tooltip {
+  position: absolute;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 0.5px solid rgb(244, 5, 5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.col__tooltip:hover .tooltip{
+  cursor: pointer;
+  visibility:visible;
+}
+
 
 .table-eidt .tooltip,
 .table-delete .tooltip,
@@ -113,9 +133,9 @@
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 4px 4px;
+  padding: 6px 6px;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 400;
   top: 20px;
   white-space: nowrap;
@@ -125,15 +145,15 @@
 }
 
 .table-option .table-eidt span {
-  width: 75px;
+  width: 70px;
 }
 
 .table-option .table-delete span {
-  width: 25px;
+  width: 60px;
 }
 
 .table-option .table-replication span {
-  width: 65px;
+  width: 52px;
 }
 
 .table-option .table-eidt:hover .tooltip,
@@ -144,7 +164,7 @@
   transition: all 0.4s ease;
   color: #000;
   display:block;
-  right: 200%;
+  right: 350%;
 }
 
 .btn-header-right .btn-close-dialog .tooltip {
@@ -153,9 +173,9 @@
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 4px 4px;
+  padding: 6px 6px;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 400;
   opacity: 0;
   white-space: nowrap;
@@ -177,9 +197,9 @@
   z-index: 3;
   background: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  padding: 4px 4px;
+  padding: 6px 6px;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 400;
   opacity: 0;
   white-space: nowrap;

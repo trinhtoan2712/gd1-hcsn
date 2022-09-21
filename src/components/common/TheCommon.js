@@ -1,4 +1,8 @@
 
+/**
+* Hàm format số tiền
+* TVTOAN (26/07/2022)
+*/
 export function formatPrice(value) {
     try {
         let newVal = value.toString().replace(/^0+/, '').replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -8,6 +12,23 @@ export function formatPrice(value) {
     }
 }
 
+/**
+* Hàm format số tiền
+* TVTOAN (26/07/2022)
+*/
+export function formatInputTypeNumber(value) {
+    try {
+        return value.replace(/[^0-9.]/g,'');
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+/**
+* Hàm format ngày tháng năm
+* TVTOAN (26/07/2022)
+*/
 export function formatInputDate(value) {
     try {
         var date = value.toString().replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -17,6 +38,10 @@ export function formatInputDate(value) {
     }
 }
 
+/**
+* Hàm format số tiền có phân cách thành không phân cách
+* TVTOAN (26/07/2022)
+*/
 export function formatNumber(value) {
     try {
         return value.split('.').join('');

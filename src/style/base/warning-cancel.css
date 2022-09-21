@@ -10,7 +10,8 @@
     border-radius: 4px;
     background-color: #fff;
     box-sizing: border-box;
-    min-width: 450px;
+    min-width: 350px;
+    max-width: 450px;
 }
 
 .btn-cancel-dialog-asset {
@@ -27,16 +28,16 @@
 
 
 .dialog__container {
-    padding-top: 40px;
+    padding-top: 16px;
     display: flex;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 16px;
+    padding-right: 16px;
     flex-direction: row;
     align-items: center;
 }
 
 .dialog__body {
-    padding:12px 24px 12px 12px;
+    padding:6px 12px 6px 6px;
     font-size: 13px;
     display: flex;
     align-items: center;
@@ -60,7 +61,7 @@
     justify-content: end;
     align-items: center;
     box-sizing: border-box;
-    padding: 24px 24px;
+    padding: 16px 16px;
     border-radius: 0 0 4px 4px;
     flex-direction: row-reverse;
 }

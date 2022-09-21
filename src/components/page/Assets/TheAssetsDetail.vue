@@ -1,12 +1,14 @@
 <template>
-    <div id="dlgAssetDetail" class="dialog">
+    <div id="dlgAssetDetail" class="dialog" 
+    @keydown.enter.prevent="btnSaveOnClick(asset)"
+    @keyup.esc.prevent="showDetailFunction(false)">
         <div class="frame_dialog">
             <div class="dialog_header">
                 <div class="dialog_header-left">
                     <h3 style="margin: unset">{{title}}</h3>
                 </div>            
                 <div class="btn-header-right" @click="showDetailFunction(false)">
-                    <i class="fa-solid fa-xmark fa-2xl"></i>
+                    <i class="fa-solid fa-xmark fa-xl"></i>
                     <div class="btn-close-dialog btn-cancel-dialog">
                         <span class="tooltip">Đóng</span>
                     </div>
@@ -14,116 +16,130 @@
             </div>
             <div class="dialog_content">
                 <div class="row" role="row">
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.fixedAssetCode}">
                         <label>Mã tài sản <span class="input--required">*</span></label>
                         <input tabindex="1" id="txtFixedAssetCode" ref="txtAssetCode" name-property="mã tài sản"
-                            type="text" class="input" placeholder="Nhập mã tài sản" required
-                            v-model="asset.fixedAssetCode" @blur="checkValidate('fixedAssetCode', this.$refs['txtAssetCode'])">
-                            <div id="fixedAssetCode" class="title-valid">Mã tài sản không hợp lệ</div>
-
+                            type="text" class="input" placeholder="Nhập mã tài sản" required maxlength="20"
+                            v-model="asset.fixedAssetCode" @blur="checkValidate(this.$refs['txtAssetCode'])" :class="{'border-red': !formValid.fixedAssetCode}">
+                            <span v-if="!formValid.fixedAssetCode" class="tooltip">Mã tài sản không hợp lệ</span>
                     </div>
-                    <div class="col" style="grid-column: span 2;">
+                    <div class="col" style="grid-column: span 2;" :class="{'col__tooltip': !formValid.fixedAssetName}">
                         <label>Tên tài sản <span class="input--required">*</span></label>
                         <input tabindex="2" id="txtFixedAssetName" ref="txtFixedAssetName" name-property="tên tài sản"
                             type="text" class="input" placeholder="Nhập tên tài sản" v-model="asset.fixedAssetName"
-                            @blur="checkValidate('fixedAssetName', this.$refs['txtFixedAssetName'])">
-                            <div id="fixedAssetName" class="title-valid">Tên tài sản không hợp lệ</div>
-
+                            maxlength="100"
+                            @blur="checkValidate(this.$refs['txtFixedAssetName'])" :class="{'border-red': !formValid.fixedAssetName}">
+                            <span v-if="!formValid.fixedAssetName" class="tooltip">Tên tài sản không hợp lệ</span>
                     </div>
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.departmentId}">
                         <label>Mã bộ phận sử dụng <span class="input--required">*</span></label>
                         <BaseComboboxForm :url="'http://localhost:14537/api/Departments'" :propValue="'DepartmentID'"
                             :propText="'DepartmentCode'" :placText="'Chọn mã loại tài sản'" :propName="'DepartmentName'"
                             :tabIndex="3" :valDefault="asset.departmentCode" v-on:getNameDepartment="getNameDepartment"
-                            v-on:validCombobox="validCombobox">
+                            v-on:validCombobox="validCombobox"
+                            :validInput = "formValid.departmentId">
                         </BaseComboboxForm>
+                        <span v-if="!formValid.departmentId" class="tooltip">Mã phòng ban không hợp lệ</span>
                     </div>
                     <div class="col" style="grid-column: span 2;">
                         <label>Tên bộ phận sử dụng </label>
                         <input id="txtDepartmentName" type="text" class="input input-disable" disabled
                             v-model="asset.departmentName">
                     </div>
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.fixedAssetCategoryId}">
                         <label>Mã loại tài sản <span class="input--required">*</span></label>
                         <BaseComboboxForm :url="'http://localhost:14537/api/FixedAssetCategorys'"
                             :propValue="'FixedAssetCategoryID'" :propText="'FixedAssetCategoryCode'"
                             :placText="'Chọn mã bộ phận sử dụng'" :propName="'FixedAssetCategoryName'" :tabIndex="4"
                             :valDefault="asset.fixedAssetCategoryCode" v-on:getNameCategory="getNameCategory"
-                            v-on:validCombobox="validCombobox">
+                            v-on:validCombobox="validCombobox"
+                            :validInput = "formValid.fixedAssetCategoryId">
                         </BaseComboboxForm>
+                        <span v-if="!formValid.fixedAssetCategoryId" class="tooltip">Mã loại tài sản không hợp lệ</span>
                     </div>
                     <div class="col" style="grid-column: span 2;">
                         <label>Tên loại tài sản</label>
                         <input id="txtFixedAssetCategoryName" type="text" class="input input-disable" disabled
                             v-model="asset.fixedAssetCategoryName">
                     </div>
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.quantity}">
                         <label>Số lượng <span class="input--required">*</span></label>
                         <div class="input-updown">
-                            <input tabindex="5" id="txtQuantity" name-property="số lượng" type="number"
+                            <input tabindex="5" id="txtQuantity" name-property="số lượng" 
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+        type = "number"
+        maxlength = "10"
+                            
                                 class="input input-number" v-model="asset.quantity" min="1" ref="txtQuantity"
-                                @blur="checkValidate('quantity', this.$refs['txtQuantity'])">
+                                v-on:keypress="isNumber(event)" 
+                                @blur="checkValidate(this.$refs['txtQuantity'])" :class="{'border-red': !formValid.quantity}">
                             <div class="btn-updown-number">
                                 <div @click="incrementNumber" class="icon-up-number icon-content"></div>
                                 <div @click="decrementNumber" class="icon-down-number icon-content"></div>
                             </div>
                         </div>
-                        <div id="quantity" class="title-valid">Số lượng không hợp lệ</div>
+                        <span v-if="!formValid.quantity" class="tooltip">Số lượng tài sản không hợp lệ</span>
                     </div>
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.cost}">
                         <label>Nguyên giá <span class="input--required">*</span></label>
                         <input tabindex="6" id="txtCost" name-property="nguyên giá" type="text" 
-                            @change="depreciationValueChange" class="input number-right" @input="formatInputNumber()"
-                            v-model="asset.cost" ref="txtCost" @blur="checkValidate('cost', this.$refs['txtCost'])">
-                            <div id="cost" class="title-valid">Nguyên giá không hợp lệ</div>
+                        maxlength="20"
+                            class="input number-right" @input="formatInputNumber()"
+                            v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="{'border-red': !formValid.cost}">
+                            <span v-if="!formValid.cost" class="tooltip">Nguyên giá không hợp lệ</span>
                     </div>
-                    <div class="col">
+                    <div class="col" :class="{'col__tooltip': !formValid.lifeTime}">
+                        <label>Số năm sử dụng <span class="input--required">*</span></label>
+                        <div class="input-updown">
+                            <input tabindex="7" id="txtLifeTime" name-property="số năm sử dụng"
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+        type = "number"
+        maxlength = "4"
+                                class="input input-number" v-model="asset.lifeTime" min="1" ref="txtLifeTime"
+                                @change="depreciationRateChange"
+                                @blur="checkValidate(this.$refs['txtLifeTime'])" :class="{'border-red': !formValid.lifeTime}">
+                            <div class="btn-updown-number">
+                                <div @click="incrementYear" class="icon-up-number icon-content"></div>
+                                <div @click="decrementYear" class="icon-down-number icon-content"></div>
+                            </div>
+                        </div>
+                        <span v-if="!formValid.lifeTime" class="tooltip">Số năm sử dụng không hợp lệ</span>
+                    </div>
+                    <div class="col" :class="{'col__tooltip': !formValid.depreciationRate}">
                         <label>Tỉ lệ hao mòn (%) <span class="input--required">*</span></label>
-                        <input tabindex="7" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text"
+                        <input tabindex="8" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text"
                             class="input number-right" v-model="asset.depreciationRate"
-                            @change="depreciationValueChange()" ref="txtDepreciationRate"
-                            @blur="checkValidate('depreciationRate' ,this.$refs['txtDepreciationRate'])">
-                            <div id="depreciationRate" class="title-valid">Tỉ lệ hao mòn không hợp lệ</div>
+                            ref="txtDepreciationRate"
+                            @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="{'border-red': !formValid.depreciationRate}">
+                            <span v-if="!formValid.depreciationRate" class="tooltip">Tỉ lệ hao mòn không hợp lệ</span>
                     </div>
-                    <div class="col" id="valid-date-use">
-                        <label>Ngày mua <span class="input--required">*</span></label>
-                        <datepicker class="" format="dd/MM/yyyy" v-model="asset.purchaseDate" placeholder="DD-MM-YYYY"
-                            :hideInput="false" ref="txtProductionDate" tabindex="9"
-                            @input="formatInputNumber()"
-                            :typeable="true">
-                        </datepicker>
-                    </div>
-                    <div class="col" id="valid-date-buy">
-                        <label>Ngày sử dụng <span class="input--required">*</span></label>
-                        <datepicker class="" format="dd/MM/yyyy" v-model="asset.productionDate" placeholder="DD-MM-YYYY"
-                            :hideInput="false" ref="txtProductionDate" tabindex="9"
-                            :typeable="true">
-                        </datepicker>
+                    <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
+                        <label>Giá trị hao mòn năm <span class="input--required">*</span></label>
+                        <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text"
+                        maxlength="20"
+                            class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
+                            @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="{'border-red': !formValid.depreciationValue}">
+                            <span v-if="!formValid.depreciationValue" class="tooltip">Giá trị hao mòn không hợp lệ</span>
+
                     </div>
                     <div class="col input-updown">
                         <label>Năm theo dõi</label>
                         <input id="txtTrackedYear" name-property="" type="text" class="input number-right input-disable"
                             v-model="asset.trackedYear" disabled>
                     </div>
-                    <div class="col">
-                        <label>Số năm sử dụng <span class="input--required">*</span></label>
-                        <div class="input-updown">
-                            <input tabindex="10" id="txtLifeTime" name-property="số năm sử dụng" type="number"
-                                class="input input-number" v-model="asset.lifeTime" min="1" ref="txtLifeTime"
-                                @blur="checkValidate('lifeTime', this.$refs['txtLifeTime'])">
-                            <div class="btn-updown-number">
-                                <div @click="incrementYear" class="icon-up-number icon-content"></div>
-                                <div @click="decrementYear" class="icon-down-number icon-content"></div>
-                            </div>
-                        </div>
-                        <div id="lifeTime" class="title-valid">Số năm sử dụng không hợp lệ</div>
+                    <div class="col" id="valid-date-use">
+                        <label>Ngày mua <span class="input--required">*</span></label>
+                        <datepicker class="" format="dd/MM/yyyy" v-model="asset.purchaseDate" placeholder="DD-MM-YYYY"
+                            :hideInput="false" ref="txtProductionDate" tabindex=""
+                            :typeable="true">
+                        </datepicker>
                     </div>
-                    <div class="col">
-                        <label>Giá trị hao mòn năm <span class="input--required">*</span></label>
-                        <input tabindex="11" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text"
-                            class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
-                            @blur="checkValidate('depreciationValue', this.$refs['txtdepreciationValue'])">
-                            <div id="depreciationValue" class="title-valid">Giá trị hao mòn không hợp lệ</div>
+                    <div class="col" id="valid-date-buy">
+                        <label>Ngày sử dụng <span class="input--required">*</span></label>
+                        <datepicker class="" format="dd/MM/yyyy" v-model="asset.productionDate" placeholder="DD-MM-YYYY"
+                            :hideInput="false" ref="txtProductionDate" tabindex=""
+                            :typeable="true">
+                        </datepicker>
                     </div>
                 </div>
 
@@ -141,7 +157,7 @@
             <div class="dialog__container">
                 <div class="icon-warning-dialog icon-content"></div>
                 <div class="dialog__body">
-                    <i style="color: #C4D106" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
                         {{ errMessWarning }}
                     </div>
@@ -161,7 +177,7 @@
             <div class="dialog__container">
                 <div class="icon-warning-dialog icon-content"></div>
                 <div class="dialog__body">
-                    <i style="color: #C4D106" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
                         {{ errMessWarning }}
                     </div>
@@ -180,7 +196,7 @@
             <div class="dialog__container">
                 <div class="icon-warning-dialog icon-content"></div>
                 <div class="dialog__body">
-                    <i style="color: #C4D106" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
                         {{ errMessWarning }}
                     </div>
@@ -195,7 +211,7 @@
     <BaseLoading v-if="isShowLoading"></BaseLoading>
 </template>
 <script>
-import { formatPrice, formatDate, formatNumber, formatInputDate } from "../../common/TheCommon"
+import { formatPrice, formatDate, formatNumber, formatInputDate, formatInputTypeNumber } from "../../common/TheCommon"
 import Datepicker from 'vuejs3-datepicker';
 import axios from 'axios'
 import BaseLoading from '../../base/BaseLoading.vue'
@@ -221,18 +237,30 @@ export default {
         title: String,
     },
     methods: {
+        isNumber: function(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                evt.preventDefault();
+            } else {
+                return true;
+            }
+        },
+
         /**
         * Nếu rỗng thì thêm class viền đỏ và hiện thông báo
         * TVTOAN (26/07/2022)
         */
-        checkValidate(idTitle, valInput) {
-            if (!valInput.value) {
+        checkValidate(valInput) {
+            try {
+                if (!valInput.value) {
                 valInput.classList.add("border-red"); 
-                document.getElementById(idTitle).classList.add('title-invalid')
             }
             else {
                 valInput.classList.remove("border-red");
-                document.getElementById(idTitle).classList.remove('title-invalid')
+            }
+            } catch (error) {
+                console.log(error);   
             }
         },
 
@@ -240,7 +268,7 @@ export default {
         * Hàm format
         * TVTOAN (26/07/2022)
         */
-        formatPrice, formatDate, formatNumber, formatInputDate,
+        formatPrice, formatDate, formatNumber, formatInputDate, formatInputTypeNumber,
 
         /**
         * Hàm tính giá trị hao mòn
@@ -249,6 +277,7 @@ export default {
         depreciationValueChange() {
             try {
                 this.asset.depreciationValue = (this.asset.cost).replace(/[^0-9]/g, '') * (this.asset.depreciationRate / 100);
+                this.asset.depreciationValue = this.asset.depreciationValue.toFixed()
                 this.asset.depreciationValue = formatPrice(this.asset.depreciationValue)
             } catch (error) {
                 console.log(error);
@@ -262,13 +291,11 @@ export default {
         formatInputNumber() {
             try {
                 this.asset.cost = formatPrice(this.asset.cost)
-                this.asset.quantity = formatPrice(this.asset.quantity)
                 this.asset.depreciationValue = formatPrice(this.asset.depreciationValue)
             } catch (error) {
                 console.log(error);
             }
         },
-
         
         /**
         * Hàm tăng giảm số lượng
@@ -276,7 +303,10 @@ export default {
         */
         incrementNumber() {
             try {
-                this.asset.quantity++
+                this.asset.quantity++;
+                if(this.asset.quantity > 2147483647) {
+                    this.asset.quantity = 2147483647;
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -325,8 +355,12 @@ export default {
         * TVTOAN (26/07/2022)
         */
         getNameDepartment(name, id) {
-            this.asset.departmentName = name;
-            this.asset.departmentID = id;
+            try {
+                this.asset.departmentName = name;
+                this.asset.departmentID = id;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -334,8 +368,12 @@ export default {
         * TVTOAN (26/07/2022)
         */
         getNameCategory(name, id) {
-            this.asset.fixedAssetCategoryName = name;
+            try {
+                this.asset.fixedAssetCategoryName = name;
             this.asset.fixedAssetCategoryID = id;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -343,10 +381,14 @@ export default {
         * TVTOAN (26/07/2022)
         */
         validCombobox(isValidCbb) {
-            if (isValidCbb == true) {
+            try {
+                if (isValidCbb == true) {
                 this.isValidCbb = true;
             } else {
                 this.isValidCbb = false;
+            }
+            } catch (error) {
+                console.log(error);
             }
         },
 
@@ -355,7 +397,11 @@ export default {
         * TVTOAN (26/07/2022)
         */
         showToastSuccess() {
-            this.$emit('updateMessage', "Lưu thông tin thành công");
+            try {
+                this.$emit('updateMessage', "Lưu thông tin thành công");
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**
@@ -363,7 +409,11 @@ export default {
         * TVTOAN (26/07/2022)
         */
         showToastFail() {
-            this.$emit('updateMessage', "Lưu thông tin không thành công");
+            try {
+                this.$emit('updateMessage', "Lưu thông tin không thành công");
+            } catch (error) {   
+                console.log(error);
+            }
         },
 
         /**
@@ -375,13 +425,89 @@ export default {
         },
 
         /**
-        * Kiểm tra dữ liệu có rỗng hay không
+        * Kiểm tra dữ liệu
         * TVTOAN (26/07/2022)
         */
-        validDateAsset(asset) {
-            if (!asset.fixedAssetId || !asset.fixedAssetCode || !asset.fixedAssetName || !asset.departmentID || !asset.fixedAssetCategoryID || !asset.purchaseDate || !asset.cost || !asset.quantity || !asset.depreciationRate || !asset.trackedYear || !asset.lifeTime || !asset.depreciationValue || !asset.productionDate) {
-                this.isValid = false;
+        validateAsset(asset) {
+            if (!asset.fixedAssetId || asset.fixedAssetId.length != 36) {
+                this.formValid.fixedAssetId = false;
             } else {
+                this.formValid.fixedAssetId = true;
+            }
+
+            if (!asset.fixedAssetCode || asset.fixedAssetCode.length > 20) {
+                this.formValid.fixedAssetCode = false;
+            } else {
+                this.formValid.fixedAssetCode = true;
+            }
+
+            if (!asset.fixedAssetName || asset.fixedAssetName.length > 100) {
+                this.formValid.fixedAssetName = false;
+            } else {
+                this.formValid.fixedAssetName = true;
+            }
+
+            if (!asset.departmentID || asset.departmentID.length != 36) {
+                this.formValid.departmentId = false;
+            } else {
+                this.formValid.departmentId = true;
+            }
+
+            if (!asset.fixedAssetCategoryID || asset.fixedAssetCategoryID.length != 36) {
+                this.formValid.fixedAssetCategoryId = false;
+            } else {
+                this.formValid.fixedAssetCategoryId = true;
+            }
+
+            if (!asset.purchaseDate) {
+                this.formValid.purchaseDate = false;
+            } else {
+                this.formValid.purchaseDate = true;
+            }
+
+            if (!asset.cost || asset.cost.length > 16) {
+                this.formValid.cost = false;
+            } else {
+                this.formValid.cost = true;
+            }
+
+            if (!asset.quantity || asset.quantity.length > 10) {
+                this.formValid.quantity = false;
+            } else {
+                this.formValid.quantity = true;
+            }
+
+            if (!asset.depreciationRate || 0 > asset.dedepreciationRate > 100) {
+                this.formValid.depreciationRate = false;
+            } else {
+                this.formValid.depreciationRate = true;
+            }
+
+            if (!asset.lifeTime || asset.lifeTime < 1) {
+                this.formValid.lifeTime = false;
+            } else {
+                this.formValid.lifeTime = true;
+            }
+
+            if (!asset.depreciationValue || asset.depreciationValue < 1 || asset.depreciationValue.length > 16) {
+                this.formValid.depreciationValue = false;
+            } else {
+                this.formValid.depreciationValue = true;
+            }
+            
+            if (!asset.productionDate) {
+                this.formValid.productionDate = false;
+            } else {
+                this.formValid.productionDate = true;
+            }
+            let arrCheckValid = [];
+            for (const property in this.formValid) {
+                arrCheckValid.push(this.formValid[property])
+            }
+            let result = arrCheckValid.includes(false)
+            if(result == true) {
+                this.isValid = false;
+            }else {
                 this.isValid = true;
             }
         },
@@ -444,7 +570,7 @@ export default {
         */
         btnSaveOnClick(asset) {
             try {
-                this.validDateAsset(asset);
+                this.validateAsset(asset);
                 if (this.isFormAdd == true) {
                     if (this.isValid && this.isValidCbb) {
                         this.isShowLoading = true;
@@ -469,7 +595,7 @@ export default {
                         };
                         axios.post("http://localhost:14537/api/FixedAssets", dataInsert)
                             .then(res => {
-                                if (res.status == '200') {
+                                if (res.status == '201') {
                                     this.resApi = res;
                                     this.showToastSuccess();
                                     this.showDetailFunction(false);
@@ -487,21 +613,13 @@ export default {
                                         .then(res => { this.asset.fixedAssetCode = res.data });
                                 }
                                 if (error.response.data.errorCode == 2) {
-                                    this.errMessWarning = "Dữ liệu không hợp lệ";
+                                    this.errMessWarning = "Thêm thất bại, dữ liệu không hợp lệ";
                                 }
                                 if (error.response.data.errorCode == 1) {
                                     this.errMessWarning = "Lỗi hệ thống, vui lòng liên hệ MISA";
                                 }
                                 this.isSave = true;
                             });
-                    } else {
-                        this.isSave = true;
-                        if (!this.isValid) {
-                            this.errMessWarning = "Vui lòng nhập đầy đủ thông tin";
-                        }
-                        if (!this.isValidCbb) {
-                            this.errMessWarning = "Mã phòng ban hoặc mã tài sản không hợp lệ";
-                        }
                     }
                 } else {
                     if (this.isValid && this.isValidCbb) {
@@ -554,14 +672,6 @@ export default {
                         } else {
                             this.showDetailFunction(false);
                             this.showToastSuccess();
-                        }
-                    } else {
-                        this.isSave = true;
-                        if (!this.isValid) {
-                            this.errMessWarning = "Vui lòng nhập đầy đủ thông tin";
-                        }
-                        if (!this.isValidCbb) {
-                            this.errMessWarning = "Mã phòng ban hoặc mã tài sản không hợp lệ";
                         }
                     }
                 }
@@ -661,6 +771,7 @@ export default {
         * TVTOAN (03/08/2022)
         */
         'asset.cost': function (newValue, oldValue) {
+            this.depreciationValueChange();
             if (this.isFormAdd == false) {
                 if (newValue != oldValue) {
                     this.isChange = true;
@@ -689,6 +800,7 @@ export default {
         * TVTOAN (03/08/2022)
         */
         'asset.depreciationRate': function (newValue, oldValue) {
+            this.depreciationValueChange();
             if (this.isFormAdd == false) {
                 if (newValue != oldValue) {
                     this.isChange = true;
@@ -717,6 +829,7 @@ export default {
         * TVTOAN (03/08/2022)
         */
         'asset.lifeTime': function (newValue, oldValue) {
+            this.asset.depreciationRate = Math.round((1 / newValue) * 100 * 100) / 100;
             if (this.isFormAdd == false) {
                 if (newValue != oldValue) {
                     this.isChange = true;
@@ -760,7 +873,26 @@ export default {
         * Gọi api new code để sinh mã tự động
         * TVTOAN (23/07/2022)
         */
-        this.asset = this.assetSelected;
+        this.asset.fixedAssetId=this.assetSelected.fixedAssetId;
+        this.asset.fixedAssetName=this.assetSelected.fixedAssetName;
+        this.asset.departmentID=this.assetSelected.departmentID;
+        this.asset.departmentCode = this.assetSelected.departmentCode
+        this.asset.departmentName = this.assetSelected.departmentName
+        this.asset.fixedAssetCategoryID=this.assetSelected.fixedAssetCategoryID;
+        this.asset.fixedAssetCategoryCode=this.assetSelected.fixedAssetCategoryCode;
+        this.asset.fixedAssetCategoryName=this.assetSelected.fixedAssetCategoryName;
+        this.asset.quantity=this.assetSelected.quantity;
+        this.asset.cost=this.assetSelected.cost;
+        this.asset.depreciationRate=this.assetSelected.depreciationRate;
+        this.asset.purchaseDate=this.assetSelected.purchaseDate;
+        this.asset.productionDate=this.assetSelected.productionDate;
+        this.asset.trackedYear=this.assetSelected.trackedYear;
+        this.asset.lifeTime=this.assetSelected.lifeTime;
+        this.asset.depreciationValue=this.assetSelected.depreciationValue;
+        this.asset.createdBy=this.assetSelected.createdBy;
+        this.asset.createdDate=this.assetSelected.createdDate;
+        this.asset.modifiedBy=this.assetSelected.modifiedBy;
+        this.asset.modifiedDate=this.assetSelected.modifiedDate;
         //gọi api lấy dữ liệu
         axios.get("http://localhost:14537/api/FixedAssets/new-code")
             .then(res => {
@@ -770,6 +902,7 @@ export default {
                     this.isValidCbb = true;
                 }
                 else if (this.title == 'Sửa tài sản') {
+                    this.asset.fixedAssetCode = this.assetSelected.fixedAssetCode;
                     this.isFormAdd = false;
                     this.isValidCbb = true;
                     this.$emit('returnIsDuplicate', false);
@@ -803,11 +936,28 @@ export default {
             isFormAdd: true,
             isValid: false,
             isWarning: false,
+
             asset: {},
             fixedAssetCategoryName: '',
             departmentName: '',
             errMessWarning: '',
             resApi: {},
+
+            // valid dữ liệu của form
+            formValid: {
+                fixedAssetId: true,
+                fixedAssetCode: true,
+                fixedAssetName: true,
+                departmentId: true,
+                fixedAssetCategoryId: true,
+                purchaseDate: true,
+                cost: true,
+                quantity: true,
+                depreciationRate: true,
+                lifeTime: true,
+                depreciationValue: true,
+                productionDate: true,
+            }
         };
     },
     mounted: function () {
@@ -831,4 +981,5 @@ export default {
 @import url(../../../style/base/warning-cancel.css);
 @import url(../../../style/base/warning-delete.css);
 @import url(../../../style/base/toast.css);
+@import url(../../../style/base/tool-tip.css);
 </style>

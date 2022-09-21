@@ -2,10 +2,10 @@
   <div class="comboboxform">
     <input type="text" class="input comboboxform__input" v-model="text" @input="inputOnChange()"
     @blur="checkValidate(this.$refs['txtDepartmentCode'])"  ref="txtDepartmentCode"
-      @keydown="selecItemUpDown" :placeholder="placText" :tabindex="tabIndex" />
+      @keydown="selecItemUpDown" :placeholder="placText" :tabindex="tabIndex" :class="{'border-red': !this.validInput || !this.isValidCbb}"/>
     <button class="button comboboxform__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
       tabindex="-1">
-      <i class="fa-solid fa-chevron-down"></i>
+      <i class="fa-solid fa-chevron-down fa-xs"></i>
     </button>
     <div v-show="isShowListData" class="comboboxform__data" ref="comboboxform__data" v-clickoutside="hideListData">
       <a class="comboboxform__item" v-for="(item, index) in dataFilter" :class="{
@@ -67,6 +67,7 @@ export default {
     propValue: String,
     propText: String,
     valDefault: String,
+    validInput: Boolean,
     isLoadData: {
       type: Boolean,
       default: true,
@@ -74,7 +75,7 @@ export default {
   },
   methods: {
     checkValidate(valInput) {
-            if (!valInput.value) {
+            if (!valInput.value || !this.isValidCbb) {
                 valInput.classList.add("border-red");
             }
             else {
@@ -99,6 +100,7 @@ export default {
       this.valueInput = item[this.propName];
       this.indexItemSelected = index;
       this.isShowListData = false;
+      this.isValidCbb = true;
       this.$emit('validCombobox', true);
       this.$emit('getNameDepartment', this.valueInput, item[this.propValue])
       this.$emit('getNameCategory', this.valueInput, item[this.propValue])
@@ -114,12 +116,14 @@ export default {
           arrBool.push(true);
           this.$emit('getNameDepartment', e[me.propName], e[me.propValue]);
           this.$emit('getNameCategory', e[me.propName], e[me.propValue]);
-          this.$emit('validCombobox', true);
+          this.isValidCbb = true;
+          this.$emit('validCombobox', this.isValidCbb);
         }else {
           arrBool.push(false);
           let isValid = arrBool.includes(true);
           if(isValid == false) {
-            this.$emit('validCombobox', false);
+            this.isValidCbb = false;
+            this.$emit('validCombobox', this.isValidCbb);
           }
         }
         return valueCode;
@@ -194,12 +198,12 @@ export default {
       dataFilter: [],
       valueInput: '',
       text: null,
-      //   value: null,
       isShowListData: false,
       focus: false,
       indexItemFocus: null,
       indexItemSelected: null,
       maxIndexItemFocus: 0,
+      isValidCbb: true,
     };
   },
 };

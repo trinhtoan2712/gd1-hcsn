@@ -1,6 +1,8 @@
 <template>
     <div class="loading ">
-        <div class="loader"></div>
+        <div class="loader">
+        </div>
+        Đang xử lý
     </div>
 </template>
 

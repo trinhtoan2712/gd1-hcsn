@@ -5,7 +5,7 @@
       @keydown="selecItemUpDown" />
     <button class="button combobox__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
       tabindex="-1">
-      <i class="fa-solid fa-chevron-down"></i>
+      <i class="fa-solid fa-chevron-down fa-xs"></i>
     </button>
     <div v-show="isShowListData" class="combobox__data" ref="combobox__data" v-clickoutside="hideListData">
       <a class="combobox__item" v-for="(item, index) in dataFilter" :class="{
