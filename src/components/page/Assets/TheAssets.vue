@@ -25,11 +25,12 @@
                 <div class="btn-add button__icon">Thêm tài sản <span class="tooltip">Ctrl + I</span></div>
             </button>
             <div class="btn-export-excel icon-content"><span class="tooltip">Xuất file excel</span> </div>
-            <div class="btn-delete icon-content" @click="showDialogDeleteList"><span class="tooltip">Xóa</span> </div>
+            <div class="btn-delete icon-content" @click="showDialogDeleteList(assetCurrent)"><span
+                    class="tooltip">Xóa</span> </div>
         </div>
     </div>
     <div class="content-table" :class="{tablenodatasize: assets.length < 1}">
-        <table  class="table-data">
+        <table class="table-data">
             <thead class="table-header" v-if="assets.length > 0">
                 <tr>
                     <th>
@@ -49,7 +50,7 @@
                     <th style="padding: 0px 10px">Chức năng</th>
                 </tr>
             </thead>
-            <tbody  class="table-body">
+            <tbody class="table-body">
                 <v-contextmenu ref="contextmenu">
                     <v-contextmenu-item>
                         <div class="menu__context">
@@ -98,9 +99,6 @@
                         <div @click="duplicateAssets(asset)"
                             class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
                                 bản </span></div>
-                        <div @click="showDialogDelete(asset)" class="table-delete icon-content icon-pading icon-small">
-                            <span class="tooltip">Xóa(Delete)</span>
-                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -143,6 +141,8 @@
                 <div class="paging__button--group">
                     <div :class="{ selected: page.isDisabled }" @click="onClickPage(page.name)" class="paging__number"
                         v-for="page in pages" :key="page.name">{{ page.name }}</div>
+                    <div class="">...</div>
+                    <div class="paging__number" @click="onClickPage(paging.totalPage)">{{paging.totalPage}}</div>
                 </div>
                 <div @click="onClickNextPage" class="paging__button paging__button--next icon-content"><span
                         class="tooltip">Trang sau</span></div>
@@ -158,7 +158,7 @@
                 <div class="dialog__body">
                     <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
-                        <span v-html = "errMessWarning"></span>
+                        <span v-html="errMessWarning"></span>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
                 <div class="dialog__body">
                     <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
                     <div class="dialog__msg-item">
-                        <span v-html = "errMessWarning"></span>
+                        <span v-html="errMessWarning"></span>
                     </div>
                 </div>
             </div>
@@ -195,12 +195,12 @@
     </div>
 </template>
 <script>
-import TheAssetDetail from "./TheAssetsDetail.vue"
-import { formatPrice, formatDate } from "../../common/TheCommon"
-import BaseLoading from '../../base/BaseLoading.vue'
+import TheAssetDetail from "./TheAssetsDetail.vue";
+import { formatPrice, formatDate, getCookie, HTTP } from "../../common/TheCommon";
+import BaseLoading from '../../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
-import axios from 'axios'
+import { HostApi, NameCookie } from "../../common/TheConst";
 
 
 export default ({
@@ -219,11 +219,10 @@ export default ({
          * Gọi hàm getData để lấy dữ liệu.
          * TVTOAN (31/07/2022)
          */
-        try {
-            this.getData(this.paging);
-        } catch (error) {
-            console.log(error);
-        }
+        setTimeout(()=> {
+            this.getData(this.paging),2000
+        })
+        
     },
     mounted: function () {
         /**
@@ -246,10 +245,10 @@ export default ({
         window.addEventListener('keydown', this.eventKeyPage);
     },
     watch: {
-        showDetailParent: function(newValue){
-            if(newValue == true){
+        showDetailParent: function (newValue) {
+            if (newValue == true) {
                 window.removeEventListener('keydown', this.handleKeydown);
-            }else{
+            } else {
                 window.addEventListener('keydown', this.handleKeydown);
             }
         }
@@ -259,7 +258,7 @@ export default ({
          * Hủy sự kiện handleKeydown cho window.
          * TVTOAN (08/08/2022)
          */
-         window.removeEventListener('keydown', this.handleKeydown);
+        window.removeEventListener('keydown', this.handleKeydown);
     },
 
     data() {
@@ -273,6 +272,7 @@ export default ({
             isShowLoading: false,
             showDetailParent: false,
 
+            JWToken: '',
             title: '',
             toastMess: '',
             errMessWarning: '',
@@ -308,7 +308,7 @@ export default ({
                 pageSize: 15,
                 pageNumber: 1,
                 totalPage: 0,
-                maxVisibleButtons: 5,
+                maxVisibleButtons: 3,
             }
         }
     },
@@ -334,7 +334,7 @@ export default ({
         */
         pages() {
             const range = [];
-            for (let i = this.startPage; i <= Math.min(this.startPage + this.paging.maxVisibleButtons - 1, this.paging.totalPage); i += 1) {
+            for (let i = this.startPage; i <= Math.min(this.startPage + this.paging.maxVisibleButtons - 1, this.paging.totalPage - 1); i += 1) {
 
                 range.push({
                     name: i,
@@ -365,26 +365,26 @@ export default ({
         */
         eventKeyPage(e) {
             try {
-                if(e.keyCode == 73 && e.ctrlKey){
+                if (e.keyCode == 73 && e.ctrlKey) {
                     this.showDetail(true);
                 }
-                if(e.keyCode == 67 && e.ctrlKey){
-                    if(this.selected.length == 1){
+                if (e.keyCode == 67 && e.ctrlKey) {
+                    if (this.selected.length == 1) {
                         this.rowOnDblClick(this.assetCurrent)
                     }
                 }
-                if(e.keyCode == 68 && e.ctrlKey){
-                    if(this.selected.length == 1){
+                if (e.keyCode == 68 && e.ctrlKey) {
+                    if (this.selected.length == 1) {
                         this.duplicateAssets(this.assetCurrent)
                     }
                 }
-                if(e.keyCode == 46){
-                    if(this.selected.length > 0){
-                        this.showDialogDeleteList();
+                if (e.keyCode == 46) {
+                    if (this.selected.length > 0) {
+                        this.showDialogDeleteList(this.assetCurrent);
                     }
                 }
-                if(this.isDelete == true) {
-                    if(e.keyCode == 13){
+                if (this.isDelete == true) {
+                    if (e.keyCode == 13) {
                         this.btnDeleteOnClick()
                     }
                 }
@@ -445,8 +445,8 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickFirstPage() {
-                this.paging.pageNumber = 1;
-                this.getData(this.paging);
+            this.paging.pageNumber = 1;
+            this.getData(this.paging);
 
         },
 
@@ -455,10 +455,10 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickPreviousPage() {
-                if (this.paging.pageNumber > 1) {
-                    this.paging.pageNumber -= 1;
-                    this.getData(this.paging);
-                }
+            if (this.paging.pageNumber > 1) {
+                this.paging.pageNumber -= 1;
+                this.getData(this.paging);
+            }
 
         },
 
@@ -467,8 +467,8 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickPage(page) {
-                this.paging.pageNumber = page;
-                this.getData(this.paging);
+            this.paging.pageNumber = page;
+            this.getData(this.paging);
 
         },
 
@@ -478,11 +478,10 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickNextPage() {
-                if (this.paging.pageNumber < this.paging.totalPage) {
-                    this.paging.pageNumber += 1;
-                    this.getData(this.paging);
-                }
-
+            if (this.paging.pageNumber < this.paging.totalPage) {
+                this.paging.pageNumber += 1;
+                this.getData(this.paging);
+            }
         },
 
         /**
@@ -490,9 +489,8 @@ export default ({
         * TVTOAN (06/08/2022)
         */
         onClickLastPage() {
-                this.paging.pageNumber = this.paging.totalPage;
-                this.getData(this.paging);
-
+            this.paging.pageNumber = this.paging.totalPage;
+            this.getData(this.paging);
         },
 
         /**
@@ -567,11 +565,11 @@ export default ({
         * Gọi api filter.
         * TVTOAN (25/07/2022)
         */
-        getData(paging) {
+        async getData(paging) {
             try {
                 this.isShowLoading = true;
                 //gọi api lấy dữ liệu
-                axios.get(`http://localhost:14537/api/FixedAssets?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                await HTTP.get(`${HostApi.HOST_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
                         this.isShowLoading = true;
                         setTimeout(() => this.isShowLoading = false, 500);
@@ -607,10 +605,14 @@ export default ({
         * Hiển thị cảnh báo khi xóa tài sản.
         * TVTOAN (02/08/2022)
         */
-        showDialogDeleteList() {
+        showDialogDeleteList(asset) {
             try {
                 if (this.selected.length > 0) {
-                    this.errMessWarning = `${this.selected.length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?`;
+                    if (this.selected.length == 1) {
+                        this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
+                    } else {
+                        this.errMessWarning = `${this.selected.length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?`;
+                    }
                     this.isDelete = true;
                     this.isMessDelete = false;
                 } else {
@@ -629,62 +631,54 @@ export default ({
         btnDeleteOnClick() {
             try {
                 this.isShowLoading = true;
-                if (this.selected.length == 1) {
-                    fetch(`http://localhost:14537/api/FixedAssets/${this.selected[0]}`, { method: 'DELETE' })
-                        .then(res => {
-                            if (res.status == 200) {
-                                this.isDelete = false;
-                                this.getData(this.paging);
-                                this.toastMess = 'Xóa thành công !!!';
-                                this.isShowToastSuccess = true;
-                                this.selected = [];
-                                setTimeout(() => this.isShowToastSuccess = false, 3000);
-                            } else {
-                                this.toastMess = `Xóa không thành công`
-                                this.isShowToastSuccess = true;
-                            }
-                        })
-                }
                 if (this.selected.length > 0) {
-                    let body = [];
-                    this.selected.map(function (value, key) {
-                        body.push(value);
-                        console.log(key);
-                    })
-                    const requestOptions = {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(body)
-                    };
-                    fetch(`http://localhost:14537/api/FixedAssets/`, requestOptions)
-                        .then(res => {
-                            if (res.status == 200) {
-                                this.isDelete = false;
-                                this.toastMess = `Xóa thành công`;
-                                this.getData(this.paging);
-                                this.selected = [];
-                                this.isShowToastSuccess = true
-                                setTimeout(() => this.isShowToastSuccess = false, 500);
-                            } else {
-                                this.toastMess = `Xóa không thành công`
-                                this.isShowToastSuccess = true;
-                            }
+                    if (this.selected.length == 1) {
+                        HTTP.delete(`${HostApi.HOST_FIXED_ASSET}/${this.selected[0]}`)
+                            .then(res => {
+                                if (res.status == 200) {
+                                    this.isDelete = false;
+                                    this.getData(this.paging);
+                                    this.toastMess = 'Xóa thành công !!!';
+                                    this.isShowToastSuccess = true;
+                                    this.selected = [];
+                                    setTimeout(() => this.isShowToastSuccess = false, 3000);
+                                } else {
+                                    this.isDelete = false;
+                                    this.toastMess = `Xóa không thành công`;
+                                    this.isShowToastSuccess = true;
+                                }
+                            })
+                    }
+                    else {
+                        let body = [];
+                        this.selected.map(function (value, key) {
+                            body.push(value);
+                            console.log(key);
                         })
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        },
-
-        /**
-        * Hiển thị dialog cảnh báo xóa tài sản.
-        * TVTOAN (02/08/2022)
-        */
-        showDialogDelete(asset) {
-            try {
-                if (this.selected.length == 1) {
-                    this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
-                    this.isDelete = true;
+                        const requestOptions = {
+                            method: "DELETE",
+                            headers: { 
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${getCookie(NameCookie.NAME_TOKEN)}`
+                            },
+                            body: JSON.stringify(body)
+                        };
+                        fetch(`${HostApi.HOST_FIXED_ASSET}`, requestOptions)
+                            .then(res => {
+                                if (res.status == 200) {
+                                    this.isDelete = false;
+                                    this.toastMess = `Xóa thành công`;
+                                    this.getData(this.paging);
+                                    this.selected = [];
+                                    this.isShowToastSuccess = true
+                                    setTimeout(() => this.isShowToastSuccess = false, 500);
+                                } else {
+                                    this.isDelete = false;
+                                    this.toastMess = `Xóa không thành công`
+                                    this.isShowToastSuccess = true;
+                                }
+                            })
+                    }
                 }
             } catch (error) {
                 console.log(error);
@@ -758,6 +752,7 @@ export default ({
             try {
                 this.title = "Sửa tài sản";
                 this.assetSelected = asset;
+                console.log(this.assetSelected);
                 this.showDetailParent = true;
             } catch (error) {
                 console.log(error);

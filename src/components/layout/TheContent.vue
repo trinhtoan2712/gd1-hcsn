@@ -19,8 +19,15 @@
                 <div class="header-notify icon-content padding"> <span class="tooltip">Thông báo</span> </div>
                 <div class="header-system icon-content padding"><span class="tooltip">Hệ thống</span></div>
                 <div class="header-support icon-content padding"><span class="tooltip">Hỗ trợ</span></div>
-                <div class="header-user icon-content padding"><span class="tooltip">Thông tin</span></div>
-                <div class="header-arrow icon-content padding"><span class="tooltip">Cài đặt</span></div>
+                <div class="info-user" @click="isOpenDropInfo = !isOpenDropInfo" :class="{ isActive: isOpenDropInfo }">
+                    <div class="header-user icon-content padding"></div>
+                    <div class="header-arrow icon-content"></div>
+                    <span class="tooltip">Thông tin</span>
+                </div>
+                <div class="dropdown-list-item" v-if="isOpenDropInfo">
+                    <div class="item-info">Thông tin</div>
+                    <div class="item-info" @click="logout">Đăng xuất</div>
+                </div>
             </div>
         </div>
         <router-view></router-view>
@@ -29,10 +36,27 @@
 </template>
 
 <script>
+import { NameCookie} from "../common/TheConst";
+
 export default {
     name: 'App',
     components: {
     },
+    methods: {
+        callToDropDownInfo() {
+            this.isOpenDropInfo = false;
+        },
+        logout() {
+            document.cookie = `${NameCookie.NAME_TOKEN}` +`=;${NameCookie.EXPIRES}`;
+            document.cookie = `${NameCookie.NAME_AUTH}` +`=;${NameCookie.EXPIRES}`;
+            this.$router.push({ path: '/login' })
+        }
+    },
+    data() {
+        return {
+            isOpenDropInfo: false
+        }
+    }
 }
 </script>
 

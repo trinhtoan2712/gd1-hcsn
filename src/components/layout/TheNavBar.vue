@@ -6,14 +6,14 @@
         </div>
         <ul class="nav-list">
             <li>
-                <router-link to="/">
+                <router-link to="/dashboard">
                     <div class="icon-dashboard icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tổng quan</span>
                 </router-link>
                 <span class="tooltip">Tổng quan</span>
             </li>
             <li>
-                <router-link to="/assets">
+                <router-link to="/asset">
                     <div class="icon-assets icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tài sản</span>
                 </router-link>

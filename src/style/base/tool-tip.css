@@ -55,7 +55,7 @@
     transform: translateY(-50%);
   }
 
-
+ .content-header-right .info-user .tooltip,
   .content-header-right .padding .tooltip{
     position: absolute;
     top: -20px;
@@ -71,7 +71,7 @@
     pointer-events: none;
     transition: 0s;
   }
-
+  .content-header-right .info-user:hover .tooltip,
 .content-header-right .padding:hover .tooltip{
   opacity: 1;
   cursor: pointer;

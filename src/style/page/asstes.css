@@ -15,6 +15,10 @@
   color: #000;
 }
 
+.bgblue .table-option {
+  opacity: 1;
+}
+
 .border-blue{
   border: 1px solid #1aa4c8 !important;
 }
@@ -165,6 +169,14 @@ input[type="date"] {
 }
 
 .table-option {
+  opacity: 0;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+}
+
+.table-option:hover {
+  opacity: 1;
   display: flex;
   align-items:center;
   justify-content: center;
@@ -257,6 +269,10 @@ input[type="date"] {
 
 .table-body tr:hover {
   background-color: rgba(75, 173, 198, 0.2);
+}
+
+.table-body tr:hover .table-option {
+  opacity: 1;
 }
 
 .table-footer {

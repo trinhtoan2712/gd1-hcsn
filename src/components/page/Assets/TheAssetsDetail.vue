@@ -27,7 +27,7 @@
                         <label>Tên tài sản <span class="input--required">*</span></label>
                         <input tabindex="2" id="txtFixedAssetName" ref="txtFixedAssetName" name-property="tên tài sản"
                             type="text" class="input" placeholder="Nhập tên tài sản" v-model="asset.fixedAssetName"
-                            maxlength="100"
+                            maxlength="255"
                             @blur="checkValidate(this.$refs['txtFixedAssetName'])" :class="{'border-red': !formValid.fixedAssetName}">
                             <span v-if="!formValid.fixedAssetName" class="tooltip">Tên tài sản không hợp lệ</span>
                     </div>
@@ -68,7 +68,7 @@
                             <input tabindex="5" id="txtQuantity" name-property="số lượng" 
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
         type = "number"
-        maxlength = "10"
+        maxlength = "18"
                             
                                 class="input input-number" v-model="asset.quantity" min="1" ref="txtQuantity"
                                 v-on:keypress="isNumber(event)" 
@@ -83,7 +83,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.cost}">
                         <label>Nguyên giá <span class="input--required">*</span></label>
                         <input tabindex="6" id="txtCost" name-property="nguyên giá" type="text" 
-                        maxlength="20"
+                        maxlength="18"
                             class="input number-right" @input="formatInputNumber()"
                             v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="{'border-red': !formValid.cost}">
                             <span v-if="!formValid.cost" class="tooltip">Nguyên giá không hợp lệ</span>
@@ -116,7 +116,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
                         <label>Giá trị hao mòn năm <span class="input--required">*</span></label>
                         <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text"
-                        maxlength="20"
+                        maxlength="18"
                             class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
                             @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="{'border-red': !formValid.depreciationValue}">
                             <span v-if="!formValid.depreciationValue" class="tooltip">Giá trị hao mòn không hợp lệ</span>
@@ -211,12 +211,11 @@
     <BaseLoading v-if="isShowLoading"></BaseLoading>
 </template>
 <script>
-import { formatPrice, formatDate, formatNumber, formatInputDate, formatInputTypeNumber } from "../../common/TheCommon"
+import { formatPrice, formatDate, formatNumber, HTTP } from "../../common/TheCommon"
 import Datepicker from 'vuejs3-datepicker';
-import axios from 'axios'
 import BaseLoading from '../../base/BaseLoading.vue'
 import { uuid } from 'vue-uuid'
-
+import { HostApi} from "../../common/TheConst";
 
 export default {
     components: { BaseLoading, Datepicker },
@@ -268,7 +267,7 @@ export default {
         * Hàm format
         * TVTOAN (26/07/2022)
         */
-        formatPrice, formatDate, formatNumber, formatInputDate, formatInputTypeNumber,
+        formatPrice, formatDate, formatNumber,
 
         /**
         * Hàm tính giá trị hao mòn
@@ -429,6 +428,7 @@ export default {
         * TVTOAN (26/07/2022)
         */
         validateAsset(asset) {
+            this.arrayInputError = [];
             if (!asset.fixedAssetId || asset.fixedAssetId.length != 36) {
                 this.formValid.fixedAssetId = false;
             } else {
@@ -437,12 +437,15 @@ export default {
 
             if (!asset.fixedAssetCode || asset.fixedAssetCode.length > 20) {
                 this.formValid.fixedAssetCode = false;
+                this.arrayInputError.push("txtAssetCode");
             } else {
                 this.formValid.fixedAssetCode = true;
             }
 
-            if (!asset.fixedAssetName || asset.fixedAssetName.length > 100) {
+            if (!asset.fixedAssetName || asset.fixedAssetName.length > 255) {
                 this.formValid.fixedAssetName = false;
+                this.arrayInputError.push("txtFixedAssetName");
+
             } else {
                 this.formValid.fixedAssetName = true;
             }
@@ -461,42 +464,49 @@ export default {
 
             if (!asset.purchaseDate) {
                 this.formValid.purchaseDate = false;
+                this.arrayInputError.push("txtPurchaseDate");
             } else {
                 this.formValid.purchaseDate = true;
             }
 
-            if (!asset.cost || asset.cost.length > 16) {
+            if (!asset.cost || asset.cost.length > 18) {
+                this.arrayInputError.push("txtCost");
                 this.formValid.cost = false;
             } else {
                 this.formValid.cost = true;
             }
 
-            if (!asset.quantity || asset.quantity.length > 10) {
+            if (!asset.quantity || asset.quantity.length > 18) {
+                this.arrayInputError.push("txtQuantity");
                 this.formValid.quantity = false;
             } else {
                 this.formValid.quantity = true;
             }
 
-            if (!asset.depreciationRate || 0 > asset.dedepreciationRate > 100) {
+            if (!asset.depreciationRate || asset.depreciationRate.length > 18) {
+                this.arrayInputError.push("txtDepreciationRate");
                 this.formValid.depreciationRate = false;
             } else {
                 this.formValid.depreciationRate = true;
             }
 
-            if (!asset.lifeTime || asset.lifeTime < 1) {
+            if (!asset.lifeTime || 0 > asset.lifeTime > 2147483647) {
+                this.arrayInputError.push("txtLifeTime");
                 this.formValid.lifeTime = false;
             } else {
                 this.formValid.lifeTime = true;
             }
 
-            if (!asset.depreciationValue || asset.depreciationValue < 1 || asset.depreciationValue.length > 16) {
+            if (!asset.depreciationValue || asset.depreciationValue.length < 1 || asset.depreciationValue.length > 18) {
                 this.formValid.depreciationValue = false;
+                this.arrayInputError.push("txtDepreciationValue");
             } else {
                 this.formValid.depreciationValue = true;
             }
             
             if (!asset.productionDate) {
                 this.formValid.productionDate = false;
+                this.arrayInputError.push("txtProductionDate");
             } else {
                 this.formValid.productionDate = true;
             }
@@ -506,7 +516,9 @@ export default {
             }
             let result = arrCheckValid.includes(false)
             if(result == true) {
+                this.$refs[this.arrayInputError[0]].focus();
                 this.isValid = false;
+                console.log(this.arrayInputError[0]);
             }else {
                 this.isValid = true;
             }
@@ -593,7 +605,7 @@ export default {
                             "productionDate": asset.productionDate,
                             "depreciationValue": formatNumber(asset.depreciationValue)
                         };
-                        axios.post("http://localhost:14537/api/FixedAssets", dataInsert)
+                        HTTP.post(`${HostApi.HOST_FIXED_ASSET}`, dataInsert)
                             .then(res => {
                                 if (res.status == '201') {
                                     this.resApi = res;
@@ -609,7 +621,7 @@ export default {
                             }).catch((error) => {
                                 if (error.response.data.errorCode == 3) {
                                     this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
-                                    axios.get("http://localhost:14537/api/FixedAssets/new-code")
+                                    HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
                                         .then(res => { this.asset.fixedAssetCode = res.data });
                                 }
                                 if (error.response.data.errorCode == 2) {
@@ -643,7 +655,7 @@ export default {
                                 "productionDate": asset.productionDate,
                                 "depreciationValue": formatNumber(asset.depreciationValue)
                             };
-                            axios.put(`http://localhost:14537/api/FixedAssets/${asset.fixedAssetId}`, dataUpdate)
+                            HTTP.put(`${HostApi.HOST_FIXED_ASSET}/${asset.fixedAssetId}`, dataUpdate)
                                 .then(res => {
                                     if (res.status == '200') {
                                         this.resApi = res;
@@ -658,7 +670,7 @@ export default {
                                 }).catch((error) => {
                                     if (error.response.data.errorCode == 3) {
                                         this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
-                                        axios.get("http://localhost:14537/api/FixedAssets/new-code")
+                                        HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
                                             .then(res => { this.asset.fixedAssetCode = res.data });
                                     }
                                     if (error.response.data.errorCode == 2) {
@@ -800,6 +812,9 @@ export default {
         * TVTOAN (03/08/2022)
         */
         'asset.depreciationRate': function (newValue, oldValue) {
+            if(this.asset.depreciationRate>100) {
+                this.asset.depreciationRate = 100
+            }
             this.depreciationValueChange();
             if (this.isFormAdd == false) {
                 if (newValue != oldValue) {
@@ -873,28 +888,30 @@ export default {
         * Gọi api new code để sinh mã tự động
         * TVTOAN (23/07/2022)
         */
-        this.asset.fixedAssetId=this.assetSelected.fixedAssetId;
-        this.asset.fixedAssetName=this.assetSelected.fixedAssetName;
-        this.asset.departmentID=this.assetSelected.departmentID;
-        this.asset.departmentCode = this.assetSelected.departmentCode
-        this.asset.departmentName = this.assetSelected.departmentName
-        this.asset.fixedAssetCategoryID=this.assetSelected.fixedAssetCategoryID;
-        this.asset.fixedAssetCategoryCode=this.assetSelected.fixedAssetCategoryCode;
-        this.asset.fixedAssetCategoryName=this.assetSelected.fixedAssetCategoryName;
-        this.asset.quantity=this.assetSelected.quantity;
-        this.asset.cost=this.assetSelected.cost;
-        this.asset.depreciationRate=this.assetSelected.depreciationRate;
-        this.asset.purchaseDate=this.assetSelected.purchaseDate;
-        this.asset.productionDate=this.assetSelected.productionDate;
-        this.asset.trackedYear=this.assetSelected.trackedYear;
-        this.asset.lifeTime=this.assetSelected.lifeTime;
-        this.asset.depreciationValue=this.assetSelected.depreciationValue;
-        this.asset.createdBy=this.assetSelected.createdBy;
-        this.asset.createdDate=this.assetSelected.createdDate;
-        this.asset.modifiedBy=this.assetSelected.modifiedBy;
-        this.asset.modifiedDate=this.assetSelected.modifiedDate;
+        // this.asset.fixedAssetId=this.assetSelected.fixedAssetId;
+        // this.asset.fixedAssetName=this.assetSelected.fixedAssetName;
+        // this.asset.departmentID=this.assetSelected.departmentID;
+        // this.asset.departmentCode = this.assetSelected.departmentCode
+        // this.asset.departmentName = this.assetSelected.departmentName
+        // this.asset.fixedAssetCategoryID=this.assetSelected.fixedAssetCategoryID;
+        // this.asset.fixedAssetCategoryCode=this.assetSelected.fixedAssetCategoryCode;
+        // this.asset.fixedAssetCategoryName=this.assetSelected.fixedAssetCategoryName;
+        // this.asset.quantity=this.assetSelected.quantity;
+        // this.asset.cost=this.assetSelected.cost;
+        // this.asset.depreciationRate=this.assetSelected.depreciationRate;
+        // this.asset.purchaseDate=this.assetSelected.purchaseDate;
+        // this.asset.productionDate=this.assetSelected.productionDate;
+        // this.asset.trackedYear=this.assetSelected.trackedYear;
+        // this.asset.lifeTime=this.assetSelected.lifeTime;
+        // this.asset.depreciationValue=this.assetSelected.depreciationValue;
+        // this.asset.createdBy=this.assetSelected.createdBy;
+        // this.asset.createdDate=this.assetSelected.createdDate;
+        // this.asset.modifiedBy=this.assetSelected.modifiedBy;
+        // this.asset.modifiedDate=this.assetSelected.modifiedDate;
+        // hỏi điệp
+        this.asset = this.assetSelected
         //gọi api lấy dữ liệu
-        axios.get("http://localhost:14537/api/FixedAssets/new-code")
+        HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
             .then(res => {
                 if (this.isDuplicate == true) {
                     this.isFormAdd = true;
@@ -924,7 +941,7 @@ export default {
                 fixedAssetCategoryID: '',
                 pageSize: 15,
                 pageNumber: 1,
-                maxVisibleButtons: 5,
+                maxVisibleButtons: 3,
             },
 
             isShowChangeMess: false,
@@ -938,6 +955,7 @@ export default {
             isWarning: false,
 
             asset: {},
+            arrayInputError: [],
             fixedAssetCategoryName: '',
             departmentName: '',
             errMessWarning: '',

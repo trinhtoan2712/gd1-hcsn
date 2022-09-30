@@ -1,17 +1,13 @@
 <template>
-  <TheNavBar/>
-  <TheContent/>
+  <router-view></router-view>
 </template>
 
 <script>
-import TheNavBar from './components/layout/TheNavBar.vue';
-import TheContent from './components/layout/TheContent.vue';
 
 export default {
   name: 'App',
   components: {
-    TheNavBar, TheContent
-  }
+}
 }
 </script>
 

@@ -84,6 +84,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
+  padding-right: 10px;
 }
 
 .header-arrow {
@@ -183,4 +184,32 @@
   height: 36px;
   overflow: hidden;
   background: no-repeat -454px -102px;
+}
+
+.info-user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-info {
+  display: block;
+  padding: 5px 10px;
+  transition: 0.3s;
+  position: relative;
+  cursor: pointer;
+}
+
+.item-info:hover {
+  background-color: #abdde9;
+}
+
+.dropdown-list-item {
+  position: absolute;
+  width: 100px;
+  right: 16px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 16px 30px rgb(0 0 0 / 16%);
+  top: 46px;
 }

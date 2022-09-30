@@ -1,0 +1,127 @@
+.login-page {
+    width: 100% !important;
+    height: 100vh !important;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(/src/assets/img/Op3-Background-1920.png);
+}
+
+.grid-login {
+    width: 650px;
+    display: flex;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 16px 30px rgb(0 0 0 / 16%);
+    overflow: hidden;
+    height: 460px;
+}
+
+.copy-right {
+    width: 200px;
+    height: 14px;
+    position: absolute;
+    bottom: 15px;
+    color: #000;
+    font-size: 9px !important;
+    left: calc(50% - 100px);
+    text-align: center;
+    color: #fff;
+    font-family: "roboto";
+}
+
+.half-ctn {
+    width: 50% !important;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.img-login {
+    background-image: url(/src/assets/img/img_Login-Local.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.grid-login-normal {
+    text-align: center;
+    width: 80%;
+}
+
+.input-login {
+    width: 100%;
+    height: 38px;
+    padding: 0px 20px;
+    margin-top: 20px;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid #dadce0;
+    font-size: 11px;
+    /* align-items: center; */
+    box-sizing: border-box;
+    background-color: white;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.logo-misa {
+    margin-top: 70px;
+    background-image: url(/src/assets/img/MisaLogo.jpg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px !important;
+    width: 100px;
+}
+
+.button-login-form {
+    width: 100%;
+    height: 38px;
+    border-radius: 4px;
+    font-size: 13px !important;
+    outline: none;
+    border: none;
+    background-color: #1a73e8;
+    color: #fff;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.logo-text {
+    margin-top: 10px;
+    font-size: 11px;
+}
+
+.forgot-password {
+    font-size: 13px;
+    color: #1a73e8;
+    text-decoration: none;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.password-login i {
+    color: #76acea;
+    position: absolute;
+    right: 10px;
+    top: 39px;
+}
+
+.snackbar {
+    visibility: visible;
+    min-width: 200px;
+    background-color: #f65335;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 6px;
+    z-index: 1;
+    top: 50px;
+    font-size: 11px;
+    position: absolute;
+}
