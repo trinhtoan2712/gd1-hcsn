@@ -39,9 +39,8 @@
 
 <script>
 import BaseLoading from '../../base/BaseLoading.vue';
-import { HTTP} from "../../common/TheCommon";
 import { HostApi, NameCookie} from "../../common/TheConst";
-
+import axios from 'axios';
 export default {
     components: { BaseLoading },
     data() {
@@ -59,24 +58,32 @@ export default {
 
     methods: {
         /**
+        * Luu token vào cookie
+        * TVTOAN (02/08/2022)
+        */
+        async setCookie(token) {
+            document.cookie = `${NameCookie.NAME_TOKEN}= ${decodeURIComponent(token)};secure`;
+            document.cookie = `${NameCookie.NAME_AUTH}= true;secure`;
+        },
+        
+        /**
         * Xử lý sự kiện login
         * TVTOAN (02/08/2022)
         */
         login () {
             if(this.dataLogin.userName && this.dataLogin.userPass){
                 this.isShowLoading = true;
-                HTTP.post(`${HostApi.HOST_TOKEN}`, this.dataLogin)
+                axios.post(`${HostApi.HOST_TOKEN}`, this.dataLogin)
                 .then(res => {
                     if(res.status == 200) {
                         this.token = res.data;
                         setTimeout(() => this.isShowLoading = false, 1000);
-                        this.$cookies.set(NameCookie.NAME_TOKEN, this.token);
-                        this.$cookies.set(NameCookie.NAME_AUTH, true);
+                        this.setCookie(this.token);
                         this.$router.push({ path: '/asset' });
                     }else{
                         this.isShowWarningValidate = true;
                         setTimeout(() => this.isShowWarningValidate = false, 3000);
-                        this.$cookies.set(NameCookie.NAME_AUTH, false);
+                        document.cookie = `${NameCookie.NAME_AUTH}=` + NameCookie.EXPIRES;
                         this.isShowLoading = false;
                     }
                 })

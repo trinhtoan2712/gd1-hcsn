@@ -56,7 +56,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.meta.requiresAuth && !getCookie(`${NameCookie.NAME_AUTH}`)) {
+  if (to.meta.requiresAuth && !getCookie(NameCookie.NAME_AUTH)) {
     return {
       path: '/login',
     }

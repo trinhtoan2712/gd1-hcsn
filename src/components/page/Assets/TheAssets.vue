@@ -196,7 +196,7 @@
 </template>
 <script>
 import TheAssetDetail from "./TheAssetsDetail.vue";
-import { formatPrice, formatDate, getCookie, HTTP } from "../../common/TheCommon";
+import { formatPrice, formatDate, getCookie, HTTP} from "../../common/TheCommon";
 import BaseLoading from '../../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
@@ -219,10 +219,7 @@ export default ({
          * Gọi hàm getData để lấy dữ liệu.
          * TVTOAN (31/07/2022)
          */
-        setTimeout(()=> {
-            this.getData(this.paging),2000
-        })
-        
+        this.getData(this.paging)
     },
     mounted: function () {
         /**
@@ -230,6 +227,7 @@ export default ({
          * TVTOAN (31/07/2022)
          */
         try {
+
             this.$refs.txtSearch.focus();
         } catch (error) {
             console.log(error);
@@ -565,19 +563,21 @@ export default ({
         * Gọi api filter.
         * TVTOAN (25/07/2022)
         */
-        async getData(paging) {
+        getData(paging) {
             try {
                 this.isShowLoading = true;
-                //gọi api lấy dữ liệu
-                await HTTP.get(`${HostApi.HOST_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                let config = {
+                    headers: {
+                        Authorization: `Bearer ${getCookie(NameCookie.NAME_TOKEN)}`,
+                    }
+                }
+                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
+                HTTP.get(`${HostApi.HOST_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`, config)
                     .then(data => {
                         this.isShowLoading = true;
                         setTimeout(() => this.isShowLoading = false, 500);
                         this.totalRecord = data.data.totalCount;
-                        this.total.totalCost = 0;
-                        this.total.totalQuantity = 0;
-                        this.total.totalAtrophy = 0;
-                        this.total.totalResidualValue = 0;
+                        this.resetTotal()
                         this.assets = data.data.data;
                         for (let asset of this.assets) {
                             this.total.totalCost += Number(asset.cost);
@@ -589,7 +589,7 @@ export default ({
                         }
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                     });
-                this.pages;
+                    this.pages;
             } catch (error) {
                 console.log(error);
             }
@@ -622,6 +622,17 @@ export default ({
             } catch (error) {
                 console.log(error);
             }
+        },
+
+        /**
+        * Hàm reset total về 0
+        * TVTOAN (02/08/2022)
+        */
+        resetTotal () {
+            this.total.totalCost = 0;
+            this.total.totalQuantity = 0;
+            this.total.totalAtrophy = 0;
+            this.total.totalResidualValue = 0;
         },
 
         /**

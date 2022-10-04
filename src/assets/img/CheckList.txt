@@ -1,0 +1,106 @@
+Trần anh Tuấn:
+- Chưa thêm sửa xóa được
+- Chưa có autoID
+- Margin trắng thừa
+- Style lại combobox
+- Tooltip xấu
+- Chưa lọc được 
+- Chưa ẩn combobox khi blur
+- Chưa expand được sidebar
+- Chưa đủ tooltip thêm, sửa, xóa
+- Số lượng bản ghi trên một trang chưa chọn được, style bỏ border đi
+- Bổ sung border top cho paging
+- Tách summary sang dòng riêng
+- Đổi lại font chữ sang roboto
+- CHo phép gõ ngày tháng năm
+- Checkbox chọn all chưa hoạt động
+
+Trịnh Văn Toàn
+- Chưa thêm sửa xóa được
+- Chưa có autoID
+- Số lượng bản ghi trên một trang chưa chọn được, style bỏ border đi
+- Bổ sung border top cho paging
+- Tách summary sang dòng riêng
+- Chưa đủ tooltip thêm, sửa, xóa
+- Đổi lại font chữ sang roboto
+- Selected đậm
+- Chưa shift 
+- Khi mở form thì nền tối đi
+- bỏ border xung quanh table 
+- bỏ 1 border table tr
+- chưa tự sinh dấu ngăn cách input number
+- style lại input date và validate nhập ngày
+- chưa validate, cho đậm input disable
+- hover đổi màu text
+- btn X quá to, dóng thẳng input
+
+Nguyễn Thị Mỹ Linh
+- Chưa thêm sửa xóa được
+- Chưa có autoID
+- Chưa lọc được 
+- Số lượng bản ghi trên một trang chưa chọn được, style bỏ border đi
+- Bổ sung border top cho paging
+- Đổi lại font chữ sang roboto
+- Checkbox chọn all chưa hoạt động
+- Chưa shift 
+- chưa tự sinh dấu ngăn cách input number
+- style lại input date và validate nhập ngày
+- chưa validate, cho đậm input disable
+- btn X quá to, dóng thẳng input
+- chiều cao các dòng table cao
+- stt căn giữa
+- xử lý nếu nan thì để trắng
+- scroll table quá to
+- margin  bottom quá to
+- combobox paging xấu
+- tách paging
+
+Hoàng Ngọc Sinh
+- Chưa thêm sửa xóa được
+- Chưa có autoID
+- Margin trắng thừa
+- Chưa ẩn combobox khi blur
+- Chưa expand được sidebar
+- CHo phép gõ ngày tháng năm
+- Checkbox chọn all chưa hoạt động
+- Chưa lọc được 
+- Số lượng bản ghi trên một trang chưa chọn được, style bỏ border đi
+- Bổ sung border top cho paging
+- Đổi lại font chữ sang roboto
+- chưa tự sinh dấu ngăn cách input number
+- style lại input date và validate nhập ngày
+- chưa validate, cho đậm input disable
+- btn X quá to, dóng thẳng input
+- chiều cao các dòng table cao
+- stt căn giữa
+- Bổ sung border top cho paging
+- Tách summary sang dòng riêng
+- Khi mở form thì nền tối đi
+- cho màu cho icon
+- Độ rộng tooltip quá to
+- chưa checkbox
+- chỉnh sửa lại combobox trong dialog
+- năm theo dõi chưa có disable
+- border table còn xấu
+- combobox paging xa 
+- cho border radius của icon tròn thêm
+- margin cho combobox
+- 
+Bùi Quang Điệp
+- Chưa thêm sửa xóa được
+- Chưa ẩn combobox khi blur
+- Chưa expand được sidebar
+- CHo phép gõ ngày tháng năm
+- Chưa lọc được 
+- style bỏ border đi
+- Bổ sung border top cho paging
+- Đổi lại font chữ sang roboto
+- tooltip nhỏ bỏ mũi tên
+- Tách summary sang dòng riêng
+- border cho cbb dialog màu header nhạt
+border bao table nhạt đi
+- combobox paging xa 
+- cho nhỏ icon trong table lại
+- dialog warning nhỏ đi
+
+

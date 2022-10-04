@@ -79,9 +79,6 @@ export function getCookie(name) {
     }
 }
 
-function getToken() {
-    return getCookie(NameCookie.NAME_TOKEN);
-}
 
 /**
 * Hàm goi api bang axios
@@ -90,6 +87,7 @@ function getToken() {
 export const HTTP = axios.create({
   baseURL: `${HostApi.HOST_FIXED_ASSET}`,
   headers: {
-    Authorization: `Bearer ` + getToken()
+    Authorization: `Bearer ` + getCookie(NameCookie.NAME_TOKEN),
+    httpOnly: true,
   }
 })

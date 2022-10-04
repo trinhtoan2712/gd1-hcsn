@@ -588,7 +588,7 @@ export default {
                         this.isShowLoading = true;
                         const dataInsert = {
                             "fixedAssetId": uuid.v1(),
-                            "fixedAssetCode": asset.fixedAssetCode,
+                            "fixedAssetCode": asset.fixedAssetCode.toString(),
                             "fixedAssetName": asset.fixedAssetName,
                             "departmentID": asset.departmentID,
                             "fixedAssetCategoryID": asset.fixedAssetCategoryID,
