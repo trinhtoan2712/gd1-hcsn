@@ -9,8 +9,9 @@ import BaseComboboxForm from './components/base/BaseComboboxForm.vue'
 import Login from './components/page/Login/TheLogin.vue'
 import Home from './components/page/Home/TheHome.vue'
 import {getCookie} from './components/common/TheCommon'
-import {NameCookie} from './components/common/TheConst'
+import {Host, NameCookie} from './components/common/TheConst'
 import VueCookies from 'vue-cookies'
+import axios from 'axios'
 
 // const routers = [
 //     { path: "/assets", component: AssetList},
@@ -62,6 +63,22 @@ router.beforeEach((to) => {
     }
   }
 })
+
+// var AUTH_TOKEN ='Bearer ' + getCookie(NameCookie.NAME_TOKEN)
+// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+// axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.baseURL = Host.BASE_URL;
+
+axios.interceptors.request.use(
+  config => {
+    const token = getCookie(NameCookie.NAME_TOKEN);
+    const auth = token ? `Bearer ${token}` : '';
+    config.headers.common['Authorization'] = auth;
+    return config;
+  },
+  error => Promise.reject(error),
+);
+
 
 const app = createApp(App);
 app.use(router).mount('#app');

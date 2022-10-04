@@ -211,11 +211,12 @@
     <BaseLoading v-if="isShowLoading"></BaseLoading>
 </template>
 <script>
-import { formatPrice, formatDate, formatNumber, HTTP } from "../../common/TheCommon"
+import { formatPrice, formatDate, formatNumber } from "../../common/TheCommon"
+import {EndPoint} from "../../common/TheConst"
 import Datepicker from 'vuejs3-datepicker';
 import BaseLoading from '../../base/BaseLoading.vue'
 import { uuid } from 'vue-uuid'
-import { HostApi} from "../../common/TheConst";
+import axios from "axios";
 
 export default {
     components: { BaseLoading, Datepicker },
@@ -605,7 +606,7 @@ export default {
                             "productionDate": asset.productionDate,
                             "depreciationValue": formatNumber(asset.depreciationValue)
                         };
-                        HTTP.post(`${HostApi.HOST_FIXED_ASSET}`, dataInsert)
+                        axios.post(`${EndPoint.END_POINT_FIXED_ASSET}`, dataInsert)
                             .then(res => {
                                 if (res.status == '201') {
                                     this.resApi = res;
@@ -621,7 +622,7 @@ export default {
                             }).catch((error) => {
                                 if (error.response.data.errorCode == 3) {
                                     this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
-                                    HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
+                                    axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
                                         .then(res => { this.asset.fixedAssetCode = res.data });
                                 }
                                 if (error.response.data.errorCode == 2) {
@@ -655,7 +656,7 @@ export default {
                                 "productionDate": asset.productionDate,
                                 "depreciationValue": formatNumber(asset.depreciationValue)
                             };
-                            HTTP.put(`${HostApi.HOST_FIXED_ASSET}/${asset.fixedAssetId}`, dataUpdate)
+                            axios.put(`${EndPoint.END_POINT_FIXED_ASSET}/${asset.fixedAssetId}`, dataUpdate)
                                 .then(res => {
                                     if (res.status == '200') {
                                         this.resApi = res;
@@ -670,7 +671,7 @@ export default {
                                 }).catch((error) => {
                                     if (error.response.data.errorCode == 3) {
                                         this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
-                                        HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
+                                        axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
                                             .then(res => { this.asset.fixedAssetCode = res.data });
                                     }
                                     if (error.response.data.errorCode == 2) {
@@ -911,7 +912,7 @@ export default {
         // hỏi điệp
         this.asset = this.assetSelected
         //gọi api lấy dữ liệu
-        HTTP.get(`${HostApi.HOST_FIXED_ASSET}/new-code`)
+        axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
             .then(res => {
                 if (this.isDuplicate == true) {
                     this.isFormAdd = true;

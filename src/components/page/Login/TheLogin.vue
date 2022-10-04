@@ -39,7 +39,7 @@
 
 <script>
 import BaseLoading from '../../base/BaseLoading.vue';
-import { HostApi, NameCookie} from "../../common/TheConst";
+import {  EndPoint, NameCookie} from "../../common/TheConst";
 import axios from 'axios';
 export default {
     components: { BaseLoading },
@@ -73,7 +73,7 @@ export default {
         login () {
             if(this.dataLogin.userName && this.dataLogin.userPass){
                 this.isShowLoading = true;
-                axios.post(`${HostApi.HOST_TOKEN}`, this.dataLogin)
+                axios.post(EndPoint.END_POINT_TOKEN, this.dataLogin)
                 .then(res => {
                     if(res.status == 200) {
                         this.token = res.data;

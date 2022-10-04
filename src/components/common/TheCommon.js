@@ -1,5 +1,4 @@
-import { StyleFormat, HostApi, NameCookie} from "./TheConst"
-import axios from 'axios';
+import { StyleFormat} from "./TheConst"
 
 /**
 * Hàm format số tiền (ngăn cách phần nghìn)
@@ -78,16 +77,3 @@ export function getCookie(name) {
         console.log(error);
     }
 }
-
-
-/**
-* Hàm goi api bang axios
-* TVTOAN (29/09/2022)
-*/
-export const HTTP = axios.create({
-  baseURL: `${HostApi.HOST_FIXED_ASSET}`,
-  headers: {
-    Authorization: `Bearer ` + getCookie(NameCookie.NAME_TOKEN),
-    httpOnly: true,
-  }
-})

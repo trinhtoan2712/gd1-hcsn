@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="content-table" :class="{tablenodatasize: assets.length < 1}">
-        <table class="table-data">
+        <table class="table-data noselect">
             <thead class="table-header" v-if="assets.length > 0">
                 <tr>
                     <th>
@@ -196,12 +196,12 @@
 </template>
 <script>
 import TheAssetDetail from "./TheAssetsDetail.vue";
-import { formatPrice, formatDate, getCookie, HTTP} from "../../common/TheCommon";
+import { formatPrice, formatDate, getCookie} from "../../common/TheCommon";
 import BaseLoading from '../../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
-import { HostApi, NameCookie } from "../../common/TheConst";
-
+import { EndPoint, NameCookie, FullUrl } from "../../common/TheConst";
+import axios from "axios";
 
 export default ({
     directives: {
@@ -566,13 +566,8 @@ export default ({
         getData(paging) {
             try {
                 this.isShowLoading = true;
-                let config = {
-                    headers: {
-                        Authorization: `Bearer ${getCookie(NameCookie.NAME_TOKEN)}`,
-                    }
-                }
                 //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
-                HTTP.get(`${HostApi.HOST_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`, config)
+                axios.get(`${EndPoint.END_POINT_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
                         this.isShowLoading = true;
                         setTimeout(() => this.isShowLoading = false, 500);
@@ -644,7 +639,7 @@ export default ({
                 this.isShowLoading = true;
                 if (this.selected.length > 0) {
                     if (this.selected.length == 1) {
-                        HTTP.delete(`${HostApi.HOST_FIXED_ASSET}/${this.selected[0]}`)
+                        axios.delete(`${EndPoint.END_POINT_FIXED_ASSET}/${this.selected[0]}`)
                             .then(res => {
                                 if (res.status == 200) {
                                     this.isDelete = false;
@@ -674,7 +669,7 @@ export default ({
                             },
                             body: JSON.stringify(body)
                         };
-                        fetch(`${HostApi.HOST_FIXED_ASSET}`, requestOptions)
+                        fetch(`${FullUrl.URL_FIXED_ASSET}`, requestOptions)
                             .then(res => {
                                 if (res.status == 200) {
                                     this.isDelete = false;

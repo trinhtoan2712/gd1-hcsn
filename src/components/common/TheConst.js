@@ -6,10 +6,18 @@ export const StyleFormat = {
     CHARACTER_DATE: "/",
 };
 
-export const HostApi = {
-    HOST_FIXED_ASSET: "http://localhost:14537/api/FixedAssets",
-    HOST_TOKEN: "http://localhost:14537/api/token",
+export const FullUrl = {
+    URL_FIXED_ASSET: "http://localhost:14537/api/FixedAssets/"
+}
+
+export const EndPoint = {
+    END_POINT_FIXED_ASSET: "api/FixedAssets",
+    END_POINT_TOKEN: "api/token",
 };
+
+export const Host = {
+    BASE_URL: "http://localhost:14537/"
+}
 
 export const NameCookie = {
     NAME_TOKEN: "Token",
