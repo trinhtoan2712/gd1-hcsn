@@ -99,6 +99,8 @@
                         <div @click="duplicateAssets(asset)"
                             class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
                                 bản </span></div>
+                        <div @click="showDialogDeleteList(assetCurrent)" class="table-delete icon-small icon-pading"><span
+                        class="tooltip">Xóa (Delete)</span></div>
                     </td>
                 </tr>
                 <tr>
@@ -358,7 +360,7 @@ export default ({
         },
 
         /**
-        * Mở dialog thêm mới.
+        * Phím tắt.
         * TVTOAN (08/08/2022)
         */
         eventKeyPage(e) {
@@ -575,13 +577,13 @@ export default ({
                         this.resetTotal()
                         this.assets = data.data.data;
                         for (let asset of this.assets) {
-                            this.total.totalCost += Number(asset.cost);
-                            this.total.totalQuantity += Number(asset.quantity);
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
-                            this.total.totalAtrophy += asset.atrophy;
-                            this.total.totalResidualValue += asset.residualValue;
                         }
+                        this.total.totalCost = data.data.totalCost;
+                        this.total.totalQuantity = data.data.totalQuantity;
+                        this.total.totalAtrophy += data.data.totalAtrophy;
+                        this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                     });
                     this.pages;

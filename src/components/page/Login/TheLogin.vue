@@ -77,9 +77,9 @@ export default {
                 .then(res => {
                     if(res.status == 200) {
                         this.token = res.data;
-                        setTimeout(() => this.isShowLoading = false, 1000);
                         this.setCookie(this.token);
                         this.$router.push({ path: '/asset' });
+                        this.isShowLoading = false;
                     }else{
                         this.isShowWarningValidate = true;
                         setTimeout(() => this.isShowWarningValidate = false, 3000);

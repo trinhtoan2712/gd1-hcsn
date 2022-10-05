@@ -20,10 +20,10 @@
                 <span class="tooltip">Tài sản</span>
             </li>
             <li>
-                <router-link to="/customer">
+                <a href="#">
                     <div class="icon-assets-htdb icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tài sản HT-ĐB</span>
-                </router-link>
+                </a>
                 <span class="tooltip">Tài sản HT-ĐB</span>
             </li>
             <li>

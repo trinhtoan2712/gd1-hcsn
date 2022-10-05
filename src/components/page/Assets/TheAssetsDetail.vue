@@ -116,7 +116,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
                         <label>Giá trị hao mòn năm <span class="input--required">*</span></label>
                         <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text"
-                        maxlength="18"
+                        maxlength="18"  @input="formatInputNumber()"
                             class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
                             @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="{'border-red': !formValid.depreciationValue}">
                             <span v-if="!formValid.depreciationValue" class="tooltip">Giá trị hao mòn không hợp lệ</span>
@@ -290,8 +290,8 @@ export default {
         */
         formatInputNumber() {
             try {
-                this.asset.cost = formatPrice(this.asset.cost)
-                this.asset.depreciationValue = formatPrice(this.asset.depreciationValue)
+                this.asset.cost = formatPrice(this.assetSelected.cost)
+                this.asset.depreciationValue = formatPrice(this.assetSelected.depreciationValue)
             } catch (error) {
                 console.log(error);
             }
@@ -787,6 +787,7 @@ export default {
             this.depreciationValueChange();
             if (this.isFormAdd == false) {
                 if (newValue != oldValue) {
+                    this.asset.cost = formatPrice(newValue)
                     this.isChange = true;
                 } else {
                     this.isChange = false;
@@ -885,36 +886,43 @@ export default {
     },
 
     created() {
+        if(this.assetSelected.fixedAssetCode != '') {
+            axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/${this.assetSelected.fixedAssetId}`)
+            .then(res => {
+                let assetCur = res.data[0];
+                this.asset.fixedAssetId = assetCur.FixedAssetID,
+                this.asset.fixedAssetCode = assetCur.FixedAssetCode,
+                this.asset.fixedAssetName = assetCur.FixedAssetName,
+                this.asset.departmentID = assetCur.DepartmentID,
+                this.asset.fixedAssetCategoryID = assetCur.FixedAssetCategoryID,
+                this.asset.purchaseDate = assetCur.PurchaseDate,
+                this.asset.cost = formatPrice(assetCur.Cost)
+                this.asset.depreciationValue = formatPrice(assetCur.DepreciationValue)
+                this.asset.quantity = assetCur.Quantity,
+                this.asset.depreciationRate = assetCur.DepreciationRate,
+                this.asset.trackedYear = assetCur.TrackedYear,
+                this.asset.lifeTime = assetCur.LifeTime,
+                this.asset.createdBy = assetCur.CreatedBy,
+                this.asset.createdDate = assetCur.CreatedDate,
+                this.asset.modifiedBy = assetCur.ModifiedBy,
+                this.asset.modifiedDate = assetCur.ModifiedDate,
+                this.asset.productionDate = assetCur.ProductionDate,
+
+                this.asset.departmentName = this.assetSelected.departmentName
+                this.asset.departmentCode = this.assetSelected.departmentCode
+                this.asset.fixedAssetCategoryName = this.assetSelected.fixedAssetCategoryName
+                this.asset.fixedAssetCategoryCode = this.assetSelected.fixedAssetCategoryCode
+            })
+        }else {
+            this.asset = this.assetSelected
+        }
         /**
         * Gọi api new code để sinh mã tự động
         * TVTOAN (23/07/2022)
         */
-        // this.asset.fixedAssetId=this.assetSelected.fixedAssetId;
-        // this.asset.fixedAssetName=this.assetSelected.fixedAssetName;
-        // this.asset.departmentID=this.assetSelected.departmentID;
-        // this.asset.departmentCode = this.assetSelected.departmentCode
-        // this.asset.departmentName = this.assetSelected.departmentName
-        // this.asset.fixedAssetCategoryID=this.assetSelected.fixedAssetCategoryID;
-        // this.asset.fixedAssetCategoryCode=this.assetSelected.fixedAssetCategoryCode;
-        // this.asset.fixedAssetCategoryName=this.assetSelected.fixedAssetCategoryName;
-        // this.asset.quantity=this.assetSelected.quantity;
-        // this.asset.cost=this.assetSelected.cost;
-        // this.asset.depreciationRate=this.assetSelected.depreciationRate;
-        // this.asset.purchaseDate=this.assetSelected.purchaseDate;
-        // this.asset.productionDate=this.assetSelected.productionDate;
-        // this.asset.trackedYear=this.assetSelected.trackedYear;
-        // this.asset.lifeTime=this.assetSelected.lifeTime;
-        // this.asset.depreciationValue=this.assetSelected.depreciationValue;
-        // this.asset.createdBy=this.assetSelected.createdBy;
-        // this.asset.createdDate=this.assetSelected.createdDate;
-        // this.asset.modifiedBy=this.assetSelected.modifiedBy;
-        // this.asset.modifiedDate=this.assetSelected.modifiedDate;
-        // hỏi điệp
-        this.asset = this.assetSelected
-        //gọi api lấy dữ liệu
         axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
             .then(res => {
-                if (this.isDuplicate == true) {
+                if (this.title == 'Nhân bản tài sản') {
                     this.isFormAdd = true;
                     this.asset.fixedAssetCode = res.data
                     this.isValidCbb = true;
