@@ -1,0 +1,52 @@
+.header-masterdetail {
+    height: 54px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-masterdetail-right {
+    display: flex;
+}
+
+.btn-unknow {
+    background-color: #fff;
+    outline: none;
+    border: none;
+    width: 70px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-unknow-icon1 {
+    background: no-repeat -110px -420px;
+	width: 20px;
+	height: 15px;
+}
+
+.btn-unknow-icon2 {
+	background: no-repeat -158px -249px;
+	width: 12px;
+	height: 7px;
+}
+
+.pading-left {
+    padding-left: 16px;
+}
+.pading-right {
+    padding-right: 16px;
+}
+.pading-top {
+    padding-top: 16px;
+}
+.pading-bottom {
+    padding-bottom: 16px !important;
+}
+
+.main-masterdetail {
+
+}

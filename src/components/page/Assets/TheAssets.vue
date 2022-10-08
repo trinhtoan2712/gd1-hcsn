@@ -22,7 +22,7 @@
         </div>
         <div class="content-option-right">
             <button class="btn" id="btnAdd" @click="showDetail(true)">
-                <div class="btn-add button__icon">Thêm tài sản <span class="tooltip">Ctrl + I</span></div>
+                <div class="btn-add">Thêm tài sản <span class="tooltip">Ctrl + I</span></div>
             </button>
             <div class="btn-export-excel icon-content"><span class="tooltip">Xuất file excel</span> </div>
             <div class="btn-delete icon-content" @click="showDialogDeleteList(assetCurrent)"><span

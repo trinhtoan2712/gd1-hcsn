@@ -13,23 +13,43 @@
                 <span class="tooltip">Tổng quan</span>
             </li>
             <li>
-                <router-link to="/asset">
+                <router-link to="/asset" class="btn-link" @click="showSideNav">
                     <div class="icon-assets icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tài sản</span>
+                    <div class="icon-drop icon-content"></div>
                 </router-link>
+                <ul class="sidenav-collapse" :class = "{show: isShowSideNav}">
+                    <li>
+                        <router-link to="/masterdetail" class="sidenav-collapse-item">
+                            <span style="color: #fff" class="">Ghi tăng</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <a to="/" class="sidenav-collapse-item">
+                            <span style="color: #fff" class="">Thay đổi thông tin</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a to="/" class="sidenav-collapse-item">
+                            <span style="color: #fff" class="">Đánh giá lại</span>
+                        </a>
+                    </li>
+                </ul>
                 <span class="tooltip">Tài sản</span>
             </li>
             <li>
-                <a href="#">
+                <router-link to="/" class="btn-link">
                     <div class="icon-assets-htdb icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tài sản HT-ĐB</span>
-                </a>
+                    <div class="icon-drop icon-content"></div>
+                </router-link>
                 <span class="tooltip">Tài sản HT-ĐB</span>
             </li>
             <li>
-                <a href="#">
+                <a href="#" class="btn-link">
                     <div class="icon-tool icon-nav icon-navbar-active"></div>
                     <span class="links_name">Công cụ dụng cụ</span>
+                    <div class="icon-drop icon-content"></div>
                 </a>
                 <span class="tooltip">Công cụ dụng cụ</span>
             </li>
@@ -41,16 +61,18 @@
                 <span class="tooltip">Danh mục</span>
             </li>
             <li>
-                <a href="#">
+                <a href="#" class="btn-link">
                     <div class="icon-search-nav icon-nav icon-navbar-active"></div>
                     <span class="links_name">Tra cứu</span>
+                    <div class="icon-drop icon-content"></div>
                 </a>
                 <span class="tooltip">Tra cứu</span>
             </li>
             <li>
-                <a href="#">
+                <a href="#" class="btn-link">
                     <div class="icon-report icon-nav icon-navbar-active"></div>
                     <span class="links_name">Báo cáo</span>
+                    <div class="icon-drop icon-content"></div>
                 </a>
                 <span class="tooltip">Báo cáo</span>
             </li>
@@ -70,9 +92,18 @@ export default ({
     data() {
         return {
             isShowNavBar: false,
+            isShowSideNav:false
         }
     },
     methods: {
+        showSideNav() {
+            try {
+                this.isShowSideNav = !this.isShowSideNav
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         //hàm ẩn hiện navbar
         btnShowNavBarOnClick() {
             try {

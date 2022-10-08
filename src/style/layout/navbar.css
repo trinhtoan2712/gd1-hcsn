@@ -16,6 +16,11 @@
   padding-left: 50px;
 }
 
+.btn-link {
+  display: flex;
+  justify-content: space-between;
+}
+
 .side-bar .logo-details {
   display: flex;
   justify-content: center;
@@ -122,16 +127,34 @@
   border-radius: 6px;
 }
 
-.router-link-active{
-  background: #1aa4c8;
-}
-
 .router-link-active .icon-nav{
   opacity: 1;
 }
 
 .side-bar li a:hover {
   background: #1aa4c8;
+}
+
+.router-link-active{
+  background: #1aa4c8;
+}
+
+.sidenav-collapse {
+  display: none;
+  cursor: pointer;
+  border-radius: 6px;
+  opacity: 0.5;
+  padding: unset !important;
+  width: 100%;
+}
+
+.sidenav-collapse .router-link-active {
+  background: unset !important;
+}
+
+.open .show {
+  display: flex !important;
+  flex-direction: column;
 }
 
 .side-bar li a .links_name {
@@ -147,6 +170,23 @@
 .side-bar.open li a .links_name {
   opacity: 1;
   pointer-events: auto;
+}
+
+.side-bar li a .icon-drop {
+  color: rgb(209, 203, 203);
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+}
+
+.side-bar.open li a .icon-drop {
+  opacity: 1;
+  pointer-events: auto;
+  right:0px; 
+  padding-right: 10px;
 }
 
 .side-bar li a:hover .links_name,
@@ -185,4 +225,10 @@
   border-radius: 5px;
   transition: all 1s ease;
   opacity: unset !important;
+}
+
+.icon-drop {
+  background:no-repeat -158px -293px;
+	width: 12px;
+	height: 7px;
 }

@@ -105,12 +105,11 @@ input[type="date"] {
   background-color: #ffffff;
   border-radius: 3px;
   box-shadow:0 2px 6px rgba(0, 0, 0, .16);
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   overflow: hidden;
   margin: 0px 10px;
-  background: no-repeat -278px -102px;
-
+  background: no-repeat -280px -103px;
 }
 
 .btn-delete {
@@ -118,10 +117,10 @@ input[type="date"] {
   background-color: #ffffff;
   border-radius: 3px;
   box-shadow:0 2px 6px rgba(0, 0, 0, .16);
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   overflow: hidden;
-  background: no-repeat -454px -102px;
+  background: no-repeat -456px -103px;
 }
 
 /* ------------- CONTENT-TABLE ------------ */

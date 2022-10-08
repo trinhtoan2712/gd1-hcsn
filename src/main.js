@@ -12,6 +12,7 @@ import {getCookie} from './components/common/TheCommon'
 import {Host, NameCookie} from './components/common/TheConst'
 import VueCookies from 'vue-cookies'
 import axios from 'axios'
+import MasterDetail from './components/page/MasterDetail/TheMasterDetail.vue'
 
 // const routers = [
 //     { path: "/assets", component: AssetList},
@@ -46,6 +47,12 @@ const routers = [
           component: AssetList,
           meta: { requiresAuth: true }
         },
+        {
+          path: '/masterdetail',
+          name: 'MasterDetail',
+          component: MasterDetail,
+          meta: { requiresAuth: true }
+        }
       ]
     }
 ]
