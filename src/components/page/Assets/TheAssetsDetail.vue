@@ -2,7 +2,7 @@
     <div id="dlgAssetDetail" class="dialog" 
     @keydown.enter.prevent="btnSaveOnClick(asset)"
     @keyup.esc.prevent="showDetailFunction(false)">
-        <div class="frame_dialog">
+        <div class="frame_dialog-input">
             <div class="dialog_header">
                 <div class="dialog_header-left">
                     <h3 style="margin: unset">{{title}}</h3>

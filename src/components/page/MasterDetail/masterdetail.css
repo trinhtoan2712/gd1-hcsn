@@ -24,29 +24,252 @@
 
 .btn-unknow-icon1 {
     background: no-repeat -110px -420px;
-	width: 20px;
-	height: 15px;
+    width: 20px;
+    height: 15px;
 }
 
 .btn-unknow-icon2 {
-	background: no-repeat -158px -249px;
-	width: 12px;
-	height: 7px;
+    background: no-repeat -158px -249px;
+    width: 12px;
+    height: 7px;
 }
 
 .pading-left {
     padding-left: 16px;
 }
+
 .pading-right {
     padding-right: 16px;
 }
+
 .pading-top {
     padding-top: 16px;
 }
+
 .pading-bottom {
     padding-bottom: 16px !important;
 }
 
-.main-masterdetail {
+.main-masterdetail {}
 
+.header-table {
+    display: flex;
+    flex-direction: row;
+    padding: 8px 0px;
+    justify-content: space-between;
+}
+
+.form-search {
+    background-color: #ffffff;
+    border-radius: 2.5px;
+    border: 1px solid #afafaf;
+    max-width: 269px;
+    height: 27px;
+    overflow: hidden;
+    display: flex;
+}
+
+.form-search__icon {
+    background: no-repeat -166px -10px;
+    width: 13px;
+    cursor: pointer;
+    height: 14px;
+    padding-right: 14px;
+    padding-bottom: 12px;
+    position: absolute;
+}
+
+.form-search__input {
+    font-size: 13px;
+    font-style: italic;
+    border: none;
+    outline: none;
+    padding-left: 35px;
+
+}
+
+.form-option-base {
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.icon-export {
+    background: no-repeat -238px -48px;
+    width: 14px;
+    height: 13px;
+}
+
+.icon-3dot {
+    background: no-repeat -275px -18px;
+    width: 3px;
+    height: 10px;
+}
+
+.container-table {
+    background-color: #ffffff;
+    overflow: hidden;
+    font-size: 13px;
+    overflow: auto;
+    height: 74vh;
+}
+
+.data-table {
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+.data-table__thead {
+    position: sticky;
+    cursor: context-menu;
+    top: 0;
+    background-color: rgb(240, 239, 239);
+    color: #000;
+    height: 38px;
+    border-bottom: 0.5px solid rgb(203 200 200);
+}
+
+.data-table__thead th {
+    font-weight: 700;
+    padding-left: 5px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.data-table__thead tr input,
+.data-table__tbody tr input {
+    margin-left: 5px;
+}
+
+.data-table__tbody td {
+    padding-left: 5px;
+    height: 32.5px !important;
+    white-space: nowrap;
+}
+
+.data-table__tbody tr:hover {
+    background-color: rgba(75, 173, 198, 0.2);
+}
+
+.data-table__tbody tr {
+    cursor: pointer;
+    border-bottom: 0.5px solid rgb(210, 203, 203);
+}
+
+.data-table__tbody tr:hover .option-table {
+    opacity: 1;
+}
+
+.tr-tbody {
+    cursor: default;
+}
+
+.footer-table {
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    font-size: 11px;
+    border-top: unset !important;
+    border: 0.5px solid #afafaf;
+    border-radius: 0px 0px 3.5px 3.5px;
+}
+
+.footer-table:hover {
+    background-color: #fff !important;
+}
+
+.footer-table .page-record select {
+    background-color: #ffffff;
+    border-radius: 2.625px;
+    border: 1px solid #afafaf;
+    width: 59px;
+    height: 25px;
+    overflow: hidden;
+    font-size: 11px;
+    padding: 0px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.summary-table {
+    background-color: #fff;
+    position: sticky !important;
+    bottom: 0 !important;
+    font-size: 11px;
+    height: 30px;
+    border-bottom: unset !important;
+}
+  
+.summary-table:hover {
+    background-color: #fff !important;
+}
+
+.paging-table {
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 4px 0px;
+    border-bottom: 0.5px solid rgb(181, 177, 177);
+}
+
+.footer-table table {
+    border-top: 0.5px solid rgb(210, 206, 206);
+    border-bottom: 0.5px solid rgb(210, 206, 206);
+    width: 100%;
+}
+
+.table-detail__header {
+    padding: 6px 0px;
+}
+
+.header-table-left {
+    padding-left: 12px;
+}
+
+.header-table-base {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.form-search-table-base {
+    background-color: #ffffff;
+    border-radius: 2.5px;
+    border: 1px solid #afafaf;
+    max-width: 269px;
+    height: 27px;
+    overflow: hidden;
+    display: flex;
+}
+
+.form-option {
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+@media only screen and (width: 1024px) {
+    .container-table {
+        background-color: #ffffff;
+        overflow: hidden;
+        font-size: 13px;
+        overflow: auto;
+        height: 79vh;
+    }
+}
+
+@media only screen and (width: 1366px) {
+    .container-table {
+        background-color: #ffffff;
+        overflow: hidden;
+        font-size: 13px;
+        overflow: auto;
+        height: 79vh;
+    }
 }

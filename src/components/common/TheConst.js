@@ -11,7 +11,9 @@ export const FullUrl = {
 }
 
 export const EndPoint = {
+    END_POINT_FIXED_ASSET_INCREMENT_DETAIL: "getOne/filter",
     END_POINT_FIXED_ASSET: "api/FixedAssets",
+    END_POINT_FIXED_ASSET_INCREMENT: "filter",
     END_POINT_TOKEN: "api/token",
 };
 
