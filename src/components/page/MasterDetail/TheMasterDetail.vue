@@ -6,7 +6,7 @@
             </div>
             <div class="header-masterdetail-right">
                 <button class="btn" style="margin-right:16px" id="btnAdd" @click="showDetail(true)">
-                    <div class="btn-add" >Thêm </div>
+                    <div class="btn-add">Thêm </div>
                     <!-- <span class="tooltip">Ctrl + I</span> -->
                 </button>
                 <button class="btn-unknow" id="">
@@ -18,7 +18,6 @@
         </div>
         <splitpanes class="main-masterdetail pading-left pading-right pading-bottom default-theme" horizontal
             style="height: 82vh; width: 97%;">
-            <BaseLoading></BaseLoading>
             <pane style="background: #fff">
                 <div class="header-table">
                     <div class="header-table-left">
@@ -53,7 +52,8 @@
                         </thead>
                         <tbody class="data-table__tbody">
                             <tr class="tr-tbody" v-for="(assetIncrement, index ) in assetsIncrement"
-                                :key="assetIncrement.voucherID" @click="btnRowActiveOnClick(assetIncrement, $event, index)"
+                                @dblclick="rowOnDblClick(assetIncrement)" :key="assetIncrement.voucherID"
+                                @click="btnRowActiveOnClick(assetIncrement, $event, index)"
                                 :class="{'bgblue': checkActive(assetIncrement.voucherID) }">
                                 <td><input type="checkbox" name="" id="" class="ckb ckb-primary"></td>
                                 <td style="text-align:center"> {{index + 1}} </td>
@@ -65,12 +65,14 @@
                                     <p>{{ assetIncrement.description }}</p>
                                 </td>
                                 <td class="table-option">
-                                    <div class="table-eidt icon-pading icon-small"><span class="tooltip">Sửa (Ctrl +
+                                    <div class="table-eidt icon-pading icon-small"
+                                        @click="rowOnDblClick(assetIncrement)"><span class="tooltip">Sửa (Ctrl +
                                             C)</span></div>
                                     <div class="table-replication icon-content icon-pading icon-small"><span
                                             class="tooltip">Nhân
                                             bản </span></div>
-                                    <div class="table-delete icon-small icon-pading"><span class="tooltip">Xóa
+                                    <div class="table-delete icon-small icon-pading"
+                                        @click="showDialogDeleteList(assetIncrement)"><span class="tooltip">Xóa
                                             (Delete)</span></div>
                                 </td>
                             </tr>
@@ -120,13 +122,57 @@
                     <div class="table-detail__header">
                         <span class="content-title">Danh sách tài sản</span>
                     </div>
-                    <TableBase v-if="isShowDetail" :voucherID="this.selected[0]"/>
+                    <TableBase v-if="isShowDetail" :voucherID="this.selected[0]" />
                 </div>
             </pane>
         </splitpanes>
         <div class="asset-masterdetail"></div>
     </div>
-    <TheDialogMasterDetail v-if="isShowDialogDetail" :showDetailChil="isShowDialogDetail" :showDetailFunction="showDetail" :title="title"/>
+    <div v-if="isDelete" id="dlg-warning" class="dialog dialog--warning">
+        <div class="dialog__content ">
+            <div class="dialog__container">
+                <div class="icon-warning-dialog icon-content"></div>
+                <div class="dialog__body">
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <div class="dialog__msg-item">
+                        <span v-html="errMessWarning"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog__footer">
+                <button @click="btnDeleteOnClick" type="submit" id="btnSave" class="btn-dialog btn"
+                    style="color: #fff">Xóa</button>
+                <button id="btnClose" @click="hideDialogDelete"
+                    class="btn-dialog btn btn-cancel-dialog-asset warning">Không</button>
+            </div>
+        </div>
+    </div>
+    <div v-if="isMessDelete" id="dlg-warning" class="dialog dialog--warning">
+        <div class="dialog__content ">
+            <div class="dialog__container">
+                <div class="icon-warning-dialog icon-content"></div>
+                <div class="dialog__body">
+                    <i style="color: #EDDC1F" class="fa-solid fa-3x fa-triangle-exclamation"></i>
+                    <div class="dialog__msg-item">
+                        <span v-html="errMessWarning"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog__footer">
+                <button @click="hideDialogDelete" type="submit" id="btnSave" class="btn-dialog btn"
+                    style="color: #fff">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+    <TheDialogMasterDetail v-if="isShowDialogDetail" :showDetailChil="isShowDialogDetail"
+        :showDetailFunction="showDetail" :assetIncrementSelected="assetIncrementSelected" :title="title"
+        :isFormAdd="isFormAdd" :isFormUpdate="isFormUpdate" :isFormDuplicate="isFormDuplicate"
+        v-on:activeAssetNew="activeAssetNew" :getData="getData" />
+    <BaseLoading v-if="isShowLoading"></BaseLoading>
+    <div id="snackbar" :class="{ show: isShowToastSuccess }" v-on:updateMessage="updateMessage">
+        <i class="fa-solid fa-circle-check icon-toast fa-2xl"></i>
+        <div>{{ toastMess }}</div>
+    </div>
 </template>
 
 <script>
@@ -138,14 +184,15 @@ import { formatPrice, formatDate } from "../../common/TheCommon";
 import BaseLoading from '../../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
-import { EndPoint} from "../../common/TheConst"; //, NameCookie, FullUrl 
+import { EndPoint } from "../../common/TheConst"; //, NameCookie, FullUrl 
 import axios from "axios";
 
 export default ({
     directives: {
         contextmenu: directive,
     },
-    components: {TheDialogMasterDetail,
+    components: {
+        TheDialogMasterDetail,
         Splitpanes, Pane, TableBase, BaseLoading, [Contextmenu.name]: Contextmenu,
         [ContextmenuItem.name]: ContextmenuItem
     },
@@ -153,8 +200,84 @@ export default ({
     created() {
         this.getData(this.paging);
     },
-    formatDate,formatPrice,
+    formatDate, formatPrice,
     methods: {
+        /**
+        * Chức năng double click 1 bản ghi
+        * TVTOAN (26/07/2022)
+        */
+        rowOnDblClick(assetIncrement) {
+            try {
+                this.title = "Sửa chứng từ ghi tăng";
+                this.isFormUpdate = true;
+                this.assetIncrementSelected = assetIncrement;
+                this.isShowDialogDetail = true;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Ẩn cảnh báo khi xóa tài sản.
+        * TVTOAN (02/08/2022)
+        */
+        hideDialogDelete() {
+            try {
+                this.isDelete = false;
+                this.isMessDelete = false;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Hiển thị cảnh báo khi xóa tài sản.
+        * TVTOAN (02/08/2022)
+        */
+        showDialogDeleteList(assetIncrement) {
+            try {
+                if (this.selected.length > 0) {
+                    if (this.selected.length == 1) {
+                        this.errMessWarning = `Bạn có muốn xóa chứng từ <b> ${assetIncrement.voucherCode} </b>?`;
+                    } else {
+                        this.errMessWarning = `${this.selected.length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?`;
+                    }
+                    this.isDelete = true;
+                    this.isMessDelete = false;
+                } else {
+                    this.errMessWarning = `Vui lòng chọn ít nhất 1 bản ghi`;
+                    this.isMessDelete = true;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Chức năng xóa chứng từ
+        * TVTOAN (26/07/2022)
+        */
+        btnDeleteOnClick() {
+            try {
+                axios.delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.selected[0]}`)
+                    .then(res => {
+                        if (res.status == 200) {
+                            this.isDelete = false;
+                            this.getData(this.paging);
+                            this.toastMess = `Xóa thành công`;
+                            this.isShowToastSuccess = true
+                            setTimeout(() => this.isShowToastSuccess = false, 3000);
+                        } else {
+                            this.isDelete = false;
+                            this.toastMess = `Xóa không thành công`
+                            this.isShowToastSuccess = true;
+                        }
+                    })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         /**
         * Chức năng mở dialog thêm mới chứng từ
         * TVTOAN (26/07/2022)
@@ -163,24 +286,18 @@ export default ({
             try {
                 this.isShowDialogDetail = isShow;
                 this.title = "Thêm chứng từ ghi tăng";
+                this.isFormAdd = true;
                 this.assetIncrementSelected = {
-                    // fixedAssetId: '00000000-0000-0000-0000-000000000000',
-                    // fixedAssetCode: '',
-                    // fixedAssetName: '',
-                    // departmentID: '',
-                    // fixedAssetCategoryID: '',
-                    // quantity: 1,
-                    // Cost: 1,
-                    // depreciationRate: 0,
-                    // purchaseDate: '',
-                    // productionDate: '',
-                    // trackedYear: '',
-                    // lifeTime: 1,
-                    // depreciationValue: 1,
-                    // createdBy: "TVTOAN",
-                    // createdDate: new Date(),
-                    // modifiedBy: "TVTOAN",
-                    // modifiedDate: new Date(),
+                    voucherID: '00000000-0000-0000-0000-000000000000',
+                    voucherCode: '',
+                    voucherDate: new Date(),
+                    incrementDate: new Date(),
+                    description: '',
+                    price: '',
+                    createdBy: "TVTOAN",
+                    createdDate: new Date(),
+                    modifiedBy: "TVTOAN",
+                    modifiedDate: new Date(),
                 };
             } catch (error) {
                 console.log(error);
@@ -191,12 +308,11 @@ export default ({
         * Chức năng lay danh sach bản ghi
         * TVTOAN (26/07/2022)
         */
-        getData(paging) { 
+        getData(paging) {
             try {
                 this.isShowLoading = true;
-                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?keyword=${paging.keyWord}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_FILTER}?keyword=${paging.keyWord}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
-                        this.isShowLoading = true;
                         setTimeout(() => this.isShowLoading = false, 500);
                         this.assetsIncrement = data.data.data;
                         this.totalRecord = data.data.totalCount;
@@ -207,7 +323,7 @@ export default ({
                 console.log(error);
             }
         },
-        
+
         /**
         * Chức năng active 1 bản ghi
         * TVTOAN (26/07/2022)
@@ -255,10 +371,10 @@ export default ({
                 console.log(error);
             }
         },
-                /**
-        // Active những row có id trong mảng
-        * TVTOAN (26/07/2022)
-        */
+        /**
+// Active những row có id trong mảng
+* TVTOAN (26/07/2022)
+*/
         checkActive(rowActive) {
             try {
                 for (let assetIncrement of this.selected) {
@@ -266,6 +382,20 @@ export default ({
                         return rowActive;
                     }
                 }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Tự động active bản ghi vừa thêm mới.
+        * TVTOAN (06/08/2022)
+        */
+        activeAssetNew(id) {
+            try {
+                this.selected = [],
+                    this.selected.push(id);
+                this.checkActive(id);
             } catch (error) {
                 console.log(error);
             }
@@ -281,8 +411,10 @@ export default ({
             isShowToastFail: false,
             isDelete: false,
             isSelect: false,
-            showDetailParent: false,
             isShowDialogDetail: false,
+            isFormAdd: false,
+            isFormUpdate: false,
+            isFormDuplicate: false,
 
             JWToken: '',
             title: '',

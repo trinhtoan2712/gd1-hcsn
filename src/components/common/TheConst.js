@@ -11,10 +11,17 @@ export const FullUrl = {
 }
 
 export const EndPoint = {
-    END_POINT_FIXED_ASSET_INCREMENT_DETAIL: "getOne/filter",
-    END_POINT_FIXED_ASSET: "api/FixedAssets",
-    END_POINT_FIXED_ASSET_INCREMENT: "filter",
+    //token
     END_POINT_TOKEN: "api/token",
+
+    //tài sản
+    END_POINT_FIXED_ASSET: "api/FixedAssets",
+    
+    //ghi tăng
+    END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE: "getOne/filter",
+    END_POINT_FIXED_ASSET_INCREMENT_FILTER: "filter",
+    END_POINT_FIXED_ASSET_INCREMENT: "api/FixedAssetIncrement",
+    END_POINT_FIXED_ASSET_INCREMENT_DETAIL: "api/FixedAssetIncrement/list"
 };
 
 export const Host = {

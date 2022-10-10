@@ -79,6 +79,17 @@
     position: absolute;
 }
 
+.col-title {
+    display: flex;
+    flex-direction: column;
+    padding-left: 17px;
+}
+
+.col-title h5{
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
 .form-search__input {
     font-size: 13px;
     font-style: italic;
@@ -173,7 +184,6 @@
     bottom: 0;
     font-size: 11px;
     border-top: unset !important;
-    border: 0.5px solid #afafaf;
     border-radius: 0px 0px 3.5px 3.5px;
 }
 
@@ -195,7 +205,6 @@
 }
 
 .summary-table {
-    background-color: #fff;
     position: sticky !important;
     bottom: 0 !important;
     font-size: 11px;
@@ -203,9 +212,7 @@
     border-bottom: unset !important;
 }
   
-.summary-table:hover {
-    background-color: #fff !important;
-}
+
 
 .paging-table {
     display: flex;
@@ -218,12 +225,18 @@
 
 .footer-table table {
     border-top: 0.5px solid rgb(210, 206, 206);
-    border-bottom: 0.5px solid rgb(210, 206, 206);
     width: 100%;
+    background-color: rgb(240, 239, 239);
+
+}
+
+.splitpanes.default-theme .splitpanes__splitter {
+    background-color: #f4f7ff !important;
 }
 
 .table-detail__header {
     padding: 6px 0px;
+    border-top: 1px solid #eee;
 }
 
 .header-table-left {

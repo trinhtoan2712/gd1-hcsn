@@ -38,6 +38,17 @@
     border-radius: 4px 4px 0px 0px;
 }
 
+.dialog_header-base {
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding:15px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+
 .btn-close-dialog {
     position: absolute;
     background: no-repeat -374px -285px;
@@ -47,9 +58,12 @@
 
 .dialog_content {
     background-color: #fff;
-    padding: 0px 16px 0px 0px;
-
 }
+
+.dialog_content-base {
+    background-color: #eff5f8 ;
+}
+
 
 .row {
     display: grid;
@@ -60,10 +74,22 @@
     display: flex;
     flex-direction: column;
     padding-left: 17px;
+    padding-right: 17px;
     padding-bottom: 17px;
 }
 
 .col label {
+    padding-bottom: 8px;
+    font-size: 13px;
+}
+
+.col-base {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+}
+
+.col-base label {
     padding-bottom: 8px;
     font-size: 13px;
 }
@@ -89,4 +115,15 @@
       border-radius: 4px 4px 0px 0px;
     
     }
+
+    .dialog_header-base {
+        height: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding:12px;
+        border-radius: 4px 4px 0px 0px;
+      
+      }
   }

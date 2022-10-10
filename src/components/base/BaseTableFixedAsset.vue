@@ -1,5 +1,5 @@
 <template>
-        <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}">
+    <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}">
         <table class="table-data noselect">
             <thead class="table-header" v-if="assets.length > 0">
                 <tr>
@@ -53,8 +53,9 @@
                         <div @click="duplicateAssets(asset)"
                             class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
                                 bản </span></div>
-                        <div @click="showDialogDeleteList(assetCurrent)" class="table-delete icon-small icon-pading"><span
-                        class="tooltip">Xóa (Delete)</span></div>
+                        <div @click="showDialogDeleteList(assetCurrent)" class="table-delete icon-small icon-pading">
+                            <span class="tooltip">Xóa (Delete)</span>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -106,7 +107,7 @@
 </template>
 
 <script>
-import { formatPrice, formatDate, getCookie} from "../common/TheCommon";
+import { formatPrice, formatDate, getCookie } from "../common/TheCommon";
 import BaseLoading from '../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
@@ -118,7 +119,8 @@ export default ({
         contextmenu: directive,
     },
     name: "TableBase",
-    components: {BaseLoading, [Contextmenu.name]: Contextmenu,
+    components: {
+        BaseLoading, [Contextmenu.name]: Contextmenu,
         [ContextmenuItem.name]: ContextmenuItem
     },
     emits: ["updateMessage"],
@@ -127,26 +129,34 @@ export default ({
         arrayFixedAsset: [],
     },
     created() {
-        if(this.voucherID) {
-            // id để lấy tài sản theo chứng từ
+
+        if (this.voucherID) {
+            /**
+            * Gọi hàm getData để lấy dữ liệu.
+            * TVTOAN (31/07/2022)
+            */
             this.getData(this.paging)
         }
-        // if(this.arrayFixedAsset.length) {
+        // else {
         //     // array từ cache để làm form sửa và thêm.
         //     this.assets = this.arrayFixedAsset;
-        // }else {
-        //     // load full tài sản để chọn thêm
-        //     this.getDataFull(this.paging);
+        //     this.totalRecord = this.assets.length;
+        //     this.resetTotal()
+        //     for (let asset of this.assets) {
+        //         asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
+        //         asset.residualValue = asset.cost - asset.atrophy;
+        //         this.total.totalCost += asset.cost;
+        //         this.total.totalAtrophy += asset.atrophy
+        //     }
+        //     this.total.totalResidualValue = this.total.totalCost - this.total.totalAtrophy
+        //     this.paging.totalPage = Math.ceil(this.asset.length / this.paging.pageSize);
         // }
-        /**
-         * Gọi hàm getData để lấy dữ liệu.
-         * TVTOAN (31/07/2022)
-         */
+
     },
 
     watch: {
         voucherID: function (newValue) {
-            if(newValue){
+            if (newValue) {
                 this.getData(this.paging)
             }
         }
@@ -438,8 +448,8 @@ export default ({
         */
         getData(paging) {
             try {
-               //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
-                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
+                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
@@ -452,12 +462,13 @@ export default ({
                         this.total.totalAtrophy += data.data.totalAtrophy;
                         this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
+
                     });
-                    this.pages;
+                this.pages;
             } catch (error) {
                 console.log(error);
             }
-        }, 
+        },
 
         /**
         * Hàm format dữ liệu.
@@ -492,7 +503,7 @@ export default ({
         * Hàm reset total về 0
         * TVTOAN (02/08/2022)
         */
-        resetTotal () {
+        resetTotal() {
             this.total.totalCost = 0;
             this.total.totalAtrophy = 0;
             this.total.totalResidualValue = 0;
@@ -531,7 +542,7 @@ export default ({
                         })
                         const requestOptions = {
                             method: "DELETE",
-                            headers: { 
+                            headers: {
                                 "Content-Type": "application/json",
                                 "Authorization": `Bearer ${getCookie(NameCookie.NAME_TOKEN)}`
                             },
