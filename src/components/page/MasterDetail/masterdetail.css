@@ -22,6 +22,10 @@
     border-radius: 4px;
 }
 
+.col-base .table-footer-base {
+    bottom : unset !important;
+}
+
 .btn-unknow-icon1 {
     background: no-repeat -110px -420px;
     width: 20px;

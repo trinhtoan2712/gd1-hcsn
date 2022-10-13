@@ -6,7 +6,7 @@
 
 .comboboxform__input {
     width: 90%;
-    height: 36px;
+    height: 32px;
     flex: 1;
     padding-right: 56px !important;
     padding-left: 10px;
@@ -40,7 +40,7 @@
     right: 0px;
     top: 0px;
     border: unset;
-    height: 34px;
+    height: 30px;
     width: 40px;
     margin-top: 1px;
     margin-right: 1px;

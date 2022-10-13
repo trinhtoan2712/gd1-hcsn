@@ -1,40 +1,30 @@
 <template>
-    <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}">
+    <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}" >
         <table class="table-data noselect">
             <thead class="table-header" v-if="assets.length > 0">
                 <tr>
-                    <th>STT<span class="tooltip">Số thứ tự</span> </th>
-                    <th>Mã tài sản</th>
-                    <th>Tên tài sản</th>
-                    <th>Bộ phận sử dụng</th>
-                    <th class="number-right">Nguyên giá</th>
-                    <th class="number-right">Hao mòn năm</th>
-                    <th class="number-right">Giá trị còn lại</th>
-                    <th style="padding: 0px 10px">Chức năng</th>
+                    <th style="width:50px" v-if="isShowCheckBox">
+                        <input type="checkbox" name="" class="ckb ckb-primary" v-model="isSelect"
+                            @click="selectAllRows">
+                    </th>
+                    <th style="width:40px">STT<span class="tooltip">Số thứ tự</span> </th>
+                    <th style="width:200px">Mã tài sản</th>
+                    <th style="width:200px">Tên tài sản</th>
+                    <th style="width:200px">Bộ phận sử dụng</th>
+                    <th style="width:200px" class="number-right">Nguyên giá</th>
+                    <th style="width:200px" class="number-right">Hao mòn năm</th>
+                    <th style="width:200px" class="number-right">Giá trị còn lại</th>
+                    <th v-if="isShowFunction" style="padding: 0px 10px">Chức năng</th>
                 </tr>
             </thead>
             <tbody class="table-body">
-                <v-contextmenu ref="contextmenu">
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="rowOnDblClick(asset)">Sửa tài sản</span>
-                        </div>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="showDialogDelete(asset)">Xóa tài sản</span>
-                        </div>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="duplicateAssets(asset)">Nhân bản</span>
-                        </div>
-                    </v-contextmenu-item>
-                </v-contextmenu>
-
                 <tr class="tbody-tr" v-for="(asset, index ) in assets" :key="asset.fixedAssetId"
                     v-contextmenu:contextmenu :class="{'bgblue': checkActive(asset.fixedAssetId) }"
                     @click="btnRowActiveOnClick(asset, $event, index)" @dblclick="rowOnDblClick(asset)">
+                                        <td v-if="isShowCheckBox" > 
+                        <input type="checkbox" name="" id="" class="ckb ckb-primary" :value="asset.fixedAssetId"
+                            v-model="selected">
+                    </td>
                     <td style="text-align:center">{{ index + 1 }}</td>
                     <td>{{ asset.fixedAssetCode }}</td>
                     <td class="text-hide">
@@ -47,7 +37,7 @@
                     <td class="number-right">{{ formatPrice(asset.depreciationValue) }}</td>
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
 
-                    <td class="table-option">
+                    <td class="table-option" v-if="isShowFunction">
                         <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
                         <div @click="duplicateAssets(asset)"
@@ -65,16 +55,17 @@
             <BaseLoading v-if="isShowLoading"></BaseLoading>
         </table>
     </div>
-    <div class="table-footer-base" v-if="assets.length > 0">
+    <div class="table-footer-base" v-if="assets.length > 0 || isShowPaging">
         <table>
             <tr class="table-summary-base" v-if="assets.length > 0">
-                <td colspan="8">
-                </td>
-                <td class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
+                <td style="width:40px !important"></td>
+                <td style="width:200px !important"></td>
+                <td style="width:200px !important"></td>
+                <td style="width:200px !important"></td>
+                <td style="width:200px !important"></td>
+                <td style="width:200px !important; padding-right: 5px;" class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
                 <td class="number-right font-bold">{{formatPrice(total.totalAtrophy)}}</td>
-                <td class="number-right font-bold">{{formatPrice(total.totalResidualValue)}}</td>
-                <td>
-                </td>
+                <td class="number-right font-bold" >{{formatPrice(total.totalResidualValue)}}</td>
             </tr>
         </table>
         <div class="paging-base">
@@ -125,18 +116,19 @@ export default ({
     },
     emits: ["updateMessage"],
     props: {
+        listAsset: [],
+        isShowCheckBox: Boolean,
+        isShowPaging: Boolean,
+        isShowFunction: Boolean,
         voucherID: String,
-        arrayFixedAsset: [],
     },
     created() {
-
-        if (this.voucherID) {
-            /**
-            * Gọi hàm getData để lấy dữ liệu.
-            * TVTOAN (31/07/2022)
-            */
-            this.getData(this.paging)
-        }
+        if(this.voucherID == 'getAll') {
+                this.getAllData(this.paging)
+            }
+            if(this.voucherID != 'getAll' && this.voucherID) {
+                this.getData(this.paging)
+            }
         // else {
         //     // array từ cache để làm form sửa và thêm.
         //     this.assets = this.arrayFixedAsset;
@@ -156,9 +148,17 @@ export default ({
 
     watch: {
         voucherID: function (newValue) {
-            if (newValue) {
+            if(newValue == 'getAll') {
+                this.getAllData(this.paging)
+            }
+            if (newValue != 'getAll') {
                 this.getData(this.paging)
             }
+
+        },
+        listAsset: function (newValue) {
+            let result  = this.assets.concat(newValue)
+            this.assets=result;
         }
     },
     unmounted() {
@@ -190,7 +190,9 @@ export default ({
             assets: [],
             assetSelected: {},
             selected: [],
+            listAssetSelected: [],
             assetCurrent: {},
+            listFixedAssetId: [],
 
             //Index
             indexRecord: {
@@ -454,21 +456,52 @@ export default ({
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
                         this.assets = data.data.data;
+                        this.listFixedAssetId = [];
                         for (let asset of this.assets) {
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
+                            this.listFixedAssetId.push(asset.fixedAssetID);
                         }
                         this.total.totalCost = data.data.totalCost;
                         this.total.totalAtrophy += data.data.totalAtrophy;
                         this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
-
+                        this.$emit("listFixedAssetId", this.listFixedAssetId);
                     });
                 this.pages;
             } catch (error) {
                 console.log(error);
             }
         },
+
+/**
+        * Gọi api filter.
+        * TVTOAN (25/07/2022)
+        */
+        getAllData(paging) {
+            try {
+                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
+                axios.get(`${EndPoint.END_POINT_FIXED_ASSET}?keyword=${paging.keyWord}&departmentID=${paging.departmentID}&fixedAssetCategoryID=${paging.fixedAssetCategoryID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}&status=0`)
+                    .then(data => {
+                        this.totalRecord = data.data.totalCount;
+                        this.resetTotal()
+                        this.assets = data.data.data;
+                        for (let asset of this.assets) {
+                            asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
+                            asset.residualValue = asset.cost - asset.atrophy;
+                        }
+                        this.total.totalCost = data.data.totalCost;
+                        this.total.totalQuantity = data.data.totalQuantity;
+                        this.total.totalAtrophy += data.data.totalAtrophy;
+                        this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
+                        this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
+                    });
+                    this.pages;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
 
         /**
         * Hàm format dữ liệu.
@@ -695,16 +728,20 @@ export default ({
                     // Ctrl chọn nhiều bản ghi
                     let isInArr = this.btnRowUnActive(asset.fixedAssetId);
                     if (isInArr != true) {
+                        this.listAssetSelected.push(asset);
                         this.selected.push(asset.fixedAssetId);
                     }
                     if (this.selected.length == this.assets.length) {
                         this.isSelect = true;
                     }
+                    var newListCtrl = [...new Set(this.listAssetSelected)];
+                    this.listAssetSelected = newListCtrl;
                     var newArrCtrl = [...new Set(this.selected)];
                     this.selected = newArrCtrl
                 } else if (e.shiftKey) {
                     // Giữ shift chọn nhiều bản ghi
                     this.selected.push(asset.fixedAssetId);
+                    this.listAssetSelected.push(asset);
                     this.lastIndex = index;
                     if (this.firstIndex > this.lastIndex) {
                         this.firstIndex = this.lastIndex;
@@ -712,9 +749,12 @@ export default ({
                     }
                     for (let index = this.firstIndex; index <= this.lastIndex; index++) {
                         this.selected.push(this.assets[index].fixedAssetId);
+                        this.listAssetSelected.push(this.assets[index]);
                     }
                     var newArr = [...new Set(this.selected)];
-                    this.selected = newArr
+                    var newList = [...new Set(this.listAssetSelected)];
+                    this.listAssetSelected = newList;
+                    this.selected = newArr;
                     if (this.selected.length == this.assets.length) {
                         this.isSelect = true;
                     }
@@ -722,11 +762,14 @@ export default ({
                     //click để chọn bản ghi
                     this.assetCurrent = asset;
                     this.selected = [];
+                    this.listAssetSelected = [];
                     this.firstIndex = index;
                     this.indexOld = this.firstIndex;
                     this.selected.push(asset.fixedAssetId);
+                    this.listAssetSelected.push(asset);
                     this.isSelect = false;
                 }
+                this.$emit("listAssetSelected", this.listAssetSelected);
             } catch (error) {
                 console.log(error);
             }

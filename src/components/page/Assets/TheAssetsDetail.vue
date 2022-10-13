@@ -65,7 +65,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.quantity}">
                         <label>Số lượng <span class="input--required">*</span></label>
                         <div class="input-updown">
-                            <input tabindex="5" id="txtQuantity" name-property="số lượng" 
+                            <input tabindex="5" id="txtQuantity" name-property="số lượng" :disabled="asset.status == 1"
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
         type = "number"
         maxlength = "18"
@@ -83,7 +83,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.cost}">
                         <label>Nguyên giá <span class="input--required">*</span></label>
                         <input tabindex="6" id="txtCost" name-property="nguyên giá" type="text" 
-                        maxlength="18"
+                        maxlength="18" :disabled="asset.status == 1"
                             class="input number-right" @input="formatInputNumber()"
                             v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="{'border-red': !formValid.cost}">
                             <span v-if="!formValid.cost" class="tooltip">Nguyên giá không hợp lệ</span>
@@ -91,7 +91,7 @@
                     <div class="col" :class="{'col__tooltip': !formValid.lifeTime}">
                         <label>Số năm sử dụng <span class="input--required">*</span></label>
                         <div class="input-updown">
-                            <input tabindex="7" id="txtLifeTime" name-property="số năm sử dụng"
+                            <input tabindex="7" id="txtLifeTime" name-property="số năm sử dụng" :disabled="asset.status == 1"
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
         type = "number"
         maxlength = "4"
@@ -107,7 +107,7 @@
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationRate}">
                         <label>Tỉ lệ hao mòn (%) <span class="input--required">*</span></label>
-                        <input tabindex="8" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text"
+                        <input tabindex="8" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text" :disabled="asset.status == 1"
                             class="input number-right" v-model="asset.depreciationRate"
                             ref="txtDepreciationRate"
                             @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="{'border-red': !formValid.depreciationRate}">
@@ -115,7 +115,7 @@
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
                         <label>Giá trị hao mòn năm <span class="input--required">*</span></label>
-                        <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text"
+                        <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text" :disabled="asset.status == 1"
                         maxlength="18"  @input="formatInputNumber()"
                             class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
                             @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="{'border-red': !formValid.depreciationValue}">
@@ -303,9 +303,11 @@ export default {
         */
         incrementNumber() {
             try {
-                this.asset.quantity++;
-                if(this.asset.quantity > 2147483647) {
-                    this.asset.quantity = 2147483647;
+                if(this.asset.status == 0) {
+                    this.asset.quantity++;
+                    if(this.asset.quantity > 2147483647) {
+                        this.asset.quantity = 2147483647;
+                    }
                 }
             } catch (error) {
                 console.log(error);
@@ -313,7 +315,9 @@ export default {
         },
         decrementNumber() {
             try {
-                this.asset.quantity = this.asset.quantity < 2 ? 1 : this.asset.quantity - 1;
+                if(this.asset.status == 0) {
+                    this.asset.quantity = this.asset.quantity < 2 ? 1 : this.asset.quantity - 1;
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -325,14 +329,18 @@ export default {
         */
         incrementYear() {
             try {
-                this.asset.lifeTime++;
+                if(this.asset.status == 0) {    
+                    this.asset.lifeTime++;
+                }
             } catch (error) {
                 console.log(error);
             }
         },
         decrementYear() {
             try {
-                this.asset.lifeTime = this.asset.lifeTime < 2 ? 1 : this.asset.lifeTime - 1;
+                if(this.asset.status == 0) {
+                    this.asset.lifeTime = this.asset.lifeTime < 2 ? 1 : this.asset.lifeTime - 1;
+            }
             } catch (error) {
                 console.log(error);
             }
@@ -907,6 +915,7 @@ export default {
                 this.asset.modifiedBy = assetCur.ModifiedBy,
                 this.asset.modifiedDate = assetCur.ModifiedDate,
                 this.asset.productionDate = assetCur.ProductionDate,
+                this.asset.status = assetCur.Status,
 
                 this.asset.departmentName = this.assetSelected.departmentName
                 this.asset.departmentCode = this.assetSelected.departmentCode

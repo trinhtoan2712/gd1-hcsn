@@ -47,6 +47,7 @@
                     <th class="number-right">Nguyên giá</th>
                     <th class="number-right">HM/KH lũy kế <span class="tooltip">Hao mòn/Khấu hao lũy kế</span></th>
                     <th class="number-right">Giá trị còn lại</th>
+                    <th> Trạng thái </th>
                     <th style="padding: 0px 10px">Chức năng</th>
                 </tr>
             </thead>
@@ -92,7 +93,8 @@
                     <td class="number-right">{{ formatPrice(asset.cost) }}</td>
                     <td class="number-right">{{ formatPrice(asset.atrophy) }}</td>
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
-
+                    <td v-if="asset.status == 1"> Đang sử dụng </td>
+                    <td v-if="asset.status == 0"> Chưa ghi tăng </td>
                     <td class="table-option">
                         <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
@@ -116,6 +118,7 @@
                     <td>
 
                     </td>
+                    <td></td>
                 </tr>
             </tbody>
             <TheAssetDetail @updateMessage="updateMessage" v-if="showDetailParent" :showDetailChil="showDetailParent"
@@ -283,6 +286,7 @@ export default ({
             assetSelected: {},
             selected: [],
             assetCurrent: {},
+            arrayIdAndStatus: [],
 
             //Index
             indexRecord: {
@@ -606,12 +610,25 @@ export default ({
             try {
                 if (this.selected.length > 0) {
                     if (this.selected.length == 1) {
-                        this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
+                        if(asset.status == 1) {
+                            this.errMessWarning = `Không thể xóa tài sản này vì đã có chứng từ phát sinh`;
+                            this.isMessDelete = true;
+                        }else {
+                            this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
+                            this.isDelete = true;
+                        }
                     } else {
-                        this.errMessWarning = `${this.selected.length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?`;
+                        for (let i = 0; i < this.arrayIdAndStatus.length; i ++) {
+                            if (this.arrayIdAndStatus[i].status == 1) {
+                                this.errMessWarning = `Không thể xóa tài sản <b> ${this.arrayIdAndStatus[i].code} - ${this.arrayIdAndStatus[i].name} </b> vì đã có chứng từ phát sinh`;
+                                this.isMessDelete = true;
+                            }
+                            else {
+                                this.errMessWarning = `${this.selected.length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?`;
+                                this.isDelete = true;
+                            }
+                        }
                     }
-                    this.isDelete = true;
-                    this.isMessDelete = false;
                 } else {
                     this.errMessWarning = `Vui lòng chọn ít nhất 1 bản ghi`;
                     this.isMessDelete = true;
@@ -746,6 +763,7 @@ export default ({
                     createdDate: new Date(),
                     modifiedBy: "TVTOAN",
                     modifiedDate: new Date(),
+                    status: 0,
                 };
             } catch (error) {
                 console.log(error);
@@ -760,7 +778,6 @@ export default ({
             try {
                 this.title = "Sửa tài sản";
                 this.assetSelected = asset;
-                console.log(this.assetSelected);
                 this.showDetailParent = true;
             } catch (error) {
                 console.log(error);
@@ -800,6 +817,14 @@ export default ({
                 if (!this.isSelect) {
                     for (let i in this.assets) {
                         this.selected.push(this.assets[i].fixedAssetId);
+                        this.arrayIdAndStatus.push(
+                            {
+                                "id": this.assets[i].fixedAssetId,
+                                "code": this.assets[i].fixedAssetCode,
+                                "name": this.assets[i].fixedAssetName,
+                                "status": this.assets[i].status
+                            }
+                        )
                     }
                 }
             } catch (error) {
@@ -818,16 +843,34 @@ export default ({
                     // Ctrl chọn nhiều bản ghi
                     let isInArr = this.btnRowUnActive(asset.fixedAssetId);
                     if (isInArr != true) {
+                        this.arrayIdAndStatus.push(
+                            {
+                                "id": asset.fixedAssetId,
+                                "code": asset.fixedAssetCode,
+                                "name": asset.fixedAssetName,
+                                "status": asset.status
+                            }
+                        )
                         this.selected.push(asset.fixedAssetId);
                     }
                     if (this.selected.length == this.assets.length) {
                         this.isSelect = true;
                     }
                     var newArrCtrl = [...new Set(this.selected)];
+                    var newArrIdAndStatusCtrl = [...new Set(this.arrayIdAndStatus)]
+                    this.arrayIdAndStatus = newArrIdAndStatusCtrl;
                     this.selected = newArrCtrl
                 } else if (e.shiftKey) {
                     // Giữ shift chọn nhiều bản ghi
                     this.selected.push(asset.fixedAssetId);
+                    this.arrayIdAndStatus.push(
+                            {
+                                "id": asset.fixedAssetId,
+                                "code": asset.fixedAssetCode,
+                                "name": asset.fixedAssetName,
+                                "status": asset.status
+                            }
+                        )
                     this.lastIndex = index;
                     if (this.firstIndex > this.lastIndex) {
                         this.firstIndex = this.lastIndex;
@@ -835,7 +878,17 @@ export default ({
                     }
                     for (let index = this.firstIndex; index <= this.lastIndex; index++) {
                         this.selected.push(this.assets[index].fixedAssetId);
+                        this.arrayIdAndStatus.push(
+                            {
+                                "id": this.assets[index].fixedAssetId,
+                                "code": this.assets[index].fixedAssetCode,
+                                "name": this.assets[index].fixedAssetName,
+                                "status": this.assets[index].status
+                            }
+                        )
                     }
+                    var newArrIdAndStatus = [...new Set(this.arrayIdAndStatus)]
+                    this.arrayIdAndStatus = newArrIdAndStatus;
                     var newArr = [...new Set(this.selected)];
                     this.selected = newArr
                     if (this.selected.length == this.assets.length) {
@@ -845,9 +898,18 @@ export default ({
                     //click để chọn bản ghi
                     this.assetCurrent = asset;
                     this.selected = [];
+                    this.arrayIdAndStatus = [];
                     this.firstIndex = index;
                     this.indexOld = this.firstIndex;
                     this.selected.push(asset.fixedAssetId);
+                    this.arrayIdAndStatus.push(
+                            {
+                                "id": asset.fixedAssetId,
+                                "code": asset.fixedAssetCode,
+                                "name": asset.fixedAssetName,
+                                "status": asset.status
+                            }
+                        )
                     this.isSelect = false;
                 }
             } catch (error) {

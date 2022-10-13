@@ -21,7 +21,8 @@ export const EndPoint = {
     END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE: "getOne/filter",
     END_POINT_FIXED_ASSET_INCREMENT_FILTER: "filter",
     END_POINT_FIXED_ASSET_INCREMENT: "api/FixedAssetIncrement",
-    END_POINT_FIXED_ASSET_INCREMENT_DETAIL: "api/FixedAssetIncrement/list"
+    END_POINT_FIXED_ASSET_INCREMENT_DETAIL: "api/FixedAssetIncrement/list",
+    END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST: "api/FixedAssetIncrementDetail/list",
 };
 
 export const Host = {

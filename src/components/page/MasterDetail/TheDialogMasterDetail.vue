@@ -17,55 +17,61 @@
                     <div class="col-title" style="grid-column: span 3;">
                         <h5 style="font-weight: 700"> Thông tin chứng từ </h5>
                     </div>
-                    <div class="col-base">
-                        <label>Mã chứng từ <span class="input--required">*</span></label>
-                        <input tabindex="1" ref="voucherCode" v-model="assetIncrement.voucherCode"
-                            name-property="mã tài sản" type="text" class="input" placeholder="Nhập mã chứng từ" required
-                            maxlength="20">
-                    </div>
-                    <div class="col-base" id="valid-date-use">
-                        <label>Ngày bắt đầu sử dụng <span class="input--required">*</span></label>
-                        <datepicker class="" format="dd/MM/yyyy" v-model="assetIncrement.voucherDate"
-                            placeholder="DD-MM-YYYY" :hideInput="false" ref="txtProductionDate" tabindex=""
-                            :typeable="true">
-                        </datepicker>
-                    </div>
-                    <div class="col-base" id="valid-date-use">
-                        <label>Ngày ghi tăng <span class="input--required">*</span></label>
-                        <datepicker class="" format="dd/MM/yyyy" v-model="assetIncrement.incrementDate"
-                            placeholder="DD-MM-YYYY" :hideInput="false" ref="txtProductionDate" tabindex=""
-                            :typeable="true">
-                        </datepicker>
-                    </div>
-                    <div class="col-base" style="grid-column: span 3;">
-                        <label> Ghi chú </label>
-                        <input tabindex="2" ref="txtFixedAssetName" v-model="assetIncrement.description" type="text"
-                            class="input" placeholder="Nhập ghi chú" maxlength="255">
+                    <div class="row" style="background-color: #fff; margin: 0px 10px; padding: 5px 0px;">
+                        <div class="col-base">
+                            <label>Mã chứng từ <span class="input--required">*</span></label>
+                            <input tabindex="1" ref="voucherCode" v-model="assetIncrement.voucherCode"
+                                name-property="mã tài sản" type="text" class="input" placeholder="Nhập mã chứng từ" required
+                                maxlength="20">
+                        </div>
+                        <div class="col-base" id="valid-date-use">
+                            <label>Ngày bắt đầu sử dụng <span class="input--required">*</span></label>
+                            <datepicker class="" format="dd/MM/yyyy" v-model="assetIncrement.voucherDate"
+                                placeholder="DD-MM-YYYY" :hideInput="false" ref="txtProductionDate" tabindex=""
+                                :typeable="true">
+                            </datepicker>
+                        </div>
+                        <div class="col-base" id="valid-date-use">
+                            <label>Ngày ghi tăng <span class="input--required">*</span></label>
+                            <datepicker class="" format="dd/MM/yyyy" v-model="assetIncrement.incrementDate"
+                                placeholder="DD-MM-YYYY" :hideInput="false" ref="txtProductionDate" tabindex=""
+                                :typeable="true">
+                            </datepicker>
+                        </div>
+                        <div class="col-base" style="grid-column: span 3;">
+                            <label> Ghi chú </label>
+                            <input tabindex="2" ref="txtFixedAssetName" v-model="assetIncrement.description" type="text"
+                                class="input" placeholder="Nhập ghi chú" maxlength="255">
+                        </div>
                     </div>
                     <div class="col-title" style="grid-column: span 3;">
                         <h5 style="font-weight: 700"> Thông tin chi tiết </h5>
                     </div>
-                    <div class="col-base" style="grid-column: span 3;">
-                        <div class="header-table-base">
-                            <div class="">
-                                <div class="form-search-table-base">
-                                    <div class="form-search__icon icon-small"></div>
-                                    <input class="form-search__input" ref="txtSearch" type="text"
-                                        placeholder="Tìm kiếm theo tài sản">
+                    <div class="row"  style="background-color: #fff; margin: 0px 10px; padding: 5px 0px;">
+                        <div class="col-base" style="grid-column: span 3;">
+                            <div class="header-table-base">
+                                <div class="">
+                                    <div class="form-search-table-base">
+                                        <div class="form-search__icon icon-small"></div>
+                                        <input class="form-search__input" ref="txtSearch" type="text"
+                                            placeholder="Tìm kiếm theo tài sản">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="header-table-right">
-                                <div class="form-option-base"
-                                    style="  box-shadow:0 2px 6px rgba(0, 0, 0, .16); width:90px">
-                                    <button tabindex="13" id="btnClose" class="btn btn-cancel-dialog-asset">Chọn tài
-                                        sản</button>
+                                <div class="header-table-right">
+                                    <div class="form-option-base"
+                                        style="  box-shadow:0 2px 6px rgba(0, 0, 0, .16); width:90px;">
+                                        <button @click="showDetail(true)" tabindex="13" id="btnClose" class="btn btn-cancel-dialog-asset" style="font-size:13px">
+                                            Chọn tài sản
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-base" style="grid-column: span 3; height: 250px;">
+                            <TableBase :voucherID="assetIncrement.voucherID" :listAsset="listAsset" :isShowFunction="true"></TableBase>
+                        </div>
                     </div>
-                    <div class="col-base" style="grid-column: span 3; height: 200px;">
-                        <TableBase :voucherID="assetIncrement.voucherID"></TableBase>
-                    </div>
+                    
                 </div>
             </div>
             <div class="dialog_footer">
@@ -75,11 +81,14 @@
             </div>
         </div>
     </div>
-    <BaseLoading v-if="isShowLoading"></BaseLoading>
+    <TheDialogSelectAsset v-if="isShowDialogDetail" :showDetailChil="isShowDialogDetail"
+        :showDetailFunction="showDetail" v-on:addListAssetSelected="addListAssetSelected"/>
+           <BaseLoading v-if="isShowLoading"></BaseLoading>
 
 </template>
 
 <script>
+import TheDialogSelectAsset from './TheDialogSelectAsset.vue';
 import Datepicker from 'vuejs3-datepicker';
 import TableBase from '../../base/BaseTableFixedAsset.vue'
 import { EndPoint } from '../../common/TheConst'
@@ -89,7 +98,7 @@ import { uuid } from 'vue-uuid'
 
 export default {
 
-    components: { Datepicker, TableBase, BaseLoading },
+    components: { Datepicker, TableBase, BaseLoading ,TheDialogSelectAsset},
     name: "TheAssetDetail",
     emits: ["getNameDepartment", "getNameCategory", "validCombobox", "updateMessage", "returnIsDuplicate", "activeAssetNew"],
     props: {
@@ -105,6 +114,10 @@ export default {
             default: false,
         },
         isFormAdd: {
+            type: Boolean,
+            default: false,
+        },
+        isFormUpdate: {
             type: Boolean,
             default: false,
         },
@@ -132,9 +145,9 @@ export default {
     data() {
         return {
             isShowLoading: false,
-
+            isShowDialogDetail: false,
             assetIncrement: {},
-
+            listAsset: [],
             paging: {
                 keyWord: '',
                 pageSize: 15,
@@ -145,6 +158,50 @@ export default {
         }
     },
     methods: {
+        /**
+        * Lấy danh sách tài sản đã chọn
+        * TVTOAN (26/07/2022)
+        */
+        addListAssetSelected(listAsset) {
+            try {
+                this.listAsset = listAsset;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Tạo data để thêm chi tiết chứng từ
+        * TVTOAN (26/07/2022)
+        */
+        insertIncrementDetail(voucherId) {
+            try{
+                var dataInsertIncrementDetail = [];
+                for(let i = 0; i < this.listAsset.length; i++) {
+                    dataInsertIncrementDetail.push({
+                        "budgetID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "fixedAssetID": this.listAsset[i].fixedAssetId,
+                        "voucherID":voucherId,
+                    })
+                }
+                return dataInsertIncrementDetail;
+            }catch(error) {
+                console.log(error)
+            }
+        },
+
+        /**
+        * Chức năng mở dialog chọn tài sản
+        * TVTOAN (26/07/2022)
+        */
+        showDetail(isShow) {
+            try{
+                this.isShowDialogDetail = isShow;
+            }catch(error) {
+                console.log(error)
+            }
+        },
+        
         /**
         * Chức năng thêm chứng từ
         * TVTOAN (26/07/2022)
@@ -162,26 +219,46 @@ export default {
                     "createdDate": new Date(),
                     "modifiedBy": "TVTOAN",
                     "modifiedDate": new Date(),
-                    "price": this.assetIncrement.price,
+                    "price": "100000",
                 };
-                axios.post(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}`, dataInsert)
+                let result = this.insertIncrementDetail(dataInsert.voucherID);
+                if(result.length > 0) {
+                    axios.post(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}`, dataInsert)
                     .then(res => {
                         if (res.status == '200') {
                             this.resApi = res;
                             this.showDetailFunction(false);
-                            this.assetIncrement = {};
+                            axios.post(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST}`, result)
+                            .then(res => {
+                                console.log(res);
+                                var listFixedAssetId = [];
+                                for(var i = 0; i < result.length; i++) {
+                                    listFixedAssetId.push(result[i].fixedAssetID);
+                                }
+                                axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=1`, listFixedAssetId)
+                                .then(res => {
+                                    console.log(res);
+                                })
+                            })
+                            this.assetIncrement = {};    
                             this.getData(this.paging);
                             this.$emit('activeAssetNew', res.data.voucherID);
+
                         } else {
                             this.showToastFail();
                         }
                     }).catch((error) => {
                         console.log(error);
                     });
-            }if(this.isFormUpdate == true) {
+                }else {
+                    console.log("rỗng");
+                }
+
+            }if(this.isFormUpdate == true){
+                console.log("A");
                 this.isShowLoading = true;
                 const dataUpdate = {
-                    "voucherID": uuid.v1(),
+                    "voucherID": this.assetIncrement.voucherID,
                     "voucherCode": this.assetIncrement.voucherCode.toString(),
                     "voucherDate": this.assetIncrement.voucherDate,
                     "incrementDate": this.assetIncrement.incrementDate,
@@ -190,13 +267,28 @@ export default {
                     "createdDate": new Date(),
                     "modifiedBy": "TVTOAN",
                     "modifiedDate": new Date(),
-                    "price": this.assetIncrement.price,
+                    "price": "100000",
                 };
-                axios.put(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}/${this.assetIncrement.voucherID}`, dataUpdate)
+
+                axios.put(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.assetIncrement.voucherID}`, dataUpdate)
                     .then(res => {
                         if (res.status == '201') {
                             this.resApi = res;
                             this.showDetailFunction(false);
+                            let result = this.insertIncrementDetail(dataUpdate.voucherID);
+                            if(result.length > 0) {
+                            axios.post(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST}`, result)
+                            .then(res => {
+                                console.log(res);
+                                var listFixedAssetId = [];
+                                for(var i = 0; i < result.length; i++) {
+                                    listFixedAssetId.push(result[i].fixedAssetID);
+                                }
+                                axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=1`, listFixedAssetId)
+                                .then(res => {
+                                    console.log(res);
+                                })
+                            })}
                             this.assetIncrement = {};
                             this.getData(this.paging);
                             this.$emit('activeAssetNew', res.data.voucherID);
@@ -206,7 +298,8 @@ export default {
                     }).catch((error) => {
                         console.log(error);
                     });
-            }
+                }
+            
         },
 
     },

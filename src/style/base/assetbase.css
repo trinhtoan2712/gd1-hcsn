@@ -126,7 +126,6 @@
   /* ------------- CONTENT-TABLE ------------ */
   .content-table-base {
     background-color: #ffffff;
-    border: 1px solid #afafaf;
     overflow: hidden;
     font-size: 13px;
     overflow: auto;
@@ -163,6 +162,7 @@
   }
   
   .table-header {
+    border-bottom: 0.5px solid rgb(220, 215, 215);
     position: sticky;
     cursor: context-menu;
     top: 0;
@@ -289,8 +289,11 @@
     bottom: 0;
     font-size: 11px;
     border-top: unset !important;
-    border: 0.5px solid #afafaf;
     border-radius: 0px 0px 3.5px 3.5px;
+  }
+
+  .dialog_content-base .table-footer-base{
+    bottom: unset !important;
   }
   
   .td-footer {
@@ -423,7 +426,6 @@
   @media only screen and (width: 1024px) {
     .content-table-base {
       background-color: #ffffff;
-      border: 1px solid #afafaf;
       overflow: hidden;
       font-size: 13px;
       overflow: auto;
@@ -434,7 +436,6 @@
   @media only screen and (width: 1366px) {
     .content-table-base {
       background-color: #ffffff;
-      border: 1px solid #afafaf;
       overflow: hidden;
       font-size: 13px;
       overflow: auto;
