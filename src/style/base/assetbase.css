@@ -129,8 +129,16 @@
     overflow: hidden;
     font-size: 13px;
     overflow: auto;
-    height: 74vh;
+    height: 64vh;
   }
+  
+.dialog_content-base .content-table-base {
+  background-color: #ffffff;
+  overflow: hidden;
+  font-size: 13px;
+  overflow: auto;
+  height: 58vh !important;
+}
   
   /* width */
   ::-webkit-scrollbar {
@@ -203,8 +211,10 @@
   }
   
   .table__nodata {
-    background-size: 20% 40%;
-    background-image: url(../../assets/img/datanotfound.png);
+    background: url('../../assets/img/img-EmptyData-L.svg') no-repeat 0 0;
+    width: 183px;
+    height: 156px;
+    background-size: 15%;
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;  
@@ -302,7 +312,6 @@
   
   .table-summary-base {
     background-color: #fff;
-    position: sticky !important;
     bottom: 0 !important;
     font-size: 11px;
     height: 30px;
@@ -429,7 +438,7 @@
       overflow: hidden;
       font-size: 13px;
       overflow: auto;
-      height: 79vh;
+      height: 64vh;
     }
   }
   
@@ -439,7 +448,7 @@
       overflow: hidden;
       font-size: 13px;
       overflow: auto;
-      height: 79vh;
+      height: 64vh;
     }
   }
   

@@ -13,7 +13,14 @@
                 </div>
             </div>
             <div class="dialog_content-base">
-                <TableBase :isShowCheckBox="true" :voucherID="isGetAll" v-on:listAssetSelected="listAssetSelected"></TableBase>
+                <div class="" style="padding: 5px 11px">
+                    <div class="form-search-table-base">
+                        <div class="form-search__icon icon-small"></div>
+                        <input class="form-search__input" ref="txtSearch" type="text" v-model="keyWord"
+                            placeholder="Tìm kiếm theo tài sản" v-on:keyup="btnSearch(keyWord, $event)">
+                    </div>
+                </div>
+                <TableBase :isShowAllColumn="true" :isShowCheckBox="true" :isShowQuantityRecords="true" :isShowSummary="true" :isShowPaging="true" :voucherID="isGetAll" v-on:listAssetSelected="listAssetSelected" :keyWord="keyWord"></TableBase>
             </div>
             <div class="dialog_footer">
                 <button tabindex="13" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
@@ -46,6 +53,7 @@ export default {
     data() {
         return {
             isGetAll: 'getAll',
+            keyWord: '',
 
             isShowLoading: false,
             isShowDialogDetail: false,
@@ -62,6 +70,20 @@ export default {
         }
     },
     methods: {
+        /**
+        * Tìm kiếm.
+        * TVTOAN (06/08/2022)
+        */
+        btnSearch(key, e) {
+            try {
+                if (e.keyCode === 13) {
+                    this.keyWord = key;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         /**
         * Lấy danh sách tài sản đã chọn
         * TVTOAN (26/07/2022)

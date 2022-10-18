@@ -18,9 +18,9 @@
                 <div class="row" role="row">
                     <div class="col" :class="{'col__tooltip': !formValid.fixedAssetCode}">
                         <label>Mã tài sản <span class="input--required">*</span></label>
-                        <input tabindex="1" id="txtFixedAssetCode" ref="txtAssetCode" name-property="mã tài sản"
+                        <input tabindex="1" id="txtFixedAssetCode" ref="txtAssetCode" name-property="mã tài sản" :disabled="asset.status == 1" 
                             type="text" class="input" placeholder="Nhập mã tài sản" required maxlength="20"
-                            v-model="asset.fixedAssetCode" @blur="checkValidate(this.$refs['txtAssetCode'])" :class="{'border-red': !formValid.fixedAssetCode}">
+                            v-model="asset.fixedAssetCode" @blur="checkValidate(this.$refs['txtAssetCode'])" :class="[{'border-red': !formValid.fixedAssetCode}, {'inputdisable': asset.status == 1 }]">
                             <span v-if="!formValid.fixedAssetCode" class="tooltip">Mã tài sản không hợp lệ</span>
                     </div>
                     <div class="col" style="grid-column: span 2;" :class="{'col__tooltip': !formValid.fixedAssetName}">
@@ -43,7 +43,7 @@
                     </div>
                     <div class="col" style="grid-column: span 2;">
                         <label>Tên bộ phận sử dụng </label>
-                        <input id="txtDepartmentName" type="text" class="input input-disable" disabled
+                        <input id="txtDepartmentName" type="text" class="input inputdisable" disabled
                             v-model="asset.departmentName">
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.fixedAssetCategoryId}">
@@ -59,20 +59,20 @@
                     </div>
                     <div class="col" style="grid-column: span 2;">
                         <label>Tên loại tài sản</label>
-                        <input id="txtFixedAssetCategoryName" type="text" class="input input-disable" disabled
+                        <input id="txtFixedAssetCategoryName" type="text" class="input inputdisable" disabled
                             v-model="asset.fixedAssetCategoryName">
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.quantity}">
                         <label>Số lượng <span class="input--required">*</span></label>
                         <div class="input-updown">
-                            <input tabindex="5" id="txtQuantity" name-property="số lượng" :disabled="asset.status == 1"
+                            <input tabindex="5" id="txtQuantity" name-property="số lượng" :disabled="asset.status == 1 " 
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
         type = "number"
         maxlength = "18"
                             
                                 class="input input-number" v-model="asset.quantity" min="1" ref="txtQuantity"
                                 v-on:keypress="isNumber(event)" 
-                                @blur="checkValidate(this.$refs['txtQuantity'])" :class="{'border-red': !formValid.quantity}">
+                                @blur="checkValidate(this.$refs['txtQuantity'])" :class="[{'border-red': !formValid.quantity}, {'inputdisable': asset.status == 1 }]">
                             <div class="btn-updown-number">
                                 <div @click="incrementNumber" class="icon-up-number icon-content"></div>
                                 <div @click="decrementNumber" class="icon-down-number icon-content"></div>
@@ -85,7 +85,7 @@
                         <input tabindex="6" id="txtCost" name-property="nguyên giá" type="text" 
                         maxlength="18" :disabled="asset.status == 1"
                             class="input number-right" @input="formatInputNumber()"
-                            v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="{'border-red': !formValid.cost}">
+                            v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="[{'border-red': !formValid.cost}, {'inputdisable': asset.status == 1 }]">
                             <span v-if="!formValid.cost" class="tooltip">Nguyên giá không hợp lệ</span>
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.lifeTime}">
@@ -97,7 +97,7 @@
         maxlength = "4"
                                 class="input input-number" v-model="asset.lifeTime" min="1" ref="txtLifeTime"
                                 @change="depreciationRateChange"
-                                @blur="checkValidate(this.$refs['txtLifeTime'])" :class="{'border-red': !formValid.lifeTime}">
+                                @blur="checkValidate(this.$refs['txtLifeTime'])" :class="[{'inputdisable': asset.status == 1 }]">
                             <div class="btn-updown-number">
                                 <div @click="incrementYear" class="icon-up-number icon-content"></div>
                                 <div @click="decrementYear" class="icon-down-number icon-content"></div>
@@ -110,7 +110,7 @@
                         <input tabindex="8" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text" :disabled="asset.status == 1"
                             class="input number-right" v-model="asset.depreciationRate"
                             ref="txtDepreciationRate"
-                            @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="{'border-red': !formValid.depreciationRate}">
+                            @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="[{'border-red': !formValid.depreciationRate}, {'inputdisable': asset.status == 1 }]">
                             <span v-if="!formValid.depreciationRate" class="tooltip">Tỉ lệ hao mòn không hợp lệ</span>
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
@@ -118,13 +118,13 @@
                         <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text" :disabled="asset.status == 1"
                         maxlength="18"  @input="formatInputNumber()"
                             class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
-                            @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="{'border-red': !formValid.depreciationValue}">
+                            @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="[{'border-red': !formValid.depreciationValue}, {'inputdisable': asset.status == 1 }]">
                             <span v-if="!formValid.depreciationValue" class="tooltip">Giá trị hao mòn không hợp lệ</span>
 
                     </div>
                     <div class="col input-updown">
                         <label>Năm theo dõi</label>
-                        <input id="txtTrackedYear" name-property="" type="text" class="input number-right input-disable"
+                        <input id="txtTrackedYear" name-property="" type="text" class="input number-right inputdisable"
                             v-model="asset.trackedYear" disabled>
                     </div>
                     <div class="col" id="valid-date-use">
@@ -378,7 +378,7 @@ export default {
         getNameCategory(name, id) {
             try {
                 this.asset.fixedAssetCategoryName = name;
-            this.asset.fixedAssetCategoryID = id;
+                this.asset.fixedAssetCategoryID = id;
             } catch (error) {
                 console.log(error);
             }
@@ -527,7 +527,6 @@ export default {
             if(result == true) {
                 this.$refs[this.arrayInputError[0]].focus();
                 this.isValid = false;
-                console.log(this.arrayInputError[0]);
             }else {
                 this.isValid = true;
             }
@@ -612,7 +611,8 @@ export default {
                             "modifiedBy": "TVTOAN",
                             "modifiedDate": new Date(),
                             "productionDate": asset.productionDate,
-                            "depreciationValue": formatNumber(asset.depreciationValue)
+                            "depreciationValue": formatNumber(asset.depreciationValue),
+                            "fixedAssetBudget": `[{"BudgetID": "142cb08f-7c31-21fa-8e90-67245e8b283e", "BudgetName":"Ngân sách tỉnh", "BudgetCost": "${formatNumber(asset.cost)}"}]`
                         };
                         axios.post(`${EndPoint.END_POINT_FIXED_ASSET}`, dataInsert)
                             .then(res => {
@@ -645,6 +645,11 @@ export default {
                 } else {
                     if (this.isValid && this.isValidCbb) {
                         if (this.isChange) {
+                            let FixedAssetBudget = [{
+                                BudgetID: "142cb08f-7c31-21fa-8e90-67245e8b283e",
+                                BudgetName: "Ngân sách tỉnh",
+                                BudgetCost: `${formatPrice(asset.cost)}`
+                            }]
                             const dataUpdate = {
                                 "fixedAssetId": asset.fixedAssetId,
                                 "fixedAssetCode": asset.fixedAssetCode,
@@ -662,7 +667,8 @@ export default {
                                 "modifiedBy": "TVTOAN",
                                 "modifiedDate": new Date(),
                                 "productionDate": asset.productionDate,
-                                "depreciationValue": formatNumber(asset.depreciationValue)
+                                "depreciationValue": formatNumber(asset.depreciationValue),
+                                "fixedAssetBudget": JSON.stringify(FixedAssetBudget)
                             };
                             axios.put(`${EndPoint.END_POINT_FIXED_ASSET}/${asset.fixedAssetId}`, dataUpdate)
                                 .then(res => {

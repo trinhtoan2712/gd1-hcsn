@@ -1,7 +1,7 @@
 <template>
     <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}" >
         <table class="table-data noselect">
-            <thead class="table-header" v-if="assets.length > 0">
+            <thead class="table-header">
                 <tr>
                     <th style="width:50px" v-if="isShowCheckBox">
                         <input type="checkbox" name="" class="ckb ckb-primary" v-model="isSelect"
@@ -10,8 +10,10 @@
                     <th style="width:40px">STT<span class="tooltip">Số thứ tự</span> </th>
                     <th style="width:200px">Mã tài sản</th>
                     <th style="width:200px">Tên tài sản</th>
+                    <th style="width:200px" v-if="isShowAllColumn">Loại tài sản</th>
                     <th style="width:200px">Bộ phận sử dụng</th>
-                    <th style="width:200px" class="number-right">Nguyên giá</th>
+                    <th style="width:100px" class="number-right" v-if="isShowAllColumn">Số lượng</th>
+                    <th style="width:200px; padding-left:50px" class="number-right">Nguyên giá</th>
                     <th style="width:200px" class="number-right">Hao mòn năm</th>
                     <th style="width:200px" class="number-right">Giá trị còn lại</th>
                     <th v-if="isShowFunction" style="padding: 0px 10px">Chức năng</th>
@@ -30,9 +32,13 @@
                     <td class="text-hide">
                         <p>{{ asset.fixedAssetName }}</p>
                     </td>
+                    <td v-if="isShowAllColumn" class="text-hide">
+                        <p>{{ asset.fixedAssetCategoryName }}</p>
+                    </td>
                     <td class="text-hide">
                         <p>{{ asset.departmentName }}</p>
                     </td>
+                    <td v-if="isShowAllColumn" class="number-right">{{ asset.quantity }}</td>
                     <td class="number-right">{{ formatPrice(asset.cost) }}</td>
                     <td class="number-right">{{ formatPrice(asset.depreciationValue) }}</td>
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
@@ -40,10 +46,7 @@
                     <td class="table-option" v-if="isShowFunction">
                         <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
-                        <div @click="duplicateAssets(asset)"
-                            class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
-                                bản </span></div>
-                        <div @click="showDialogDeleteList(assetCurrent)" class="table-delete icon-small icon-pading">
+                        <div @click="btnDeleteOnClick(asset,index)" class="table-delete icon-small icon-pading">
                             <span class="tooltip">Xóa (Delete)</span>
                         </div>
                     </td>
@@ -55,20 +58,20 @@
             <BaseLoading v-if="isShowLoading"></BaseLoading>
         </table>
     </div>
-    <div class="table-footer-base" v-if="assets.length > 0 || isShowPaging">
+    <div class="table-footer-base" v-if="assets.length > 0">
         <table>
-            <tr class="table-summary-base" v-if="assets.length > 0">
-                <td style="width:40px !important"></td>
+            <tr class="table-summary-base" v-if="assets.length > 0 || isShowSummary">
+                <td style="width:240px !important; padding-left: 5px;"><span v-if="isShowQuantityRecords">Đã chọn: <strong>{{selected.length}}</strong> bản ghi</span></td>
                 <td style="width:200px !important"></td>
                 <td style="width:200px !important"></td>
                 <td style="width:200px !important"></td>
-                <td style="width:200px !important"></td>
-                <td style="width:200px !important; padding-right: 5px;" class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
+                <td v-if="isShowAllColumn" style="width:50px !important; padding-right: 5px;" class="number-right font-bold">{{ total.totalQuantity }}</td>
+                <td style="width:120px !important; padding-right: 5px;" class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
                 <td class="number-right font-bold">{{formatPrice(total.totalAtrophy)}}</td>
                 <td class="number-right font-bold" >{{formatPrice(total.totalResidualValue)}}</td>
             </tr>
         </table>
-        <div class="paging-base">
+        <div class="paging-base" v-if="isShowPaging">
             <div class="total-record">Tổng số: <strong>{{ totalRecord }}</strong> bản ghi</div>
             <div class="page-record">
                 <select name="" id="" @change="selectPageSize($event)">
@@ -85,7 +88,7 @@
                 <div class="paging__button--group">
                     <div :class="{ selected: page.isDisabled }" @click="onClickPage(page.name)" class="paging__number"
                         v-for="page in pages" :key="page.name">{{ page.name }}</div>
-                    <div class="">...</div>
+                    <div class="" v-if="pages.length > 2">...</div>
                     <div class="paging__number" @click="onClickPage(paging.totalPage)">{{paging.totalPage}}</div>
                 </div>
                 <div @click="onClickNextPage" class="paging__button paging__button--next icon-content"><span
@@ -95,14 +98,17 @@
             </div>
         </div>
     </div>
+    <TheDialogUpdateBudgetAsset v-if="isShowDialogAssetBudget" :showDetailChil="isShowDialogAssetBudget"
+        :showDetailFunction="showDetail" :title="title" :assetSelected="assetSelected" v-on:arrayById="arrayById" v-on:totalById="totalById"/>
 </template>
 
 <script>
-import { formatPrice, formatDate, getCookie } from "../common/TheCommon";
+import TheDialogUpdateBudgetAsset from '../page/MasterDetail/TheDialogUpdateBudgetAsset.vue'
+import { formatPrice, formatDate } from "../common/TheCommon";
 import BaseLoading from '../base/BaseLoading.vue';
 import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
-import { EndPoint, NameCookie, FullUrl } from "../common/TheConst";
+import { EndPoint } from "../common/TheConst";
 import axios from "axios";
 
 export default ({
@@ -112,22 +118,27 @@ export default ({
     name: "TableBase",
     components: {
         BaseLoading, [Contextmenu.name]: Contextmenu,
-        [ContextmenuItem.name]: ContextmenuItem
+        [ContextmenuItem.name]: ContextmenuItem, TheDialogUpdateBudgetAsset
     },
     emits: ["updateMessage"],
     props: {
+        listSelected: [],
+        keyWord: String,
         listAsset: [],
+        isShowQuantityRecords: Boolean,
         isShowCheckBox: Boolean,
         isShowPaging: Boolean,
+        isShowSummary: Boolean,
         isShowFunction: Boolean,
         voucherID: String,
+        isShowAllColumn: Boolean,
     },
     created() {
         if(this.voucherID == 'getAll') {
                 this.getAllData(this.paging)
             }
-            if(this.voucherID != 'getAll' && this.voucherID) {
-                this.getData(this.paging)
+            else {
+                this.getData(this.pagingByVoucherID)
             }
         // else {
         //     // array từ cache để làm form sửa và thêm.
@@ -147,18 +158,24 @@ export default ({
     },
 
     watch: {
+        keyWord: function (newValue) {
+            this.paging.keyWord = newValue;
+            this.getAllData(this.paging)
+        },
+
         voucherID: function (newValue) {
             if(newValue == 'getAll') {
                 this.getAllData(this.paging)
             }
             if (newValue != 'getAll') {
-                this.getData(this.paging)
+                this.getData(this.pagingByVoucherID)
             }
 
         },
         listAsset: function (newValue) {
             let result  = this.assets.concat(newValue)
-            this.assets=result;
+            let newListCtrl = [...new Set(result)];
+            this.assets=newListCtrl;
         }
     },
     unmounted() {
@@ -172,6 +189,7 @@ export default ({
     data() {
         return {
             // Dữ liệu bool
+            isShowDialogAssetBudget: false,
             isShowToastSuccess: false,
             isMessDelete: false,
             isShowToastFail: false,
@@ -193,6 +211,8 @@ export default ({
             listAssetSelected: [],
             assetCurrent: {},
             listFixedAssetId: [],
+            listDelete: [],
+            listUpdate: [],
 
             //Index
             indexRecord: {
@@ -215,6 +235,17 @@ export default ({
                 departmentID: '',
                 fixedAssetCategoryID: '',
                 pageSize: 15,
+                pageNumber: 1,
+                totalPage: 0,
+                maxVisibleButtons: 3,
+            },
+
+            // Dữ liệu cho api phân trang
+            pagingByVoucherID: {
+                keyWord: '',
+                departmentID: '',
+                fixedAssetCategoryID: '',
+                pageSize: 9999,
                 pageNumber: 1,
                 totalPage: 0,
                 maxVisibleButtons: 3,
@@ -255,6 +286,24 @@ export default ({
     },
 
     methods: {
+        /**
+        * Lấy tổng tiền từ các nguồn vốn
+        * TVTOAN (11/09/2022)
+        */
+        totalById(total) {
+            this.assetCurrent.cost = total;
+            this.$emit("listUpdate", this.assets)
+        },
+
+        /**
+        * Lấy thông tin từ các nguồn vốn
+        * TVTOAN (11/09/2022)
+        */
+        arrayById(array) {
+            this.assetCurrent.fixedAssetBudget = array;
+            this.$emit("listUpdate", this.assets)
+        },
+
         /**
         * Tính ra đã sử dụng được bao nhiêu năm.
         * TVTOAN (11/09/2022)
@@ -355,7 +404,7 @@ export default ({
         */
         onClickFirstPage() {
             this.paging.pageNumber = 1;
-            this.getData(this.paging);
+            this.getAllData(this.paging)
 
         },
 
@@ -366,7 +415,7 @@ export default ({
         onClickPreviousPage() {
             if (this.paging.pageNumber > 1) {
                 this.paging.pageNumber -= 1;
-                this.getData(this.paging);
+                this.getAllData(this.paging)
             }
 
         },
@@ -377,7 +426,7 @@ export default ({
         */
         onClickPage(page) {
             this.paging.pageNumber = page;
-            this.getData(this.paging);
+            this.getAllData(this.paging)
 
         },
 
@@ -389,7 +438,7 @@ export default ({
         onClickNextPage() {
             if (this.paging.pageNumber < this.paging.totalPage) {
                 this.paging.pageNumber += 1;
-                this.getData(this.paging);
+                this.getAllData(this.paging)
             }
         },
 
@@ -399,7 +448,7 @@ export default ({
         */
         onClickLastPage() {
             this.paging.pageNumber = this.paging.totalPage;
-            this.getData(this.paging);
+            this.getAllData(this.paging)
         },
 
         /**
@@ -410,7 +459,7 @@ export default ({
             try {
                 if (e.keyCode === 13) {
                     this.paging.keyWord = key;
-                    this.getData(this.paging);
+                    this.getAllData(this.paging)
                 }
             } catch (error) {
                 console.log(error);
@@ -424,7 +473,7 @@ export default ({
         selectPageSize(e) {
             try {
                 this.paging.pageSize = e.target.value;
-                this.getData(this.paging);
+                this.getAllData(this.paging);
             } catch (error) {
                 console.log(error);
             }
@@ -450,13 +499,14 @@ export default ({
         */
         getData(paging) {
             try {
-                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
-                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                console.log(this.listSelected);
+                if(this.listSelected.length == 1) {
+                    this.listFixedAssetId = [];
+                    axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
                         this.assets = data.data.data;
-                        this.listFixedAssetId = [];
                         for (let asset of this.assets) {
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
@@ -468,6 +518,22 @@ export default ({
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                         this.$emit("listFixedAssetId", this.listFixedAssetId);
                     });
+                }
+                if(this.listSelected.length > 1) {
+                    debugger
+                    console.log("a");
+                    for(var i = 0; i < this.listSelected.length; i++) {
+                        axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.listSelected[i]}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                        .then(data => {
+                            this.assets = data.data.data;
+                            for (let asset of this.assets) {
+                                this.listFixedAssetId.push(asset.fixedAssetID);
+                            }
+                            this.$emit("listFixedAssetId", this.listFixedAssetId);
+                        })
+                    }
+                }
+                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
                 this.pages;
             } catch (error) {
                 console.log(error);
@@ -546,58 +612,12 @@ export default ({
         * Hàm xóa tài sản
         * TVTOAN (02/08/2022)
         */
-        btnDeleteOnClick() {
+        btnDeleteOnClick(asset,index) {
             try {
-                this.isShowLoading = true;
-                if (this.selected.length > 0) {
-                    if (this.selected.length == 1) {
-                        axios.delete(`${EndPoint.END_POINT_FIXED_ASSET}/${this.selected[0]}`)
-                            .then(res => {
-                                if (res.status == 200) {
-                                    this.isDelete = false;
-                                    this.getData(this.paging);
-                                    this.toastMess = 'Xóa thành công !!!';
-                                    this.isShowToastSuccess = true;
-                                    this.selected = [];
-                                    setTimeout(() => this.isShowToastSuccess = false, 3000);
-                                } else {
-                                    this.isDelete = false;
-                                    this.toastMess = `Xóa không thành công`;
-                                    this.isShowToastSuccess = true;
-                                }
-                            })
-                    }
-                    else {
-                        let body = [];
-                        this.selected.map(function (value, key) {
-                            body.push(value);
-                            console.log(key);
-                        })
-                        const requestOptions = {
-                            method: "DELETE",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${getCookie(NameCookie.NAME_TOKEN)}`
-                            },
-                            body: JSON.stringify(body)
-                        };
-                        fetch(`${FullUrl.URL_FIXED_ASSET}`, requestOptions)
-                            .then(res => {
-                                if (res.status == 200) {
-                                    this.isDelete = false;
-                                    this.toastMess = `Xóa thành công`;
-                                    this.getData(this.paging);
-                                    this.selected = [];
-                                    this.isShowToastSuccess = true
-                                    setTimeout(() => this.isShowToastSuccess = false, 500);
-                                } else {
-                                    this.isDelete = false;
-                                    this.toastMess = `Xóa không thành công`
-                                    this.isShowToastSuccess = true;
-                                }
-                            })
-                    }
-                }
+                this.listDelete.push(asset.fixedAssetId || asset.fixedAssetID);
+                this.assets.splice(index, 1);
+                this.$emit("idFixedAssettDelete", asset.fixedAssetId || asset.fixedAssetID);
+                this.$emit("listDelete", this.listDelete);
             } catch (error) {
                 console.log(error);
             }
@@ -636,7 +656,7 @@ export default ({
         */
         showDetail(isShow) {
             try {
-                this.showDetailParent = isShow;
+                this.isShowDialogAssetBudget = isShow;
                 this.title = "Thêm tài sản";
                 this.assetSelected = {
                     fixedAssetId: '00000000-0000-0000-0000-000000000000',
@@ -668,10 +688,10 @@ export default ({
         */
         rowOnDblClick(asset) {
             try {
-                this.title = "Sửa tài sản";
+                console.log(asset);
+                this.title = `Sửa tài sản ${asset.fixedAssetName}`;
                 this.assetSelected = asset;
-                console.log(this.assetSelected);
-                this.showDetailParent = true;
+                this.isShowDialogAssetBudget = true;
             } catch (error) {
                 console.log(error);
             }
@@ -707,11 +727,14 @@ export default ({
         selectAllRows() {
             try {
                 this.selected = [];
+                this.listAssetSelected = [];
                 if (!this.isSelect) {
                     for (let i in this.assets) {
                         this.selected.push(this.assets[i].fixedAssetId);
+                        this.listAssetSelected.push(this.assets[i]);
                     }
                 }
+                this.$emit("listAssetSelected", this.listAssetSelected);
             } catch (error) {
                 console.log(error);
             }

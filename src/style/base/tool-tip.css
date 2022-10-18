@@ -55,6 +55,31 @@
     transform: translateY(-50%);
   }
 
+  .container-table tr th .tooltip {
+    position: absolute;
+    top: -20px;
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding: 6px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0s;
+  }
+
+  .container-table tr th:hover .tooltip {
+    opacity: 1;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+
  .content-header-right .info-user .tooltip,
   .content-header-right .padding .tooltip{
     position: absolute;
@@ -79,6 +104,60 @@
   top: 6%;
   transform: translateX(-80%);
 }
+
+.header-table-right .btn-export .tooltip,
+.header-table-right .btn-delete .tooltip {
+  position: absolute;
+  top: 50px;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 6px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
+  color: #000;
+}
+
+.header-masterdetail-right .btn-unknow .tooltip {
+  position: absolute;
+  top: 50px;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 6px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
+  color: #000;
+}
+
+.header-masterdetail-right .btn-unknow:hover .tooltip {
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  top: 15%;
+  transform: translateX(-75%);
+}
+
+.header-table-right .btn-export:hover .tooltip,
+.header-table-right .btn-delete:hover .tooltip{
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  top: 15%;
+  transform: translateX(-75%);
+}
+
+
 .content-option-right .btn-add .tooltip,
 .content-option-right .btn-export-excel .tooltip,
 .content-option-right .btn-delete .tooltip {

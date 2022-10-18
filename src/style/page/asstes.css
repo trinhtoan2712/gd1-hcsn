@@ -204,8 +204,10 @@ input[type="date"] {
 }
 
 .table__nodata {
-  background-size: 20% 40%;
-  background-image: url(../../assets/img/datanotfound.png);
+	background: url('../../assets/img/img-EmptyData-L.svg') no-repeat 0 0;
+	width: 183px;
+	height: 156px;
+  background-size: 10%;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;  

@@ -1,6 +1,6 @@
 <template>
   <div class="combobox">
-    <div class="icon-filter-combobox"></div>
+    <div v-if="isShowIcon" class="icon-filter-combobox"></div>
     <input :placeholder="placText" type="text" class="input combobox__input" v-model="text" @input="inputOnChange"
       @keydown="selecItemUpDown" />
     <button class="button combobox__button" @click="btnSelectDataOnClick($event)" @keydown="selecItemUpDown"
@@ -66,12 +66,15 @@ export default {
   },
   mixins: [tooltipMixin],
   props: {
+    isShowIcon: Boolean,
     placText: String,
     value: null,
     url: String,
     propValue: String,
     propID:String,
     propText: String,
+    valDefault: String,
+    index: Number,
     isLoadData: {
       type: Boolean,
       default: true,
@@ -108,6 +111,7 @@ export default {
         this.isShowListData = false;
         this.$emit('filterByDepartmentID', item[this.propID])
         this.$emit('filterByCategoryID', item[this.propID])
+        this.$emit('getIdAndName', item[this.propText], item[this.propValue], this.index)
       }
     },
 
@@ -173,6 +177,7 @@ export default {
         .then((res) => {
           this.data = res;
           this.dataFilter = res;
+          this.text = this.valDefault;
         })
         .catch((res) => {
           console.log(res);

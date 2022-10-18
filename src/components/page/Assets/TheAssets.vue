@@ -10,13 +10,13 @@
                 <BaseCombobox :url="'http://localhost:14537/api/FixedAssetCategorys'"
                     :propValue="'FixedAssetCategoryCode'" :propText="'FixedAssetCategoryName'"
                     :propID="'FixedAssetCategoryID'" :placText="'Loại tài sản'"
-                    v-on:filterByCategoryID="filterByCategoryID">
+                    v-on:filterByCategoryID="filterByCategoryID" :isShowIcon="true">
                 </BaseCombobox>
             </div>
             <div class="filter-assets">
                 <BaseCombobox :url="'http://localhost:14537/api/Departments'" :propValue="'DepartmentCode'"
                     :propID="'DepartmentID'" :propText="'DepartmentName'" :placText="'Bộ phận sử dụng'"
-                    v-on:filterByDepartmentID="filterByDepartmentID">
+                    v-on:filterByDepartmentID="filterByDepartmentID" :isShowIcon="true">
                 </BaseCombobox>
             </div>
         </div>
@@ -95,13 +95,13 @@
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
                     <td v-if="asset.status == 1"> Đang sử dụng </td>
                     <td v-if="asset.status == 0"> Chưa ghi tăng </td>
-                    <td class="table-option">
+                    <td class="table-option" @click="btnRowActiveOnClick(asset, $event, index)">
                         <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
                         <div @click="duplicateAssets(asset)"
                             class="table-replication icon-content icon-pading icon-small"><span class="tooltip">Nhân
                                 bản </span></div>
-                        <div @click="showDialogDeleteList(assetCurrent)" class="table-delete icon-small icon-pading"><span
+                        <div @click="showDialogDeleteList(asset)" class="table-delete icon-small icon-pading"><span
                         class="tooltip">Xóa (Delete)</span></div>
                     </td>
                 </tr>
@@ -146,7 +146,7 @@
                 <div class="paging__button--group">
                     <div :class="{ selected: page.isDisabled }" @click="onClickPage(page.name)" class="paging__number"
                         v-for="page in pages" :key="page.name">{{ page.name }}</div>
-                    <div class="">...</div>
+                        <div class="" v-if="pages.length > 2">...</div>
                     <div class="paging__number" @click="onClickPage(paging.totalPage)">{{paging.totalPage}}</div>
                 </div>
                 <div @click="onClickNextPage" class="paging__button paging__button--next icon-content"><span
@@ -580,6 +580,8 @@ export default ({
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
                         this.assets = data.data.data;
+                        this.selected = [];
+                        this.selected.push(this.assets[0].fixedAssetId)
                         for (let asset of this.assets) {
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
@@ -764,6 +766,7 @@ export default ({
                     modifiedBy: "TVTOAN",
                     modifiedDate: new Date(),
                     status: 0,
+                    fixedAssetBudget: '',
                 };
             } catch (error) {
                 console.log(error);

@@ -17,7 +17,7 @@
                     <div class="col-title" style="grid-column: span 3;">
                         <h5 style="font-weight: 700"> Thông tin chứng từ </h5>
                     </div>
-                    <div class="row" style="background-color: #fff; margin: 0px 10px; padding: 5px 0px;">
+                    <div class="row" style="background-color: #fff; margin: 0px 10px; padding:0px 0px 5px 0px;">
                         <div class="col-base">
                             <label>Mã chứng từ <span class="input--required">*</span></label>
                             <input tabindex="1" ref="voucherCode" v-model="assetIncrement.voucherCode"
@@ -47,8 +47,8 @@
                     <div class="col-title" style="grid-column: span 3;">
                         <h5 style="font-weight: 700"> Thông tin chi tiết </h5>
                     </div>
-                    <div class="row"  style="background-color: #fff; margin: 0px 10px; padding: 5px 0px;">
-                        <div class="col-base" style="grid-column: span 3;">
+                    <div class="row"  style="background-color: #fff; margin:0px 10px 10px 10px;">
+                        <div class="col-base" style="grid-column: span 3; padding-bottom: 0px;">
                             <div class="header-table-base">
                                 <div class="">
                                     <div class="form-search-table-base">
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                                 <div class="header-table-right">
-                                    <div class="form-option-base"
+                                    <div class="-base"
                                         style="  box-shadow:0 2px 6px rgba(0, 0, 0, .16); width:90px;">
                                         <button @click="showDetail(true)" tabindex="13" id="btnClose" class="btn btn-cancel-dialog-asset" style="font-size:13px">
                                             Chọn tài sản
@@ -67,8 +67,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-base" style="grid-column: span 3; height: 250px;">
-                            <TableBase :voucherID="assetIncrement.voucherID" :listAsset="listAsset" :isShowFunction="true"></TableBase>
+                        <div class="col-base" style="grid-column: span 3; height: 200px;">
+                            <TableBase v-on:listUpdate="listUpdate" :voucherID="assetIncrement.voucherID" :listAsset="listAsset" :isShowFunction="true" v-on:listDelete="listDelete"  v-on:idFixedAssettDelete="idFixedAssettDelete"></TableBase>
                         </div>
                     </div>
                     
@@ -77,7 +77,7 @@
             <div class="dialog_footer">
                 <button tabindex="13" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
                 <button type="submit" tabindex="12" id="btnSave" class="btn-dialog btn" style="color: #fff"
-                    @click="btnSaveOnClick">Lưu</button>
+                    @click="btnSaveOnClick(assetIncrement)">Lưu</button>
             </div>
         </div>
     </div>
@@ -132,7 +132,8 @@ export default {
                     this.assetIncrement.voucherDate = res.data[0].VoucherDate;
                     this.assetIncrement.incrementDate = res.data[0].IncrementDate;
                     this.assetIncrement.description = res.data[0].Description;
-                    this.assetIncrement.price = res.data[0].Price
+                    this.assetIncrement.price = res.data[0].Price;
+                    this.assetIncrement.createdDate = res.data[0].CreatedDate;
                 })
         } else {
             axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}/new-code`)
@@ -144,10 +145,13 @@ export default {
     },
     data() {
         return {
+            totalIncrement: 0,
             isShowLoading: false,
             isShowDialogDetail: false,
             assetIncrement: {},
             listAsset: [],
+            listDeleteDialog:[],
+            listUpdateDialog:[],
             paging: {
                 keyWord: '',
                 pageSize: 15,
@@ -158,6 +162,23 @@ export default {
         }
     },
     methods: {
+        /**
+        * Lấy danh sách tài có sửa nguồn vốn
+        * TVTOAN (26/07/2022)
+        */
+        listUpdate(list) {
+            try {
+                this.totalIncrement = 0;
+                this.listUpdateDialog = list;
+                for (var i = 0; i < this.listUpdateDialog.length; i++) {
+                    this.totalIncrement += Number(this.listUpdateDialog[i].cost);
+                }
+                console.log(this.totalIncrement);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         /**
         * Lấy danh sách tài sản đã chọn
         * TVTOAN (26/07/2022)
@@ -171,11 +192,57 @@ export default {
         },
 
         /**
+        * Xóa id khỏi danh sách thêm
+        * TVTOAN (26/07/2022)
+        */
+        idFixedAssettDelete(id) {
+            try {
+                var newArr = this.listAsset.filter(item => item.fixedAssetId !== id);
+                this.listAsset = newArr;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Lấy danh sách tài sản xóa
+        * TVTOAN (26/07/2022)
+        */
+        listDelete(listDelete) {
+            try {
+                this.listDeleteDialog = listDelete;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Lấy danh sách tài sản xóa
+        * TVTOAN (26/07/2022)
+        */
+        deleteFixedAssetIncrementDetail() {
+            try {
+                var listDeleteFixedAssetId = [];
+                for(var i = 0; i < this.listDeleteDialog.length; i++) {
+                    listDeleteFixedAssetId.push(this.listDeleteDialog[i]);
+                }
+                axios.delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST}`, { data: listDeleteFixedAssetId })
+                .then(res => {
+                  if (res.status == 200) {
+                    axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=0`, listDeleteFixedAssetId)
+                  }
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
         * Tạo data để thêm chi tiết chứng từ
         * TVTOAN (26/07/2022)
         */
         insertIncrementDetail(voucherId) {
-            try{
+            try{                
                 var dataInsertIncrementDetail = [];
                 for(let i = 0; i < this.listAsset.length; i++) {
                     dataInsertIncrementDetail.push({
@@ -206,20 +273,20 @@ export default {
         * Chức năng thêm chứng từ
         * TVTOAN (26/07/2022)
         */
-        btnSaveOnClick() {
+        btnSaveOnClick(assetIncrement) {
             if (this.isFormAdd == true) {
                 this.isShowLoading = true;
                 const dataInsert = {
                     "voucherID": uuid.v1(),
-                    "voucherCode": this.assetIncrement.voucherCode.toString(),
-                    "voucherDate": this.assetIncrement.voucherDate,
-                    "incrementDate": this.assetIncrement.incrementDate,
-                    "description": this.assetIncrement.description,
+                    "voucherCode": assetIncrement.voucherCode.toString(),
+                    "voucherDate": assetIncrement.voucherDate,
+                    "incrementDate": assetIncrement.incrementDate,
+                    "description": assetIncrement.description,
                     "createdBy": "TVTOAN",
                     "createdDate": new Date(),
                     "modifiedBy": "TVTOAN",
                     "modifiedDate": new Date(),
-                    "price": "100000",
+                    "price": this.totalIncrement.toString(),
                 };
                 let result = this.insertIncrementDetail(dataInsert.voucherID);
                 if(result.length > 0) {
@@ -242,7 +309,7 @@ export default {
                             })
                             this.assetIncrement = {};    
                             this.getData(this.paging);
-                            this.$emit('activeAssetNew', res.data.voucherID);
+                            this.$emit('activeAssetNew', dataInsert.voucherID);
 
                         } else {
                             this.showToastFail();
@@ -255,21 +322,20 @@ export default {
                 }
 
             }if(this.isFormUpdate == true){
-                console.log("A");
                 this.isShowLoading = true;
                 const dataUpdate = {
-                    "voucherID": this.assetIncrement.voucherID,
-                    "voucherCode": this.assetIncrement.voucherCode.toString(),
-                    "voucherDate": this.assetIncrement.voucherDate,
-                    "incrementDate": this.assetIncrement.incrementDate,
-                    "description": this.assetIncrement.description,
+                    "voucherID": assetIncrement.voucherID,
+                    "voucherCode": assetIncrement.voucherCode.toString(),
+                    "voucherDate": assetIncrement.voucherDate,
+                    "incrementDate": assetIncrement.incrementDate,
+                    "description": assetIncrement.description,
                     "createdBy": "TVTOAN",
-                    "createdDate": new Date(),
+                    "createdDate": assetIncrement.createdDate,
                     "modifiedBy": "TVTOAN",
                     "modifiedDate": new Date(),
-                    "price": "100000",
+                    "price": this.totalIncrement.toString(),
                 };
-
+                this.deleteFixedAssetIncrementDetail();
                 axios.put(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.assetIncrement.voucherID}`, dataUpdate)
                     .then(res => {
                         if (res.status == '201') {
@@ -291,7 +357,7 @@ export default {
                             })}
                             this.assetIncrement = {};
                             this.getData(this.paging);
-                            this.$emit('activeAssetNew', res.data.voucherID);
+                            this.$emit('activeAssetNew', dataUpdate.voucherID);
                         } else {
                             this.showToastFail();
                         }
