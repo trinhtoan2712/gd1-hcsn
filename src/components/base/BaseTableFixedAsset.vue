@@ -499,14 +499,15 @@ export default ({
         */
         getData(paging) {
             try {
-                console.log(this.listSelected);
-                if(this.listSelected.length == 1) {
-                    this.listFixedAssetId = [];
-                    axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
+                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
+                axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
                         this.assets = data.data.data;
+                        if(this.listSelected.length == 1) {
+                            this.listFixedAssetId = [];
+                        }
                         for (let asset of this.assets) {
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
@@ -518,22 +519,6 @@ export default ({
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                         this.$emit("listFixedAssetId", this.listFixedAssetId);
                     });
-                }
-                if(this.listSelected.length > 1) {
-                    debugger
-                    console.log("a");
-                    for(var i = 0; i < this.listSelected.length; i++) {
-                        axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.listSelected[i]}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
-                        .then(data => {
-                            this.assets = data.data.data;
-                            for (let asset of this.assets) {
-                                this.listFixedAssetId.push(asset.fixedAssetID);
-                            }
-                            this.$emit("listFixedAssetId", this.listFixedAssetId);
-                        })
-                    }
-                }
-                //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
                 this.pages;
             } catch (error) {
                 console.log(error);
