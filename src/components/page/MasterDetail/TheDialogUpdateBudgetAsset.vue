@@ -86,7 +86,7 @@ export default {
 
     components: {},
     name: "TheDialogUpdateBudgetAsset",
-    emits: [],
+    emits: ["totalById", "arrayById"],
     props: {
         assetSelected: Object,
         title: String,
@@ -97,8 +97,10 @@ export default {
         },
     },
     created() {
+        debugger
         this.asset = this.assetSelected;
-        this.assetBudgets = JSON.parse(this.asset.fixedAssetBudget);
+        this.assetBudgets = this.asset.fixedAssetBudget;
+        this.assetBudgets = JSON.parse(this.assetBudgets);
         for(var i = 0; i < this.assetBudgets.length; i ++) {
             this.assetBudgets[i].BudgetCost = formatPrice(this.assetBudgets[i].BudgetCost);
         }
@@ -149,13 +151,7 @@ export default {
          */
         btnAddBudget() {
             try {
-                this.assetBudgets.push(
-                    {
-                        BudgetID: uuid.v1(),
-                        BudgetName: '',
-                        BudgetCost: ''
-                    }
-                )
+                this.assetBudgets.push({BudgetID: uuid.v1(),BudgetName: '',BudgetCost: ''})
             } catch (error) {
                 console.log(error);
             }

@@ -7,7 +7,7 @@
                         <input type="checkbox" name="" class="ckb ckb-primary" v-model="isSelect"
                             @click="selectAllRows">
                     </th>
-                    <th style="width:40px">STT<span class="tooltip">Số thứ tự</span> </th>
+                    <th style="width:40px;text-align: center;">STT<span class="tooltip">Số thứ tự</span> </th>
                     <th style="width:200px">Mã tài sản</th>
                     <th style="width:200px">Tên tài sản</th>
                     <th style="width:200px" v-if="isShowAllColumn">Loại tài sản</th>
@@ -120,7 +120,7 @@ export default ({
         BaseLoading, [Contextmenu.name]: Contextmenu,
         [ContextmenuItem.name]: ContextmenuItem, TheDialogUpdateBudgetAsset
     },
-    emits: ["updateMessage"],
+    emits: ["updateMessage", "listUpdate", "listAssetSelected", "listDelete", "idFixedAssettDelete", "listFixedAssetId"],
     props: {
         listSelected: [],
         keyWord: String,
@@ -673,7 +673,6 @@ export default ({
         */
         rowOnDblClick(asset) {
             try {
-                console.log(asset);
                 this.title = `Sửa tài sản ${asset.fixedAssetName}`;
                 this.assetSelected = asset;
                 this.isShowDialogAssetBudget = true;

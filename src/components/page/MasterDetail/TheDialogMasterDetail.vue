@@ -100,7 +100,7 @@ export default {
 
     components: { Datepicker, TableBase, BaseLoading ,TheDialogSelectAsset},
     name: "TheAssetDetail",
-    emits: ["getNameDepartment", "getNameCategory", "validCombobox", "updateMessage", "returnIsDuplicate", "activeAssetNew"],
+    emits: ["activeAssetNew"],
     props: {
         getData: Function,
         showDetailFunction: Function,
@@ -168,12 +168,12 @@ export default {
         */
         listUpdate(list) {
             try {
+                this.listUpdateDialog = [];
                 this.totalIncrement = 0;
-                this.listUpdateDialog = list;
-                for (var i = 0; i < this.listUpdateDialog.length; i++) {
-                    this.totalIncrement += Number(this.listUpdateDialog[i].cost);
-                }
-                console.log(this.totalIncrement);
+                for (var i = 0; i < list.length; i++) {
+                    this.totalIncrement += Number(list[i].cost);
+                    this.listUpdateDialog.push({FixedAssetId: list[i].fixedAssetID || list[i].fixedAssetId,FixedAssetBudget: list[i].fixedAssetBudget,FixedAssetCost: list[i].cost,})
+                }    
             } catch (error) {
                 console.log(error);
             }
@@ -186,6 +186,9 @@ export default {
         addListAssetSelected(listAsset) {
             try {
                 this.listAsset = listAsset;
+                for (var i = 0; i < listAsset.length; i++) {
+                    this.totalIncrement += Number(listAsset[i].cost); 
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -257,6 +260,22 @@ export default {
             }
         },
 
+                /**
+        * Tạo data để thêm chi tiết chứng từ
+        * TVTOAN (26/07/2022)
+        */
+        getListUpdateFixedAssetBudget() {
+            try{                
+                var listUpdate = [];
+                for(let i = 0; i < this.listUpdateDialog.length; i++) {
+                    listUpdate.push(this.listUpdateDialog[i])
+                }
+                return listUpdate;
+            }catch(error) {
+                console.log(error)
+            }
+        },
+
         /**
         * Chức năng mở dialog chọn tài sản
         * TVTOAN (26/07/2022)
@@ -288,7 +307,14 @@ export default {
                     "modifiedDate": new Date(),
                     "price": this.totalIncrement.toString(),
                 };
+                
                 let result = this.insertIncrementDetail(dataInsert.voucherID);
+                let resultGetListUpdate = this.getListUpdateFixedAssetBudget();
+                console.log(resultGetListUpdate);
+                axios.put(`${EndPoint.END_POINT_FIXED_ASSET}/update-budget`, resultGetListUpdate)
+                .then(res => {
+                    console.log(res);   
+                })
                 if(result.length > 0) {
                     axios.post(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}`, dataInsert)
                     .then(res => {
@@ -336,6 +362,12 @@ export default {
                     "price": this.totalIncrement.toString(),
                 };
                 this.deleteFixedAssetIncrementDetail();
+                let resultGetListUpdate = this.getListUpdateFixedAssetBudget();
+                console.log(resultGetListUpdate);
+                axios.put(`${EndPoint.END_POINT_FIXED_ASSET}/update-budget`, resultGetListUpdate)
+                .then(res => {
+                    console.log(res);   
+                })
                 axios.put(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.assetIncrement.voucherID}`, dataUpdate)
                     .then(res => {
                         if (res.status == '201') {

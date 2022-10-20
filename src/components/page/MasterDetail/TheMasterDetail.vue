@@ -48,7 +48,7 @@
                 <th style="width:30px">
                   <input type="checkbox" name="" class="ckb ckb-primary" v-model="isSelect" @click="selectAllRows" />
                 </th>
-                <th style="width:30px">STT<span class="tooltip">Số thứ tự</span></th>
+                <th style="width:30px; text-align: center;">STT<span class="tooltip">Số thứ tự</span></th>
                 <th style="width:100px">Số chứng từ</th>
                 <th style="width:120px; text-align:center">Ngày chứng từ</th>
                 <th style="width:120px; text-align:center">Ngày ghi tăng</th>
@@ -67,7 +67,7 @@
                     v-model="selected" />
                 </td>
                 <td style="text-align: center">{{ index + 1 }}</td>
-                <td>{{ assetIncrement.voucherCode }}</td>
+                <td style="color: #1aa4c8" @click="rowOnDblClick(assetIncrement)">{{ assetIncrement.voucherCode }}</td>
                 <td style="text-align: center">{{ formatDate(assetIncrement.voucherDate)}}</td>
                 <td style="text-align: center">{{ formatDate(assetIncrement.incrementDate) }}</td>
                 <td class="number-right">{{ formatPrice(Number(assetIncrement.price)) }}</td>
@@ -108,27 +108,27 @@
           <div class="paging-table">
             <div class="total-record">Tổng số: <strong>{{ totalRecord }}</strong> bản ghi</div>
             <div class="page-record">
-                <select name="" id="" @change="selectPageSize($event)">
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                </select>
+              <select name="" id="" @change="selectPageSize($event)">
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+              </select>
             </div>
             <div class="table__paging--center">
-                <div @click="onClickFirstPage" class="paging__button"><i class="fa-solid fa-angles-left"></i><span
-                        class="tooltip">Về trang đầu</span></div>
-                <div @click="onClickPreviousPage" class="paging__button paging__button--prev icon-content"><span
-                        class="tooltip">Trang trước</span></div>
-                <div class="paging__button--group">
-                    <div :class="{ selected: page.isDisabled }" @click="onClickPage(page.name)" class="paging__number"
-                        v-for="page in pages" :key="page.name">{{ page.name }}</div>
-                    <div class="" v-if="pages.length > 2">...</div>
-                    <div class="paging__number" @click="onClickPage(paging.totalPage)">{{paging.totalPage}}</div>
-                </div>
-                <div @click="onClickNextPage" class="paging__button paging__button--next icon-content"><span
-                        class="tooltip">Trang sau</span></div>
-                <div @click="onClickLastPage" class="paging__button"><i class="fa-solid fa-angles-right"></i><span
-                        class="tooltip">Đến trang cuối</span></div>
+              <div @click="onClickFirstPage" class="paging__button"><i class="fa-solid fa-angles-left"></i><span
+                  class="tooltip">Về trang đầu</span></div>
+              <div @click="onClickPreviousPage" class="paging__button paging__button--prev icon-content"><span
+                  class="tooltip">Trang trước</span></div>
+              <div class="paging__button--group">
+                <div :class="{ selected: page.isDisabled }" @click="onClickPage(page.name)" class="paging__number"
+                  v-for="page in pages" :key="page.name">{{ page.name }}</div>
+                <div class="" v-if="pages.length > 2">...</div>
+                <div class="paging__number" @click="onClickPage(paging.totalPage)">{{paging.totalPage}}</div>
+              </div>
+              <div @click="onClickNextPage" class="paging__button paging__button--next icon-content"><span
+                  class="tooltip">Trang sau</span></div>
+              <div @click="onClickLastPage" class="paging__button"><i class="fa-solid fa-angles-right"></i><span
+                  class="tooltip">Đến trang cuối</span></div>
             </div>
           </div>
         </div>
@@ -137,10 +137,12 @@
         <div class="table-detail">
           <div class="table-detail__header">
             <span class="content-title">Danh sách tài sản</span>
-            <div @click="btnShowFullAsset"><div style="padding-left: 12px;" class="icon-change-layout icon-content"></div></div>
+            <div @click="btnShowFullAsset">
+              <div style="padding-left: 12px;" class="icon-change-layout icon-content"></div>
+            </div>
           </div>
-          <TableBase v-if="isShowDetail" :listSelected="selected" :isShowFunction="false" :isShowPaging="true" :isShowSummary="true"
-            :voucherID="this.selected[0]" v-on:listFixedAssetId="getListFixedAssetId" />
+          <TableBase v-if="isShowDetail" :listSelected="selected" :isShowFunction="false" :isShowPaging="false"
+            :isShowSummary="true" :voucherID="this.selected[0]" v-on:listFixedAssetId="getListFixedAssetId" />
         </div>
       </pane>
     </splitpanes>
@@ -226,52 +228,52 @@ export default {
   },
 
   computed: {
-        /**
-        * Lấy trang đầu tiên.
-        * TVTOAN (06/08/2022)
-        */
-        startPage() {
-            if (this.paging.pageNumber === 1) {
-                return 1;
-            }
-            if (this.paging.pageNumber === this.paging.totalPage) {
-                return this.paging.totalPage;
-            }
-            return this.paging.pageNumber - 1;
-        },
-
-        /**
-        * Lấy mảng gồm tên và attr btn.
-        * TVTOAN (06/08/2022)
-        */
-        pages() {
-            const range = [];
-            for (let i = this.startPage; i <= Math.min(this.startPage + this.paging.maxVisibleButtons - 1, this.paging.totalPage - 1); i += 1) {
-
-                range.push({
-                    name: i,
-                    isDisabled: i === this.paging.pageNumber
-                });
-            }
-            return range;
-        },
+    /**
+    * Lấy trang đầu tiên.
+    * TVTOAN (06/08/2022)
+    */
+    startPage() {
+      if (this.paging.pageNumber === 1) {
+        return 1;
+      }
+      if (this.paging.pageNumber === this.paging.totalPage) {
+        return this.paging.totalPage;
+      }
+      return this.paging.pageNumber - 1;
     },
+
+    /**
+    * Lấy mảng gồm tên và attr btn.
+    * TVTOAN (06/08/2022)
+    */
+    pages() {
+      const range = [];
+      for (let i = this.startPage; i <= Math.min(this.startPage + this.paging.maxVisibleButtons - 1, this.paging.totalPage - 1); i += 1) {
+
+        range.push({
+          name: i,
+          isDisabled: i === this.paging.pageNumber
+        });
+      }
+      return range;
+    },
+  },
 
   methods: {
     formatDate,
     formatPrice,
 
-  /**
-  * Click đổi layout
-  * TVTOAN (06/08/2022)
-  */
+    /**
+    * Click đổi layout
+    * TVTOAN (06/08/2022)
+    */
     btnClickChangeLayout() {
       try {
-        if(this.isLayoutIncrement == false) {
+        if (this.isLayoutIncrement == false) {
           this.isLayoutIncrement = true;
           this.paneTopSize = 100;
           this.paneBottomSize = 0;
-        }else {
+        } else {
           this.isLayoutIncrement = false;
           this.paneTopSize = 62;
           this.paneBottomSize = 38;
@@ -281,17 +283,17 @@ export default {
         console.log(error);
       }
     },
-  /**
-  * Click đổi layout
-  * TVTOAN (06/08/2022)
-  */
-  btnShowFullAsset() {
+    /**
+    * Click đổi layout
+    * TVTOAN (06/08/2022)
+    */
+    btnShowFullAsset() {
       try {
-        if(this.isLayoutAsset == false) {
+        if (this.isLayoutAsset == false) {
           this.isLayoutAsset = true;
           this.paneTopSize = 0;
           this.paneBottomSize = 100;
-        }else {
+        } else {
           this.isLayoutAsset = false;
           this.paneTopSize = 100;
           this.paneBottomSize = 0;
@@ -302,70 +304,70 @@ export default {
       }
     },
 
-/**
-  * Về trang đầu.
-  * TVTOAN (06/08/2022)
-  */
-  onClickFirstPage() {
+    /**
+      * Về trang đầu.
+      * TVTOAN (06/08/2022)
+      */
+    onClickFirstPage() {
       this.paging.pageNumber = 1;
       this.getData(this.paging);
 
-  },
+    },
 
-  /**
-  * Lùi 1 trang.
-  * TVTOAN (06/08/2022)
-  */
-  onClickPreviousPage() {
+    /**
+    * Lùi 1 trang.
+    * TVTOAN (06/08/2022)
+    */
+    onClickPreviousPage() {
       if (this.paging.pageNumber > 1) {
-          this.paging.pageNumber -= 1;
-          this.getData(this.paging);
+        this.paging.pageNumber -= 1;
+        this.getData(this.paging);
       }
 
-  },
+    },
 
-  /**
-  *  Chọn trang muốn đến.
-  * TVTOAN (06/08/2022)
-  */
-  onClickPage(page) {
+    /**
+    *  Chọn trang muốn đến.
+    * TVTOAN (06/08/2022)
+    */
+    onClickPage(page) {
       this.paging.pageNumber = page;
       this.getData(this.paging);
 
-  },
+    },
 
 
-  /**
-  * Tiến 1 trang.
-  * TVTOAN (06/08/2022)
-  */
-  onClickNextPage() {
+    /**
+    * Tiến 1 trang.
+    * TVTOAN (06/08/2022)
+    */
+    onClickNextPage() {
       if (this.paging.pageNumber < this.paging.totalPage) {
-          this.paging.pageNumber += 1;
-          this.getData(this.paging);
+        this.paging.pageNumber += 1;
+        this.getData(this.paging);
       }
-  },
+    },
 
-  /**
-  * Đến trang cuối.
-  * TVTOAN (06/08/2022)
-  */
-  onClickLastPage() {
+    /**
+    * Đến trang cuối.
+    * TVTOAN (06/08/2022)
+    */
+    onClickLastPage() {
       this.paging.pageNumber = this.paging.totalPage;
       this.getData(this.paging);
-  },
+    },
 
     /**
     * Chọn số bản ghi hiển thị trên 1 trang.
     * TVTOAN (06/08/2022)
     */
     selectPageSize(e) {
-        try {
-            this.paging.pageSize = e.target.value;
-            this.getData(this.paging);
-        } catch (error) {
-            console.log(error);
-        }
+      try {
+        this.paging.pageSize = e.target.value;
+        this.getData(this.paging);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     /**
@@ -468,38 +470,69 @@ export default {
      */
     btnDeleteOnClick() {
       try {
-        if(this.selected.length == 1) {
+        if (this.selected.length == 1) {
           var listFixedAssetId = [];
-        for (var i = 0; i < this.listFixedAssetId.length; i++) {
-          listFixedAssetId.push(this.listFixedAssetId[i]);
-        }
-        axios
-          .delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.selected[0]}`)
-          .then((res) => {
-            if (res.status == 200) {
-              axios.delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST}`, { data: listFixedAssetId })
-                .then(res => {
-                  if (res.status == 200) {
-                    axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=0`, listFixedAssetId)
-                      .then(res => {
-                        if (res.status == 200) {
-                          this.isDelete = false;
-                          this.getData(this.paging);
-                          this.toastMess = `Xóa thành công`;
-                          this.isShowToastSuccess = true;
-                          setTimeout(() => (this.isShowToastSuccess = false), 3000);
-                        }
-                      })
-                  }
-                })
-            } else {
-              this.isDelete = false;
-              this.toastMess = `Xóa không thành công`;
-              this.isShowToastSuccess = true;
-            }
-          });
-        }else {
-          console.log("a")
+          for (var i = 0; i < this.listFixedAssetId.length; i++) {
+            listFixedAssetId.push(this.listFixedAssetId[i]);
+          }
+          axios
+            .delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT}?recordID=${this.selected[0]}`)
+            .then((res) => {
+              if (res.status == 200) {
+                axios.delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_LIST}`, { data: listFixedAssetId })
+                  .then(res => {
+                    if (res.status == 200) {
+                      axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=0`, listFixedAssetId)
+                        .then(res => {
+                          if (res.status == 200) {
+                            this.isDelete = false;
+                            this.getData(this.paging);
+                            this.toastMess = `Xóa thành công`;
+                            this.isShowToastSuccess = true;
+                            setTimeout(() => (this.isShowToastSuccess = false), 3000);
+                          }
+                        })
+                    }
+                  })
+              } else {
+                this.isDelete = false;
+                this.toastMess = `Xóa không thành công`;
+                this.isShowToastSuccess = true;
+              }
+            });
+        } else {
+          let listVoucherID = [];
+          let listFixedAssetID = [];
+          for (let i = 0; i < this.selected.length; i++) {
+            listVoucherID.push(this.selected[i]);
+          }
+          for (let i = 0; i < listVoucherID.length; i++) {
+            axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${listVoucherID[i]}&pageSize=${this.pagingByVoucherID.pageSize}&pageNumber=${this.pagingByVoucherID.pageNumber}`)
+              .then(res => {
+                this.assets = res.data.data;
+                for (let asset of this.assets) {
+                  listFixedAssetID.push(asset.fixedAssetID);
+                }
+                if (res.status == 200) {
+                  axios
+                    .delete(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL}`, { data: listVoucherID })
+                    .then((res) => {
+                      if(res.status == 200) {
+                        axios.put(`${EndPoint.END_POINT_FIXED_ASSET}?status=0`, listFixedAssetID)
+                        .then(res => {
+                          if (res.status == 200) {
+                            this.isDelete = false;
+                            this.getData(this.paging);
+                            this.toastMess = `Xóa thành công`;
+                            this.isShowToastSuccess = true;
+                            setTimeout(() => (this.isShowToastSuccess = false), 3000);
+                          }
+                        })
+                      }
+                    })
+                }
+              })
+          }
         }
       } catch (error) {
         console.log(error);
@@ -698,6 +731,17 @@ export default {
         totalCost: 0,
         totalAtrophy: 0,
         totalResidualValue: 0,
+      },
+
+      // Dữ liệu cho api phân trang
+      pagingByVoucherID: {
+        keyWord: '',
+        departmentID: '',
+        fixedAssetCategoryID: '',
+        pageSize: 9999,
+        pageNumber: 1,
+        totalPage: 0,
+        maxVisibleButtons: 3,
       },
 
       // Dữ liệu cho api phân trang

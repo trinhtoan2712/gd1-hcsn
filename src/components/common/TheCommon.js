@@ -27,6 +27,19 @@ export function formatNumber(value) {
 }
 
 /**
+* Hàm xóa dấu /
+* TVTOAN (26/07/2022)
+*/
+export function formatJson(value) {
+    try {
+        return value.split(StyleFormat.FORMAT_JSON).join('');
+    } catch (error) {
+        console.log(error);
+        return "";
+    }
+}
+
+/**
 * Hàm format ngày tháng
 * TVTOAN (26/07/2022)
 */
