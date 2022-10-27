@@ -126,9 +126,9 @@
   /* ------------- CONTENT-TABLE ------------ */
   .content-table-base {
     background-color: #ffffff;
-    overflow: hidden;
+    /* overflow: hidden; */
     font-size: 13px;
-    overflow: auto;
+    /* overflow: auto; */
     height: 64vh;
   }
   
@@ -311,16 +311,18 @@
   }
   
   .table-summary-base {
+    position: sticky !important;
     background-color: #fff;
     bottom: 0 !important;
     font-size: 11px;
     height: 30px;
     border-bottom: unset !important;
+    background-color: rgb(240, 239, 239);
     }
-  
-  .table-summary-base:hover {
-    background-color: #fff !important;
-  }
+
+.table-summary-base:hover {
+  background-color: rgb(240, 239, 239) !important;
+}
 
   .table-footer-base table {
     border-top: 0.5px solid rgb(210, 206, 206);
@@ -435,9 +437,9 @@
   @media only screen and (width: 1024px) {
     .content-table-base {
       background-color: #ffffff;
-      overflow: hidden;
+      /* overflow: hidden; */
       font-size: 13px;
-      overflow: auto;
+      /* overflow: auto; */
       height: 64vh;
     }
   }
@@ -445,9 +447,9 @@
   @media only screen and (width: 1366px) {
     .content-table-base {
       background-color: #ffffff;
-      overflow: hidden;
+      /* overflow: hidden; */
       font-size: 13px;
-      overflow: auto;
+      /* overflow: auto; */
       height: 64vh;
     }
   }

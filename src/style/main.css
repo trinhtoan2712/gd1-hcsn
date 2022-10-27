@@ -39,6 +39,11 @@ body {
     padding-right: 13px;
 }
 
+.number-right-base {
+    text-align: right !important;
+    padding-right: 17px;
+}
+
 /* -------------- REPONSIVE -------------- */
 @media (max-width: 420px) {
     .side-bar li .tooltip {

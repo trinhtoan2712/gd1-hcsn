@@ -20,7 +20,7 @@
                 </router-link>
                 <ul class="sidenav-collapse" :class = "{show: isShowSideNav}">
                     <li>
-                        <router-link to="/masterdetail" class="sidenav-collapse-item">
+                        <router-link to="/increment" class="sidenav-collapse-item">
                             <span style="color: #fff" class="">Ghi tăng</span>
                         </router-link>
                     </li>

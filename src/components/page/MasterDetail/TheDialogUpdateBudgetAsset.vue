@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="dialog_footer">
-                <button tabindex="13" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
+                <button tabindex="13" @click="showDetailFunction(false)" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
                 <button @click="btnSaveOnClick()" type="submit" tabindex="12" id="btnSave" class="btn-dialog btn"
                     style="color: #fff">Chọn</button>
             </div>
@@ -97,7 +97,6 @@ export default {
         },
     },
     created() {
-        debugger
         this.asset = this.assetSelected;
         this.assetBudgets = this.asset.fixedAssetBudget;
         this.assetBudgets = JSON.parse(this.assetBudgets);

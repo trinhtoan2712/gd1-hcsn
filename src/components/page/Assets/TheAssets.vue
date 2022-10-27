@@ -4,7 +4,7 @@
             <div class="filter-search">
                 <div class="icon-search-content icon-content"></div>
                 <input class="input-search" ref="txtSearch" type="text" v-model="paging.keyWord"
-                    placeholder="Tìm kiếm theo tài sản" v-on:keyup="btnSearch(paging.keyWord, $event)">
+                    placeholder="Tìm kiếm theo mã và tên" v-on:keyup="btnSearch(paging.keyWord, $event)">
             </div>
             <div class="filter-assets">
                 <BaseCombobox :url="'http://localhost:14537/api/FixedAssetCategorys'"
@@ -42,7 +42,6 @@
                     <th>Tên tài sản</th>
                     <th>Loại tài sản</th>
                     <th>Bộ phận sử dụng</th>
-                    <th>Ngày mua</th>
                     <th class="number-right">Số lượng</th>
                     <th class="number-right">Nguyên giá</th>
                     <th class="number-right">HM/KH lũy kế <span class="tooltip">Hao mòn/Khấu hao lũy kế</span></th>
@@ -52,26 +51,8 @@
                 </tr>
             </thead>
             <tbody class="table-body">
-                <v-contextmenu ref="contextmenu">
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="rowOnDblClick(asset)">Sửa tài sản</span>
-                        </div>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="showDialogDelete(asset)">Xóa tài sản</span>
-                        </div>
-                    </v-contextmenu-item>
-                    <v-contextmenu-item>
-                        <div class="menu__context">
-                            <span @click="duplicateAssets(asset)">Nhân bản</span>
-                        </div>
-                    </v-contextmenu-item>
-                </v-contextmenu>
-
                 <tr class="tbody-tr" v-for="(asset, index ) in assets" :key="asset.fixedAssetId"
-                    v-contextmenu:contextmenu :class="{'bgblue': checkActive(asset.fixedAssetId) }"
+                    :class="{'bgblue': checkActive(asset.fixedAssetId) }"
                     @click="btnRowActiveOnClick(asset, $event, index)" @dblclick="rowOnDblClick(asset)">
                     <td>
                         <input type="checkbox" name="" id="" class="ckb ckb-primary" :value="asset.fixedAssetId"
@@ -88,13 +69,12 @@
                     <td class="text-hide">
                         <p>{{ asset.departmentName }}</p>
                     </td>
-                    <td style="padding-left:unset">{{ formatDate(asset.purchaseDate) }}</td>
                     <td class="number-right">{{ formatPrice(asset.quantity) }}</td>
                     <td class="number-right">{{ formatPrice(asset.cost) }}</td>
                     <td class="number-right">{{ formatPrice(asset.atrophy) }}</td>
                     <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
-                    <td v-if="asset.status == 1"> Đang sử dụng </td>
-                    <td v-if="asset.status == 0"> Chưa ghi tăng </td>
+                    <td v-if="asset.status == isUse"> Đang sử dụng </td>
+                    <td v-if="asset.status == isNotUse"> Chưa ghi tăng </td>
                     <td class="table-option" @click="btnRowActiveOnClick(asset, $event, index)">
                         <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
@@ -109,21 +89,20 @@
                     <td colspan="12" class="table__nodata" v-if="assets.length < 1"> </td>
                 </tr>
                 <tr class="table-summary" v-if="assets.length > 0">
-                    <td colspan="7">
+                    <td colspan="6">
                     </td>
                     <td class="number-right font-bold">{{ formatPrice(total.totalQuantity) }}</td>
                     <td class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
                     <td class="number-right font-bold">{{formatPrice(total.totalAtrophy)}}</td>
                     <td class="number-right font-bold">{{formatPrice(total.totalResidualValue)}}</td>
-                    <td>
-
-                    </td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                 </tr>
             </tbody>
             <TheAssetDetail @updateMessage="updateMessage" v-if="showDetailParent" :showDetailChil="showDetailParent"
                 :showDetailFunction="showDetail" :assetSelected="assetSelected" :getData="getData"
-                :isDuplicate="isDuplicate" v-on:returnIsDuplicate="returnIsDuplicate" :title="title"
+                v-on:returnIsDuplicate="returnIsDuplicate" :title="title"
                 v-on:activeAssetNew="activeAssetNew" />
             <BaseLoading v-if="isShowLoading"></BaseLoading>
         </table>
@@ -175,7 +154,6 @@
             </div>
         </div>
     </div>
-
     <div v-if="isMessDelete" id="dlg-warning" class="dialog dialog--warning">
         <div class="dialog__content ">
             <div class="dialog__container">
@@ -193,7 +171,6 @@
             </div>
         </div>
     </div>
-
     <div id="snackbar" :class="{ show: isShowToastSuccess }" v-on:updateMessage="updateMessage">
         <i class="fa-solid fa-circle-check icon-toast fa-2xl"></i>
         <div>{{ toastMess }}</div>
@@ -203,19 +180,13 @@
 import TheAssetDetail from "./TheAssetsDetail.vue";
 import { formatPrice, formatDate, getCookie} from "../../common/TheCommon";
 import BaseLoading from '../../base/BaseLoading.vue';
-import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
-import "v-contextmenu/dist/themes/default.css";
-import { EndPoint, NameCookie, FullUrl } from "../../common/TheConst";
+import { EndPoint, NameCookie, FullUrl, KeyCode, MessWarning, Notification, TitleDialog, StatusAsset} from "../../common/TheConst";
 import axios from "axios";
 
 export default ({
-    directives: {
-        contextmenu: directive,
-    },
     name: "AssetList",
     components: {
-        TheAssetDetail, BaseLoading, [Contextmenu.name]: Contextmenu,
-        [ContextmenuItem.name]: ContextmenuItem
+        TheAssetDetail, BaseLoading, 
     },
     emits: ["updateMessage"],
     props: [],
@@ -232,7 +203,6 @@ export default ({
          * TVTOAN (31/07/2022)
          */
         try {
-
             this.$refs.txtSearch.focus();
         } catch (error) {
             console.log(error);
@@ -313,7 +283,10 @@ export default ({
                 pageNumber: 1,
                 totalPage: 0,
                 maxVisibleButtons: 3,
-            }
+            },
+
+            isUse: StatusAsset.USED,
+            isNotUse: StatusAsset.NOT_USED
         }
     },
 
@@ -369,26 +342,26 @@ export default ({
         */
         eventKeyPage(e) {
             try {
-                if (e.keyCode == 73 && e.ctrlKey) {
+                if (e.keyCode == KeyCode.KEY_I && e.ctrlKey) {
                     this.showDetail(true);
                 }
-                if (e.keyCode == 67 && e.ctrlKey) {
+                if (e.keyCode == KeyCode.KEY_C && e.ctrlKey) {
                     if (this.selected.length == 1) {
                         this.rowOnDblClick(this.assetCurrent)
                     }
                 }
-                if (e.keyCode == 68 && e.ctrlKey) {
+                if (e.keyCode == KeyCode.KEY_D && e.ctrlKey) {
                     if (this.selected.length == 1) {
                         this.duplicateAssets(this.assetCurrent)
                     }
                 }
-                if (e.keyCode == 46) {
+                if (e.keyCode == KeyCode.KEY_DEL) {
                     if (this.selected.length > 0) {
                         this.showDialogDeleteList(this.assetCurrent);
                     }
                 }
                 if (this.isDelete == true) {
-                    if (e.keyCode == 13) {
+                    if (e.keyCode == KeyCode.KEY_ENTER) {
                         this.btnDeleteOnClick()
                     }
                 }
@@ -406,7 +379,7 @@ export default ({
                 var startIndex = 0;
                 var endIndex = this.assets.length - 1;
                 switch (e.keyCode) {
-                    case 38:
+                    case KeyCode.KEY_ARROWUP:
                         if (this.selected.length == 0) {
                             this.assetCurrent = this.assets[endIndex]
                             this.selected.push(this.assets[endIndex].fixedAssetId);
@@ -422,7 +395,7 @@ export default ({
                             this.checkActive(this.assets[this.curIndex].fixedAssetId);
                         }
                         break;
-                    case 40:
+                    case KeyCode.KEY_ARROWDOWN:
                         if (this.selected.length == 0) {
                             this.assetCurrent = this.assets[startIndex]
                             this.selected.push(this.assets[startIndex].fixedAssetId);
@@ -476,7 +449,6 @@ export default ({
 
         },
 
-
         /**
         * Tiến 1 trang.
         * TVTOAN (06/08/2022)
@@ -503,7 +475,7 @@ export default ({
         */
         btnSearch(key, e) {
             try {
-                if (e.keyCode === 13) {
+                if (e.keyCode == KeyCode.KEY_ENTER) {
                     this.paging.keyWord = key;
                     this.getData(this.paging);
                 }
@@ -611,9 +583,15 @@ export default ({
         showDialogDeleteList(asset) {
             try {
                 if (this.selected.length > 0) {
+
                     if (this.selected.length == 1) {
                         if(asset.status == 1) {
-                            this.errMessWarning = `Không thể xóa tài sản này vì đã có chứng từ phát sinh`;
+                            let voucherCode = '';
+                            axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/increment/${asset.fixedAssetId}`)
+                            .then(res =>{
+                                voucherCode = res.data[0].VoucherCode;
+                                this.errMessWarning = `Tài sản <b> ${asset.fixedAssetCode} </b> đã phát sinh chứng từ ghi tăng <b> ${voucherCode}</b>. Không thể xóa!`;
+                            })
                             this.isMessDelete = true;
                         }else {
                             this.errMessWarning = `Bạn có muốn xóa tài sản <b> ${asset.fixedAssetCode} - ${asset.fixedAssetName} </b>?`;
@@ -632,7 +610,7 @@ export default ({
                         }
                     }
                 } else {
-                    this.errMessWarning = `Vui lòng chọn ít nhất 1 bản ghi`;
+                    this.errMessWarning = MessWarning.NO_RECORD;
                     this.isMessDelete = true;
                 }
             } catch (error) {
@@ -665,13 +643,13 @@ export default ({
                                 if (res.status == 200) {
                                     this.isDelete = false;
                                     this.getData(this.paging);
-                                    this.toastMess = 'Xóa thành công !!!';
+                                    this.toastMess = Notification.DELETE_SUCCESS;
                                     this.isShowToastSuccess = true;
                                     this.selected = [];
                                     setTimeout(() => this.isShowToastSuccess = false, 3000);
                                 } else {
                                     this.isDelete = false;
-                                    this.toastMess = `Xóa không thành công`;
+                                    this.toastMess = Notification.DELETE_FAIL;
                                     this.isShowToastSuccess = true;
                                 }
                             })
@@ -694,14 +672,14 @@ export default ({
                             .then(res => {
                                 if (res.status == 200) {
                                     this.isDelete = false;
-                                    this.toastMess = `Xóa thành công`;
+                                    this.toastMess = Notification.DELETE_SUCCESS;
                                     this.getData(this.paging);
                                     this.selected = [];
                                     this.isShowToastSuccess = true
                                     setTimeout(() => this.isShowToastSuccess = false, 500);
                                 } else {
                                     this.isDelete = false;
-                                    this.toastMess = `Xóa không thành công`
+                                    this.toastMess = Notification.DELETE_FAIL
                                     this.isShowToastSuccess = true;
                                 }
                             })
@@ -746,7 +724,7 @@ export default ({
         showDetail(isShow) {
             try {
                 this.showDetailParent = isShow;
-                this.title = "Thêm tài sản";
+                this.title = TitleDialog.INSERT_ASSET;
                 this.assetSelected = {
                     fixedAssetId: '00000000-0000-0000-0000-000000000000',
                     fixedAssetCode: '',
@@ -779,7 +757,7 @@ export default ({
         */
         rowOnDblClick(asset) {
             try {
-                this.title = "Sửa tài sản";
+                this.title = TitleDialog.UPDATE_ASSET;
                 this.assetSelected = asset;
                 this.showDetailParent = true;
             } catch (error) {
@@ -793,7 +771,7 @@ export default ({
         */
         duplicateAssets(asset) {
             try {
-                this.title = "Nhân bản tài sản";
+                this.title = TitleDialog.DUPLICATE_ASSET;
                 this.assetSelected = asset;
                 this.isDuplicate = true;
                 this.showDetailParent = true;

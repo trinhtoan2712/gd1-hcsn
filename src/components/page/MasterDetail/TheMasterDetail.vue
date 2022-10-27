@@ -1,4 +1,4 @@
-<template>
+<template v-if="!!assets">
   <div class="container">
     <div class="header-masterdetail pading-left pading-right">
       <div class="header-masterdetail-left">
@@ -17,15 +17,14 @@
         </button>
       </div>
     </div>
-    <splitpanes class="main-masterdetail pading-left pading-right pading-bottom default-theme" horizontal
-      style="height: 81.5vh; width: 97.5%">
+    <splitpanes class="main-masterdetail pading-left pading-right pading-bottom default-theme" horizontal>
       <pane style="background: #fff;" :size="paneTopSize">
         <div class="header-table">
           <div class="header-table-left">
-            <div class="form-search">
+            <div class="form-search" style="width:269px">
               <div class="form-search__icon icon-small"></div>
-              <input v-on:keyup="btnSearch(paging.keyWord, $event)" class="form-search__input" ref="txtSearch"
-                type="text" placeholder="Tìm kiếm theo tài sản" v-model="paging.keyWord" />
+              <input style="width:100%" v-on:keyup="btnSearch(paging.keyWord, $event)" class="form-search__input" ref="txtSearch"
+                type="text" placeholder="Tìm kiếm theo số chứng từ và nội dung" v-model="paging.keyWord" />
             </div>
           </div>
           <div class="header-table-right">
@@ -133,7 +132,7 @@
           </div>
         </div>
       </pane>
-      <pane style="z-index: 9; background: #fff;" :size="paneBottomSize">
+      <pane style="z-index: 9; background: #fff" :size="paneBottomSize">
         <div class="table-detail">
           <div class="table-detail__header">
             <span class="content-title">Danh sách tài sản</span>
@@ -187,9 +186,9 @@
       </div>
     </div>
   </div>
-  <TheDialogMasterDetail v-if="isShowDialogDetail" :showDetailChil="isShowDialogDetail" :showDetailFunction="showDetail"
+  <TheDialogMasterDetail @updateMessage="updateMessage" v-if="isShowDialogDetail" :showDetailChil="isShowDialogDetail" :showDetailFunction="showDetail"
     :assetIncrementSelected="assetIncrementSelected" :title="title" :isFormAdd="isFormAdd" :isFormUpdate="isFormUpdate"
-    :isFormDuplicate="isFormDuplicate" v-on:activeAssetNew="activeAssetNew" :getData="getData" />
+    v-on:activeAssetNew="activeAssetNew" :getData="getData" />
   <BaseLoading v-if="isShowLoading"></BaseLoading>
   <div id="snackbar" :class="{ show: isShowToastSuccess }" v-on:updateMessage="updateMessage">
     <i class="fa-solid fa-circle-check icon-toast fa-2xl"></i>
@@ -204,23 +203,16 @@ import "splitpanes/dist/splitpanes.css";
 import TableBase from "../../base/BaseTableFixedAsset.vue";
 import { formatPrice, formatDate } from '../../common/TheCommon'
 import BaseLoading from "../../base/BaseLoading.vue";
-import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
-import "v-contextmenu/dist/themes/default.css";
-import { EndPoint } from "../../common/TheConst"; //, NameCookie, FullUrl
+import { EndPoint,KeyCode,MessWarning, Notification, TitleDialog } from "../../common/TheConst";
 import axios from "axios";
 
 export default {
-  directives: {
-    contextmenu: directive,
-  },
   components: {
     TheDialogMasterDetail,
     Splitpanes,
     Pane,
     TableBase,
     BaseLoading,
-    [Contextmenu.name]: Contextmenu,
-    [ContextmenuItem.name]: ContextmenuItem,
   },
 
   created() {
@@ -283,6 +275,21 @@ export default {
         console.log(error);
       }
     },
+
+        /**
+        * Cập nhật thông báo.
+        * TVTOAN (02/08/2022)
+        */
+        updateMessage(mes) {
+            try {
+                this.toastMess = mes;
+                this.isShowToastSuccess = true;
+                setTimeout(() => this.isShowToastSuccess = false, 3000);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
     /**
     * Click đổi layout
     * TVTOAN (06/08/2022)
@@ -376,7 +383,7 @@ export default {
     */
     btnSearch(key, e) {
       try {
-        if (e.keyCode === 13) {
+        if (e.keyCode == KeyCode.KEY_ENTER) {
           this.paging.keyWord = key;
           this.getData(this.paging);
         }
@@ -400,6 +407,10 @@ export default {
       }
     },
 
+    /**
+    * Chức năng chọn tất cả bản ghi
+    * TVTOAN (26/07/2022)
+    */
     selectAllRows() {
       try {
         this.selected = [];
@@ -419,7 +430,7 @@ export default {
      */
     rowOnDblClick(assetIncrement) {
       try {
-        this.title = "Sửa chứng từ ghi tăng";
+        this.title = TitleDialog.UPDATE_ASSET_INCREMENT;
         this.isFormUpdate = true;
         this.assetIncrementSelected = assetIncrement;
         this.isShowDialogDetail = true;
@@ -456,7 +467,7 @@ export default {
           this.isDelete = true;
           this.isMessDelete = false;
         } else {
-          this.errMessWarning = `Vui lòng chọn ít nhất 1 bản ghi`;
+          this.errMessWarning = MessWarning.NO_RECORD;
           this.isMessDelete = true;
         }
       } catch (error) {
@@ -487,7 +498,7 @@ export default {
                           if (res.status == 200) {
                             this.isDelete = false;
                             this.getData(this.paging);
-                            this.toastMess = `Xóa thành công`;
+                            this.toastMess = Notification.DELETE_SUCCESS;
                             this.isShowToastSuccess = true;
                             setTimeout(() => (this.isShowToastSuccess = false), 3000);
                           }
@@ -496,7 +507,7 @@ export default {
                   })
               } else {
                 this.isDelete = false;
-                this.toastMess = `Xóa không thành công`;
+                this.toastMess = Notification.DELETE_FAIL;
                 this.isShowToastSuccess = true;
               }
             });
@@ -523,7 +534,7 @@ export default {
                           if (res.status == 200) {
                             this.isDelete = false;
                             this.getData(this.paging);
-                            this.toastMess = `Xóa thành công`;
+                            this.toastMess = Notification.DELETE_SUCCESS;
                             this.isShowToastSuccess = true;
                             setTimeout(() => (this.isShowToastSuccess = false), 3000);
                           }
@@ -546,7 +557,7 @@ export default {
     showDetail(isShow) {
       try {
         this.isShowDialogDetail = isShow;
-        this.title = "Thêm chứng từ ghi tăng";
+        this.title = TitleDialog.INSERT_ASSET_INCREMENT;
         this.isFormAdd = true;
         this.assetIncrementSelected = {
           voucherID: "00000000-0000-0000-0000-000000000000",
@@ -702,7 +713,6 @@ export default {
       isShowDialogDetail: false,
       isFormAdd: false,
       isFormUpdate: false,
-      isFormDuplicate: false,
 
       JWToken: "",
       title: "",
@@ -759,4 +769,5 @@ export default {
 
 <style scoped>
 @import url(../MasterDetail/masterdetail.css);
+@import url(../../../style/base/toast.css);
 </style>

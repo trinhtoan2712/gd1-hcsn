@@ -16,14 +16,14 @@
                 <div class="" style="padding: 5px 11px">
                     <div class="form-search-table-base">
                         <div class="form-search__icon icon-small"></div>
-                        <input class="form-search__input" ref="txtSearch" type="text" v-model="keyWord"
-                            placeholder="Tìm kiếm theo tài sản" v-on:keyup="btnSearch(keyWord, $event)">
+                        <input style="width: 100%" class="form-search__input" ref="txtSearch" type="text" v-model="keyWord"
+                            placeholder="Tìm kiếm theo mã tài sản và tên tài sản" v-on:keyup="btnSearch(keyWord, $event)">
                     </div>
                 </div>
-                <TableBase :isShowAllColumn="true" :isShowCheckBox="true" :isShowQuantityRecords="true" :isShowSummary="true" :isShowPaging="true" :voucherID="isGetAll" v-on:listAssetSelected="listAssetSelected" :keyWord="keyWord"></TableBase>
+                <TableBase :isShowAllColumn="true" :isShowSummaryAll="true" :isShowCheckBox="true" :isShowQuantityRecords="true" :isShowSummary="true" :isShowPaging="true" :voucherID="isGetAll" v-on:listAssetSelected="listAssetSelected" :keyWord="keyWord"></TableBase>
             </div>
             <div class="dialog_footer">
-                <button tabindex="13" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
+                <button tabindex="13" @click="showDetailFunction(false)" id="btnClose" class="btn-dialog btn btn-cancel-dialog-asset">Hủy</button>
                 <button type="submit" tabindex="12" id="btnSave" class="btn-dialog btn" style="color: #fff"
                     @click="btnSaveOnClick">Chọn</button>
             </div>

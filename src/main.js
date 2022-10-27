@@ -48,7 +48,7 @@ const routers = [
           meta: { requiresAuth: true }
         },
         {
-          path: '/masterdetail',
+          path: '/increment',
           name: 'MasterDetail',
           component: MasterDetail,
           meta: { requiresAuth: true }

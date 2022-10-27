@@ -1,5 +1,5 @@
 <template>
-    <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}" >
+    <div class="content-table-base" :class="{tablenodatasize: assets.length < 1}">
         <table class="table-data noselect">
             <thead class="table-header">
                 <tr>
@@ -7,26 +7,24 @@
                         <input type="checkbox" name="" class="ckb ckb-primary" v-model="isSelect"
                             @click="selectAllRows">
                     </th>
-                    <th style="width:40px;text-align: center;">STT<span class="tooltip">Số thứ tự</span> </th>
-                    <th style="width:200px">Mã tài sản</th>
-                    <th style="width:200px">Tên tài sản</th>
-                    <th style="width:200px" v-if="isShowAllColumn">Loại tài sản</th>
-                    <th style="width:200px">Bộ phận sử dụng</th>
-                    <th style="width:100px" class="number-right" v-if="isShowAllColumn">Số lượng</th>
-                    <th style="width:200px; padding-left:50px" class="number-right">Nguyên giá</th>
-                    <th style="width:200px" class="number-right">Hao mòn năm</th>
-                    <th style="width:200px" class="number-right">Giá trị còn lại</th>
-                    <th v-if="isShowFunction" style="padding: 0px 10px">Chức năng</th>
+                    <th style="text-align: center;">STT<span class="tooltip">Số thứ tự</span> </th>
+                    <th>Mã tài sản</th>
+                    <th>Tên tài sản</th>
+                    <th v-if="isShowAllColumn">Loại tài sản</th>
+                    <th>Bộ phận sử dụng</th>
+                    <th class="number-right-base" v-if="isShowAllColumn">Số lượng</th>
+                    <th class="number-right-base">Nguyên giá</th>
+                    <th class="number-right-base">Hao mòn năm</th>
+                    <th class="number-right-base">Giá trị còn lại</th>
+                    <th v-if="isShowFunction">Chức năng</th>
                 </tr>
             </thead>
             <tbody class="table-body">
                 <tr class="tbody-tr" v-for="(asset, index ) in assets" :key="asset.fixedAssetId"
-                    v-contextmenu:contextmenu :class="{'bgblue': checkActive(asset.fixedAssetId) }"
+                    :class="{'bgblue': checkActive(asset.fixedAssetId) }"
                     @click="btnRowActiveOnClick(asset, $event, index)" @dblclick="rowOnDblClick(asset)">
-                                        <td v-if="isShowCheckBox" > 
-                        <input type="checkbox" name="" id="" class="ckb ckb-primary" :value="asset.fixedAssetId"
-                            v-model="selected">
-                    </td>
+                    <td v-if="isShowCheckBox"> <input type="checkbox" name="" id="" class="ckb ckb-primary"
+                            :value="asset.fixedAssetId" v-model="selected"></td>
                     <td style="text-align:center">{{ index + 1 }}</td>
                     <td>{{ asset.fixedAssetCode }}</td>
                     <td class="text-hide">
@@ -38,39 +36,62 @@
                     <td class="text-hide">
                         <p>{{ asset.departmentName }}</p>
                     </td>
-                    <td v-if="isShowAllColumn" class="number-right">{{ asset.quantity }}</td>
-                    <td class="number-right">{{ formatPrice(asset.cost) }}</td>
-                    <td class="number-right">{{ formatPrice(asset.depreciationValue) }}</td>
-                    <td class="number-right">{{ formatPrice(asset.residualValue) }}</td>
-
+                    <td v-if="isShowAllColumn" style="padding-right: 42px" class="number-right-base">{{ asset.quantity
+                    }}</td>
+                    <td class="number-right-base">{{ formatPrice(asset.cost) }}</td>
+                    <td class="number-right-base">{{ formatPrice(asset.depreciationValue) }}</td>
+                    <td class="number-right-base">{{ formatPrice(asset.residualValue) }}</td>
                     <td class="table-option" v-if="isShowFunction">
-                        <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"><span
+                        <div @click="rowOnDblClick(asset)" class="table-eidt icon-pading icon-small"> <span
                                 class="tooltip">Sửa (Ctrl + C)</span></div>
-                        <div @click="btnDeleteOnClick(asset,index)" class="table-delete icon-small icon-pading">
-                            <span class="tooltip">Xóa (Delete)</span>
+                        <div @click="btnDeleteOnClick(asset,index)" class="table-delete icon-small icon-pading"> <span
+                                class="tooltip">Xóa (Delete)</span>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="12" class="table__nodata" v-if="assets.length < 1"> </td>
                 </tr>
+                <tr v-if="!isShowSummaryAll && assets.length > 0" class="table-summary-base">
+                    <td colspan="4">
+                    </td>
+                    <td class="number-right font-bold">{{formatPrice(totalAssetPaging.totalCost)}}</td>
+                    <td class="number-right font-bold">{{formatPrice(totalAssetPaging.totalAtrophy)}}</td>
+                    <td class="number-right font-bold">{{formatPrice(totalAssetPaging.totalResidualValue)}}</td>
+                    <td v-if="isShowFunction"></td>
+                </tr>
+
             </tbody>
             <BaseLoading v-if="isShowLoading"></BaseLoading>
         </table>
     </div>
     <div class="table-footer-base" v-if="assets.length > 0">
-        <table>
+        <table v-if="isShowSummaryAll" style="border-collapse:collapse">
             <tr class="table-summary-base" v-if="assets.length > 0 || isShowSummary">
-                <td style="width:240px !important; padding-left: 5px;"><span v-if="isShowQuantityRecords">Đã chọn: <strong>{{selected.length}}</strong> bản ghi</span></td>
-                <td style="width:200px !important"></td>
-                <td style="width:200px !important"></td>
-                <td style="width:200px !important"></td>
-                <td v-if="isShowAllColumn" style="width:50px !important; padding-right: 5px;" class="number-right font-bold">{{ total.totalQuantity }}</td>
-                <td style="width:120px !important; padding-right: 5px;" class="number-right font-bold">{{ formatPrice(total.totalCost) }}</td>
-                <td class="number-right font-bold">{{formatPrice(total.totalAtrophy)}}</td>
-                <td class="number-right font-bold" >{{formatPrice(total.totalResidualValue)}}</td>
+                <td><span v-if="isShowQuantityRecords">Đã chọn:<strong>{{selected.length}}</strong> bản ghi</span></td>
+                <td style="width: 51%"></td>
+                <td v-if="isShowAllColumn" class="number-right-base font-bold">{{ total.totalQuantity }}</td>
+                <td style="padding-right: 6px" class="number-right-base font-bold">{{formatPrice(total.totalCost) || 0 }}
+                </td>
+                <td style="padding-right: 12px" class="number-right-base font-bold">{{formatPrice(total.totalAtrophy) || 0}}
+                </td>
+                <td class="number-right-base font-bold">{{formatPrice(total.totalResidualValue) || 0}}</td>
             </tr>
         </table>
+        <!-- <table v-if="!isShowSummaryAll">
+            <tr class="table-summary-base" v-if="assets.length > 0 || isShowSummary">
+                <td style="padding-left: 4px;"><span v-if="isShowQuantityRecords">Đã chọn:<strong>{{selected.length}}</strong> bản ghi</span></td>
+                <td v-if="isShowFunction" style="width: 58%"></td>
+                <td v-if="!isShowFunction" style="width: 55%"></td>
+                <td v-if="isShowAllColumn" class="number-right-base font-bold">{{ total.totalQuantity }}</td>
+                <td :class="{'td-table' : isShowFunction}" class="number-right-base font-bold">
+                    {{formatPrice(totalAssetPaging.totalCost) || 0}}</td>
+                <td :class="{'td-table-2' : isShowFunction}" class="number-right-base font-bold">
+                    {{formatPrice(totalAssetPaging.totalAtrophy)}}</td>
+                <td class="number-right-base font-bold">{{formatPrice(totalAssetPaging.totalResidualValue) || 0}}</td>
+                <td style="padding-right: 68px" v-if="isShowFunction"></td>
+            </tr>
+        </table> -->
         <div class="paging-base" v-if="isShowPaging">
             <div class="total-record">Tổng số: <strong>{{ totalRecord }}</strong> bản ghi</div>
             <div class="page-record">
@@ -99,29 +120,26 @@
         </div>
     </div>
     <TheDialogUpdateBudgetAsset v-if="isShowDialogAssetBudget" :showDetailChil="isShowDialogAssetBudget"
-        :showDetailFunction="showDetail" :title="title" :assetSelected="assetSelected" v-on:arrayById="arrayById" v-on:totalById="totalById"/>
+        :showDetailFunction="showDetail" :title="title" :assetSelected="assetSelected" v-on:arrayById="arrayById"
+        v-on:totalById="totalById" />
 </template>
 
 <script>
 import TheDialogUpdateBudgetAsset from '../page/MasterDetail/TheDialogUpdateBudgetAsset.vue'
 import { formatPrice, formatDate } from "../common/TheCommon";
 import BaseLoading from '../base/BaseLoading.vue';
-import { directive, Contextmenu, ContextmenuItem } from "v-contextmenu";
-import "v-contextmenu/dist/themes/default.css";
 import { EndPoint } from "../common/TheConst";
 import axios from "axios";
 
 export default ({
-    directives: {
-        contextmenu: directive,
-    },
     name: "TableBase",
     components: {
-        BaseLoading, [Contextmenu.name]: Contextmenu,
-        [ContextmenuItem.name]: ContextmenuItem, TheDialogUpdateBudgetAsset
+        BaseLoading, TheDialogUpdateBudgetAsset
     },
     emits: ["updateMessage", "listUpdate", "listAssetSelected", "listDelete", "idFixedAssettDelete", "listFixedAssetId"],
     props: {
+        keyWordSearch: String,
+        isShowSummaryAll: Boolean,
         listSelected: [],
         keyWord: String,
         listAsset: [],
@@ -134,27 +152,12 @@ export default ({
         isShowAllColumn: Boolean,
     },
     created() {
-        if(this.voucherID == 'getAll') {
-                this.getAllData(this.paging)
-            }
-            else {
-                this.getData(this.pagingByVoucherID)
-            }
-        // else {
-        //     // array từ cache để làm form sửa và thêm.
-        //     this.assets = this.arrayFixedAsset;
-        //     this.totalRecord = this.assets.length;
-        //     this.resetTotal()
-        //     for (let asset of this.assets) {
-        //         asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
-        //         asset.residualValue = asset.cost - asset.atrophy;
-        //         this.total.totalCost += asset.cost;
-        //         this.total.totalAtrophy += asset.atrophy
-        //     }
-        //     this.total.totalResidualValue = this.total.totalCost - this.total.totalAtrophy
-        //     this.paging.totalPage = Math.ceil(this.asset.length / this.paging.pageSize);
-        // }
-
+        if (this.voucherID == 'getAll') {
+            this.getAllData(this.paging)
+        }
+        else {
+            this.getData(this.pagingByVoucherID)
+        }
     },
 
     watch: {
@@ -163,19 +166,58 @@ export default ({
             this.getAllData(this.paging)
         },
 
+        keyWordSearch: function (newValue) {
+            // this.assetsDefault = this.assets;
+            if(newValue != null) {
+                this.assetsSearch = this.assetsDefault.filter(item => {
+                    return item.fixedAssetCode.toUpperCase().includes(newValue.toUpperCase()) || item.fixedAssetName.toUpperCase().includes(newValue.toUpperCase());
+                })
+                this.assets = this.assetsSearch;
+                for (let asset of this.assets) {
+                asset.atrophy = asset.depreciationValue;
+                asset.residualValue = asset.cost - asset.atrophy;
+                this.totalAssetPaging.totalCost += Number(asset.cost)
+                this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
+            }
+            }if (newValue == null){
+                this.assets = this.assetsDefault;
+            }
+        },
+
         voucherID: function (newValue) {
-            if(newValue == 'getAll') {
+            if (newValue == 'getAll') {
                 this.getAllData(this.paging)
             }
             if (newValue != 'getAll') {
                 this.getData(this.pagingByVoucherID)
             }
-
         },
         listAsset: function (newValue) {
-            let result  = this.assets.concat(newValue)
+            let result = this.assets.concat(newValue)
             let newListCtrl = [...new Set(result)];
-            this.assets=newListCtrl;
+            this.assets = newListCtrl;
+            this.resetTotal()
+            for (let asset of this.assets) {
+                asset.atrophy = asset.depreciationValue;
+                asset.residualValue = asset.cost - asset.atrophy;
+                this.totalAssetPaging.totalCost += Number(asset.cost)
+                this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
+            }
+            this.totalAssetPaging.totalResidualValue = this.totalAssetPaging.totalCost - this.totalAssetPaging.totalAtrophy;
+            this.assetsDefault = this.assets;
+        },
+
+        assets: function (newValue) {
+            if (newValue && this.isShowSummaryAll == false) {
+                this.resetTotal()
+                for (let asset of this.assets) {
+                    asset.atrophy = asset.depreciationValue;
+                    asset.residualValue = asset.cost - asset.atrophy;
+                    this.totalAssetPaging.totalCost += Number(asset.cost)
+                    this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
+                }
+                this.totalAssetPaging.totalResidualValue = this.totalAssetPaging.totalCost - this.totalAssetPaging.totalAtrophy;
+            }
         }
     },
     unmounted() {
@@ -205,6 +247,8 @@ export default ({
             curIndex: 0,
 
             //Đối tượng và mảng
+            assetsDefault: [],
+            assetsSearch: [],
             assets: [],
             assetSelected: {},
             selected: [],
@@ -224,6 +268,11 @@ export default ({
             // Dữ liệu cho bảng
             total: {
                 totalRecord: 0,
+                totalCost: 0,
+                totalAtrophy: 0,
+                totalResidualValue: 0,
+            },
+            totalAssetPaging: {
                 totalCost: 0,
                 totalAtrophy: 0,
                 totalResidualValue: 0,
@@ -291,6 +340,13 @@ export default ({
         * TVTOAN (11/09/2022)
         */
         totalById(total) {
+            this.resetTotal()
+            for (let asset of this.assets) {
+                asset.atrophy = asset.depreciationValue;
+                asset.residualValue = asset.cost - asset.atrophy;
+                this.totalAssetPaging.totalCost += Number(asset.cost)
+                this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
+            }
             this.assetCurrent.cost = total;
             this.$emit("listUpdate", this.assets)
         },
@@ -300,6 +356,13 @@ export default ({
         * TVTOAN (11/09/2022)
         */
         arrayById(array) {
+            this.resetTotal()
+            for (let asset of this.assets) {
+                asset.atrophy = asset.depreciationValue;
+                asset.residualValue = asset.cost - asset.atrophy;
+                this.totalAssetPaging.totalCost += Number(asset.cost)
+                this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
+            }
             this.assetCurrent.fixedAssetBudget = array;
             this.$emit("listUpdate", this.assets)
         },
@@ -502,22 +565,26 @@ export default ({
                 //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
                 axios.get(`${EndPoint.END_POINT_FIXED_ASSET_INCREMENT_DETAIL_GETONE}?voucherId=${this.voucherID}&pageSize=${paging.pageSize}&pageNumber=${paging.pageNumber}`)
                     .then(data => {
+                        //this.assets có thể null ở đây
                         this.totalRecord = data.data.totalCount;
                         this.resetTotal()
                         this.assets = data.data.data;
-                        if(this.listSelected.length == 1) {
+                        if(this.listSelected) {
+                            if (this.listSelected.length == 1) {
                             this.listFixedAssetId = [];
+                            }
                         }
                         for (let asset of this.assets) {
                             asset.atrophy = this.getAtrophy(asset.trackedYear, asset.productionDate) * asset.depreciationValue;
                             asset.residualValue = asset.cost - asset.atrophy;
                             this.listFixedAssetId.push(asset.fixedAssetID);
+                            this.totalAssetPaging.totalCost += Number(asset.cost)
+                            this.totalAssetPaging.totalAtrophy += Number(asset.atrophy)
                         }
-                        this.total.totalCost = data.data.totalCost;
-                        this.total.totalAtrophy += data.data.totalAtrophy;
-                        this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
+                        this.totalAssetPaging.totalResidualValue = this.totalAssetPaging.totalCost - this.totalAssetPaging.totalAtrophy;
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                         this.$emit("listFixedAssetId", this.listFixedAssetId);
+                        this.assetsDefault = this.assets;
                     });
                 this.pages;
             } catch (error) {
@@ -525,10 +592,10 @@ export default ({
             }
         },
 
-/**
-        * Gọi api filter.
-        * TVTOAN (25/07/2022)
-        */
+        /**
+                * Gọi api filter.
+                * TVTOAN (25/07/2022)
+                */
         getAllData(paging) {
             try {
                 //gọi api lấy dữ liệu truyền lại cái domain lúc đầu vào đây
@@ -547,7 +614,7 @@ export default ({
                         this.total.totalResidualValue = data.data.totalCost - data.data.totalAtrophy
                         this.paging.totalPage = Math.ceil(data.data.totalCount / this.paging.pageSize);
                     });
-                    this.pages;
+                this.pages;
             } catch (error) {
                 console.log(error);
             }
@@ -591,13 +658,16 @@ export default ({
             this.total.totalCost = 0;
             this.total.totalAtrophy = 0;
             this.total.totalResidualValue = 0;
+            this.totalAssetPaging.totalCost = 0;
+            this.totalAssetPaging.totalAtrophy = 0;
+            this.totalAssetPaging.totalResidualValue = 0;
         },
 
         /**
         * Hàm xóa tài sản
         * TVTOAN (02/08/2022)
         */
-        btnDeleteOnClick(asset,index) {
+        btnDeleteOnClick(asset, index) {
             try {
                 this.listDelete.push(asset.fixedAssetId || asset.fixedAssetID);
                 this.assets.splice(index, 1);

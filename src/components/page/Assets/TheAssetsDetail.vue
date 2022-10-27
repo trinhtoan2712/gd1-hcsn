@@ -20,7 +20,7 @@
                         <label>Mã tài sản <span class="input--required">*</span></label>
                         <input tabindex="1" id="txtFixedAssetCode" ref="txtAssetCode" name-property="mã tài sản" :disabled="asset.status == 1" 
                             type="text" class="input" placeholder="Nhập mã tài sản" required maxlength="20"
-                            v-model="asset.fixedAssetCode" @blur="checkValidate(this.$refs['txtAssetCode'])" :class="[{'border-red': !formValid.fixedAssetCode}, {'inputdisable': asset.status == 1 }]">
+                            v-model="asset.fixedAssetCode" @blur="checkValidate(this.$refs['txtAssetCode'])" :class="[{'border-red': !formValid.fixedAssetCode}, {'inputdisable': asset.status == 1 && !isFormAdd}]">
                             <span v-if="!formValid.fixedAssetCode" class="tooltip">Mã tài sản không hợp lệ</span>
                     </div>
                     <div class="col" style="grid-column: span 2;" :class="{'col__tooltip': !formValid.fixedAssetName}">
@@ -72,7 +72,7 @@
                             
                                 class="input input-number" v-model="asset.quantity" min="1" ref="txtQuantity"
                                 v-on:keypress="isNumber(event)" 
-                                @blur="checkValidate(this.$refs['txtQuantity'])" :class="[{'border-red': !formValid.quantity}, {'inputdisable': asset.status == 1 }]">
+                                @blur="checkValidate(this.$refs['txtQuantity'])" :class="[{'border-red': !formValid.quantity}, {'inputdisable': asset.status == 1 && !isFormAdd}]">
                             <div class="btn-updown-number">
                                 <div @click="incrementNumber" class="icon-up-number icon-content"></div>
                                 <div @click="decrementNumber" class="icon-down-number icon-content"></div>
@@ -85,7 +85,7 @@
                         <input tabindex="6" id="txtCost" name-property="nguyên giá" type="text" 
                         maxlength="18" :disabled="asset.status == 1"
                             class="input number-right" @input="formatInputNumber()"
-                            v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="[{'border-red': !formValid.cost}, {'inputdisable': asset.status == 1 }]">
+                            v-model="asset.cost" ref="txtCost" @blur="checkValidate(this.$refs['txtCost'])" :class="[{'border-red': !formValid.cost}, {'inputdisable': asset.status == 1 && !isFormAdd}]">
                             <span v-if="!formValid.cost" class="tooltip">Nguyên giá không hợp lệ</span>
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.lifeTime}">
@@ -97,7 +97,7 @@
         maxlength = "4"
                                 class="input input-number" v-model="asset.lifeTime" min="1" ref="txtLifeTime"
                                 @change="depreciationRateChange"
-                                @blur="checkValidate(this.$refs['txtLifeTime'])" :class="[{'inputdisable': asset.status == 1 }]">
+                                @blur="checkValidate(this.$refs['txtLifeTime'])" :class="[{'inputdisable': asset.status == 1 && !isFormAdd}]">
                             <div class="btn-updown-number">
                                 <div @click="incrementYear" class="icon-up-number icon-content"></div>
                                 <div @click="decrementYear" class="icon-down-number icon-content"></div>
@@ -110,7 +110,7 @@
                         <input tabindex="8" id="txtDepreciationRate" name-property="tỉ lệ hao mòn" type="text" :disabled="asset.status == 1"
                             class="input number-right" v-model="asset.depreciationRate"
                             ref="txtDepreciationRate"
-                            @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="[{'border-red': !formValid.depreciationRate}, {'inputdisable': asset.status == 1 }]">
+                            @blur="checkValidate(this.$refs['txtDepreciationRate'])" :class="[{'border-red': !formValid.depreciationRate}, {'inputdisable': asset.status == 1  && !isFormAdd}]">
                             <span v-if="!formValid.depreciationRate" class="tooltip">Tỉ lệ hao mòn không hợp lệ</span>
                     </div>
                     <div class="col" :class="{'col__tooltip': !formValid.depreciationValue}">
@@ -118,7 +118,7 @@
                         <input tabindex="9" id="txtdepreciationValue" name-property="giá trị hao mòn năm" type="text" :disabled="asset.status == 1"
                         maxlength="18"  @input="formatInputNumber()"
                             class="input number-right" v-model="asset.depreciationValue" ref="txtdepreciationValue"
-                            @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="[{'border-red': !formValid.depreciationValue}, {'inputdisable': asset.status == 1 }]">
+                            @blur="checkValidate(this.$refs['txtdepreciationValue'])" :class="[{'border-red': !formValid.depreciationValue}, {'inputdisable': asset.status == 1 && !isFormAdd}]">
                             <span v-if="!formValid.depreciationValue" class="tooltip">Giá trị hao mòn không hợp lệ</span>
 
                     </div>
@@ -211,8 +211,8 @@
     <BaseLoading v-if="isShowLoading"></BaseLoading>
 </template>
 <script>
-import { formatPrice, formatDate, formatNumber } from "../../common/TheCommon"
-import {EndPoint} from "../../common/TheConst"
+import { formatPrice, formatDate, formatNumber} from "../../common/TheCommon"
+import {EndPoint, MessWarning, Notification, TitleDialog, StatusAsset, LengthInput, StatusCodeResApi,ErrorCode} from "../../common/TheConst"
 import Datepicker from 'vuejs3-datepicker';
 import BaseLoading from '../../base/BaseLoading.vue'
 import { uuid } from 'vue-uuid'
@@ -305,8 +305,8 @@ export default {
             try {
                 if(this.asset.status == 0) {
                     this.asset.quantity++;
-                    if(this.asset.quantity > 2147483647) {
-                        this.asset.quantity = 2147483647;
+                    if(this.asset.quantity > LengthInput.MAX_INT) {
+                        this.asset.quantity = LengthInput.MAX_INT;
                     }
                 }
             } catch (error) {
@@ -329,7 +329,7 @@ export default {
         */
         incrementYear() {
             try {
-                if(this.asset.status == 0) {    
+                if(this.asset.status == this.isNotUse) {    
                     this.asset.lifeTime++;
                 }
             } catch (error) {
@@ -338,7 +338,7 @@ export default {
         },
         decrementYear() {
             try {
-                if(this.asset.status == 0) {
+                if(this.asset.status == this.isNotUse) {
                     this.asset.lifeTime = this.asset.lifeTime < 2 ? 1 : this.asset.lifeTime - 1;
             }
             } catch (error) {
@@ -406,7 +406,7 @@ export default {
         */
         showToastSuccess() {
             try {
-                this.$emit('updateMessage', "Lưu thông tin thành công");
+                this.$emit('updateMessage', Notification.SAVE_SUCCESS);
             } catch (error) {
                 console.log(error);
             }
@@ -418,7 +418,7 @@ export default {
         */
         showToastFail() {
             try {
-                this.$emit('updateMessage', "Lưu thông tin không thành công");
+                this.$emit('updateMessage',Notification.SAVE_FAIL);
             } catch (error) {   
                 console.log(error);
             }
@@ -438,20 +438,20 @@ export default {
         */
         validateAsset(asset) {
             this.arrayInputError = [];
-            if (!asset.fixedAssetId || asset.fixedAssetId.length != 36) {
+            if (!asset.fixedAssetId || asset.fixedAssetId.length != LengthInput.LENGTH_GUID) {
                 this.formValid.fixedAssetId = false;
             } else {
                 this.formValid.fixedAssetId = true;
             }
 
-            if (!asset.fixedAssetCode || asset.fixedAssetCode.length > 20) {
+            if (!asset.fixedAssetCode || asset.fixedAssetCode.length > LengthInput.LENGTH_CODE) {
                 this.formValid.fixedAssetCode = false;
                 this.arrayInputError.push("txtAssetCode");
             } else {
                 this.formValid.fixedAssetCode = true;
             }
 
-            if (!asset.fixedAssetName || asset.fixedAssetName.length > 255) {
+            if (!asset.fixedAssetName || asset.fixedAssetName.length > LengthInput.LENGTH_NAME) {
                 this.formValid.fixedAssetName = false;
                 this.arrayInputError.push("txtFixedAssetName");
 
@@ -459,13 +459,13 @@ export default {
                 this.formValid.fixedAssetName = true;
             }
 
-            if (!asset.departmentID || asset.departmentID.length != 36) {
+            if (!asset.departmentID || asset.departmentID.length != LengthInput.LENGTH_GUID) {
                 this.formValid.departmentId = false;
             } else {
                 this.formValid.departmentId = true;
             }
 
-            if (!asset.fixedAssetCategoryID || asset.fixedAssetCategoryID.length != 36) {
+            if (!asset.fixedAssetCategoryID || asset.fixedAssetCategoryID.length != LengthInput.LENGTH_GUID) {
                 this.formValid.fixedAssetCategoryId = false;
             } else {
                 this.formValid.fixedAssetCategoryId = true;
@@ -478,35 +478,35 @@ export default {
                 this.formValid.purchaseDate = true;
             }
 
-            if (!asset.cost || asset.cost.length > 18) {
+            if (!asset.cost || asset.cost.length > LengthInput.LENGTH_COST) {
                 this.arrayInputError.push("txtCost");
                 this.formValid.cost = false;
             } else {
                 this.formValid.cost = true;
             }
 
-            if (!asset.quantity || asset.quantity.length > 18) {
+            if (!asset.quantity || asset.quantity.length > LengthInput.LENGTH_COST) {
                 this.arrayInputError.push("txtQuantity");
                 this.formValid.quantity = false;
             } else {
                 this.formValid.quantity = true;
             }
 
-            if (!asset.depreciationRate || asset.depreciationRate.length > 18) {
+            if (!asset.depreciationRate || asset.depreciationRate.length > LengthInput.LENGTH_COST) {
                 this.arrayInputError.push("txtDepreciationRate");
                 this.formValid.depreciationRate = false;
             } else {
                 this.formValid.depreciationRate = true;
             }
 
-            if (!asset.lifeTime || 0 > asset.lifeTime > 2147483647) {
+            if (!asset.lifeTime || 0 > asset.lifeTime > LengthInput.MAX_INT) {
                 this.arrayInputError.push("txtLifeTime");
                 this.formValid.lifeTime = false;
             } else {
                 this.formValid.lifeTime = true;
             }
 
-            if (!asset.depreciationValue || asset.depreciationValue.length < 1 || asset.depreciationValue.length > 18) {
+            if (!asset.depreciationValue || asset.depreciationValue.length < 1 || asset.depreciationValue.length > LengthInput.LENGTH_COST) {
                 this.formValid.depreciationValue = false;
                 this.arrayInputError.push("txtDepreciationValue");
             } else {
@@ -540,10 +540,10 @@ export default {
             try {
                 if (this.isChange == true) {
                     this.isShowChangeMess = true;
-                    this.errMessWarning = "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này ?"
+                    this.errMessWarning = MessWarning.FORM_CHANGE
                 } else {
                     this.isCancel = true;
-                    this.errMessWarning = "Bạn có muốn hủy bỏ khai báo tài sản này không ?"
+                    this.errMessWarning = MessWarning.CANCEL_FORM
                 }
             } catch (error) {
                 console.log(error);
@@ -616,7 +616,7 @@ export default {
                         };
                         axios.post(`${EndPoint.END_POINT_FIXED_ASSET}`, dataInsert)
                             .then(res => {
-                                if (res.status == '201') {
+                                if (res.status == StatusCodeResApi.CREATED) {
                                     this.resApi = res;
                                     this.showToastSuccess();
                                     this.showDetailFunction(false);
@@ -628,16 +628,16 @@ export default {
                                     this.showToastFail();
                                 }
                             }).catch((error) => {
-                                if (error.response.data.errorCode == 3) {
-                                    this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
+                                if (error.response.data.errorCode == ErrorCode.DUPLICATE_CODE) {
+                                    this.errMessWarning = MessWarning.DUPLICATE_CODE;
                                     axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
                                         .then(res => { this.asset.fixedAssetCode = res.data });
                                 }
-                                if (error.response.data.errorCode == 2) {
-                                    this.errMessWarning = "Thêm thất bại, dữ liệu không hợp lệ";
+                                if (error.response.data.errorCode == ErrorCode.VALIDATE) {
+                                    this.errMessWarning = MessWarning.MISSING_FIELD;
                                 }
-                                if (error.response.data.errorCode == 1) {
-                                    this.errMessWarning = "Lỗi hệ thống, vui lòng liên hệ MISA";
+                                if (error.response.data.errorCode == ErrorCode.EXCEPTION) {
+                                    this.errMessWarning = MessWarning.EXCEPTION;
                                 }
                                 this.isSave = true;
                             });
@@ -672,27 +672,28 @@ export default {
                             };
                             axios.put(`${EndPoint.END_POINT_FIXED_ASSET}/${asset.fixedAssetId}`, dataUpdate)
                                 .then(res => {
-                                    if (res.status == '200') {
+                                    if (res.status == StatusCodeResApi.SUCCESS) {
                                         this.resApi = res;
                                         this.showToastSuccess();
                                         this.showDetailFunction(false);
                                         this.asset = {};
                                         this.getData(this.paging);
                                         this.isValidCbb = false;
+                                        this.$emit('activeAssetNew', res.data.fixedAssetId);
                                     } else {
                                         this.showToastFail();
                                     }
                                 }).catch((error) => {
-                                    if (error.response.data.errorCode == 3) {
-                                        this.errMessWarning = "Mã tài sản đã tồn tại, đã sinh mã tài sản mới";
+                                    if (error.response.data.errorCode == ErrorCode.DUPLICATE_CODE) {
+                                        this.errMessWarning = MessWarning.DUPLICATE_CODE;
                                         axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
                                             .then(res => { this.asset.fixedAssetCode = res.data });
                                     }
-                                    if (error.response.data.errorCode == 2) {
-                                        this.errMessWarning = "Dữ liệu không hợp lệ";
+                                    if (error.response.data.errorCode == ErrorCode.VALIDATE) {
+                                        this.errMessWarning = MessWarning.MISSING_FIELD;
                                     }
-                                    if (error.response.data.errorCode == 1) {
-                                        this.errMessWarning = "Lỗi hệ thống, vui lòng liên hệ MISA";
+                                    if (error.response.data.errorCode == ErrorCode.EXCEPTION) {
+                                    this.errMessWarning = MessWarning.EXCEPTION;
                                     }
                                     this.isSave = true;
                                 });
@@ -937,12 +938,12 @@ export default {
         */
         axios.get(`${EndPoint.END_POINT_FIXED_ASSET}/new-code`)
             .then(res => {
-                if (this.title == 'Nhân bản tài sản') {
+                if (this.title == TitleDialog.DUPLICATE_ASSET) {
                     this.isFormAdd = true;
                     this.asset.fixedAssetCode = res.data
                     this.isValidCbb = true;
                 }
-                else if (this.title == 'Sửa tài sản') {
+                else if (this.title == TitleDialog.UPDATE_ASSET) {
                     this.asset.fixedAssetCode = this.assetSelected.fixedAssetCode;
                     this.isFormAdd = false;
                     this.isValidCbb = true;
@@ -999,7 +1000,10 @@ export default {
                 lifeTime: true,
                 depreciationValue: true,
                 productionDate: true,
-            }
+            }, 
+
+            isUse: StatusAsset.USED,
+            isNotUse: StatusAsset.NOT_USED
         };
     },
     mounted: function () {

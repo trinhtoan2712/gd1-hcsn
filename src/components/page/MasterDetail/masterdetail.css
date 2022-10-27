@@ -75,7 +75,10 @@
     padding-bottom: 16px !important;
 }
 
-.main-masterdetail {}
+.main-masterdetail {
+    height: 81.5vh !important;
+     width: 97.5% !important;
+}
 
 .header-table {
     display: flex;
@@ -323,6 +326,22 @@
         overflow: auto;
         height: 79vh;
     }
+    .main-masterdetail {
+        height: 85.5vh !important;
+         width: 97.5% !important;
+    }
+}
+
+.td-table {
+    padding-right: 29px;
+}
+
+.border-red {
+    border: 1px solid rgb(244, 12, 12) !important;
+  }
+
+.td-table-2 {
+    padding-right: 21px;
 }
 
 @media only screen and (width: 1366px) {
@@ -332,5 +351,9 @@
         font-size: 13px;
         overflow: auto;
         height: 79vh;
+    }
+    .main-masterdetail {
+        height: 84.5vh !important;
+         width: 97.5% !important;
     }
 }

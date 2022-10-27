@@ -129,7 +129,7 @@ input[type="date"] {
   border: 1px solid #afafaf;
   overflow: hidden;
   margin: 0px 16px;
-  font-size: 13px;
+  font-size: 12px;
   overflow: auto;
   height: 74vh;
 }
@@ -193,7 +193,7 @@ input[type="date"] {
 
 .text-hide p{
   margin: unset;
-  width: 160px;
+  width: 156px;
   text-overflow: ellipsis;
   overflow: hidden;
 }
